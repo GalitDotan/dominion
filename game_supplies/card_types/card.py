@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from copy import deepcopy
+from typing import List
 
 
 class Card(ABC):
@@ -18,7 +19,7 @@ class Card(ABC):
         raise NotImplementedError()
 
     def __eq__(self, other):
-        return self.name == other._name
+        return self.name == other.name
 
     def __lt__(self, other: 'Card'):
         if self.cost < other.cost:
@@ -26,6 +27,9 @@ class Card(ABC):
         if self.cost > other.cost:
             return False
         return self.name < other.name
+
+    def help(self):
+        return str(self)
 
     @property
     def type(self):
@@ -130,9 +134,29 @@ class Reaction(Card):
         pass
 
 
+class AttackCommands:  # TODO: move someplace else
+    pass
+
+
 class Attack(Card):
+    def __init__(self, name: str, cost: int, attacks: List[AttackCommands]):
+        super().__init__(name, cost)
+        self.attacks: List = []
+
     def __repr__(self):
         pass
 
 
-ALL_CARD_TYPES = (Action, Treasure, Curse, Reaction, Attack)
+class Duration(Card):
+
+    def __repr__(self):
+        pass
+
+
+class Night(Card):
+
+    def __repr__(self):
+        pass
+
+
+ALL_CARD_TYPES = (Action, Treasure, Curse, Reaction, Attack, Duration, Night)
