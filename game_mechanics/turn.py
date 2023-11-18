@@ -31,7 +31,7 @@ class Turn:
 
     def buy_phase(self):
         while self.turn_state.buys > 0:
-            self.player._hand.sort(key=lambda x: x.name)
+            self.player.hand.sort(key=lambda x: x.name)
 
     def night_phase(self):
         return

@@ -11,10 +11,14 @@ from game_supplies.card_types.card import Card, Duration, Treasure, Action, Atta
 class Player:
     def __init__(self, cards: List[Card]):
         self._all_cards: List[Card] = cards  # all cards the player has
-        self._draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
-        self._discard_pile = Pile(name='Discard Pile', is_visible=True)
-        self._hand: Hand = Hand(self.draw_cards(5))
-        self._played_cards: List[Card] = []
+
+        # player's card structures
+        self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
+        self.discard_pile = Pile(name='Discard Pile', is_visible=True)
+        self.hand: Hand = Hand(self.draw_cards(5))
+        self.played_cards: List[Card] = []
+
+        # player's stats
         self.victory_points = 0
 
     @property
@@ -25,10 +29,10 @@ class Player:
         return sorted(self._all_cards, key=lambda x: x.value)
 
     def play_card(self, card: Card):
-        if card not in self._hand:
-            raise ValueError(f"{card} is not it {self._hand}")
+        if card not in self.hand:
+            raise ValueError(f"{card} is not it {self.hand}")
 
-        self._hand.play(card)
+        self.hand.remove(card)
 
         if type(card) is Treasure:
             self.coins += card.coins
@@ -42,25 +46,25 @@ class Player:
             pass
 
     def draw_card(self):
-        if self._draw_pile.is_empty():
-            cards = self._discard_pile.draw_all()
+        if self.draw_pile.is_empty():
+            cards = self.discard_pile.draw_all()
             shuffle(cards)
-            self._discard_pile.put_all(cards)
-        return self._draw_pile.draw()
+            self.discard_pile.put_all(cards)
+        return self.draw_pile.draw()
 
     def draw_cards(self, amount: int):
         return [self.draw_card() for _ in range(amount)]
 
     def discard_hand(self):
-        self._discard_pile.put_all(self._hand.cards)
-        self._hand = []
+        self.discard_pile.put_all(self.hand.cards)
+        self.hand = []
 
     def discard_play(self):
-        self._discard_pile.put_all(self._played_cards)
-        for card in self._played_cards:
+        self.discard_pile.put_all(self.played_cards)
+        for card in self.played_cards:
             if type(Card) is not Duration:
-                self._played_cards.remove(card)
-                self._discard_pile.put(card)
+                self.played_cards.remove(card)
+                self.discard_pile.put(card)
 
     def get_playable_cards(self, phase: Phase) -> List[Card]:
         """
@@ -79,7 +83,7 @@ class Player:
         else:
             playable_types = ()
 
-        for card in self._hand:
+        for card in self.hand:
             for playable_type in playable_types:
                 if type(card) is playable_type:
                     playable.append(card)

@@ -1,10 +1,8 @@
-from abc import ABC, abstractmethod
-
 from game_mechanics.commands.command import Command
 from game_mechanics.player.turn_state import TurnState
 
 
-class ChangeStateCommand(Command, ABC):
+class ChangeStateCommand(Command):
     def __init__(self, plus_actions: int = 0, plus_buys: int = 0, plus_coins: int = 0):
         self.plus_actions = plus_actions
         self.plus_buys = plus_buys

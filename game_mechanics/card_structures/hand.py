@@ -8,5 +8,5 @@ class Hand(CardStructure):
     def __init__(self, cards: List[Card]):
         super().__init__(cards)
 
-    def play(self, card: Card):
+    def remove(self, card: Card):
         self._cards.remove(card)
