@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Optional
+from typing import List, Optional, Callable
 
 from game_supplies.card_types.card import Card
 
@@ -11,18 +11,37 @@ class CardStructure(ABC):
         self._is_visible: bool = is_visible
 
     def __repr__(self):
+        basic_repr = f"{self._name}[{len(self)}]"
         if not self._is_visible:
-            return f"{self._name}[{self.size}]"
+            return basic_repr
         card_names = sorted([c.name for c in self._cards])
-        return f"{self._name}[{self.size}]: {card_names}"
+        return f"{basic_repr}: {card_names}"
 
-    @property
-    def size(self):
+    def __len__(self):
         return len(self._cards)
+
+    def __iter__(self):
+        return self._cards.__iter__()
+
+    def __getitem__(self, item: int):
+        return self._cards[item]
 
     @property
     def visible(self) -> bool:
         return self._is_visible
 
+    @property
+    def cards(self) -> List[Card]:
+        return self._cards.copy()
+
     def is_empty(self) -> bool:
         return len(self._cards) == 0
+
+    def pop(self, i: int):
+        self._cards.pop(i)
+
+    def sort(self, key: Optional[Callable] = None):
+        if key is not None:
+            self._cards.sort(key=key)
+        else:
+            self._cards.sort()

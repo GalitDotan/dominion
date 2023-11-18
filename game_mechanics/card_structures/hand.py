@@ -6,4 +6,7 @@ from game_supplies.card_types.card import Card
 
 class Hand(CardStructure):
     def __init__(self, cards: List[Card]):
-        self._cards: List[Card] = cards
+        super().__init__(cards)
+
+    def play(self, card: Card):
+        self._cards.remove(card)

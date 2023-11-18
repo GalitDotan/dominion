@@ -1,9 +1,10 @@
 from random import shuffle
 from typing import List, Tuple
 
+from game_mechanics.card_structures.trash import Trash
 from game_mechanics.end_conditions import game_over
 from game_mechanics.card_structures.pile import Pile
-from game_mechanics.player import Player
+from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
 from game_supplies.card_types.card import Card, Curse
 from game_supplies.cards.base.basic_supply_cards.Copper import Copper
@@ -37,18 +38,6 @@ def _generate_piles(card_types: Tuple, pile_size: int = 10) -> List[Pile]:
     return [Pile(cards=[card_type() for _ in range(pile_size)], ) for card_type in card_types]
 
 
-def _play_turn(player: Player, other_players: List[Player]) -> Player:
-    # action phase
-
-
-    # buy phase
-
-    # clean-up phase
-    player.discard_hand()
-    player.discard_play()
-
-
-
 def run(num_players: int = 2, start_cards: List[Card] = None):
     if num_players < 2 or num_players > 6:
         raise ValueError("Number of players has to be between 2 and 6")
@@ -62,17 +51,22 @@ def run(num_players: int = 2, start_cards: List[Card] = None):
     players.append(my_player)
     shuffle(players)
 
-    next_player = players[0]
+    next_player_index = 0
 
     kingdom_piles = _generate_piles(card_types=FIRST_GAME_CARDS)
     other_piles = _generate_piles(card_types=OTHER_CARDS)
     supply = Supply(kingdom_piles, other_piles)
 
+    trash = Trash()
+
     while not game_over(supply, num_players):
-        curr_player = next_player
+        curr_player = players[next_player_index]
         other_players = players.copy()
         other_players.remove(curr_player)
-        next_player = _play_turn(curr_player, other_players)
+
+        play_turn(curr_player, other_players)
+
+        next_player_index = (next_player_index + 1) % num_players
 
 
 if __name__ == '__main__':

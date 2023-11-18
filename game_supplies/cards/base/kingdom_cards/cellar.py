@@ -1,3 +1,6 @@
+from game_supplies.card_types.card import Action
+
+
 class Cellar(Action):
     def __init__(self):
         super().__init__(name='Cellar',

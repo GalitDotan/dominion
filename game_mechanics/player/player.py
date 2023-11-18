@@ -1,36 +1,11 @@
-from enum import Enum
 from random import shuffle
 from typing import List
 
 from game_mechanics.card_structures.hand import Hand
-from game_mechanics.phases.phases import Phase
 from game_mechanics.card_structures.pile import Pile
+from game_mechanics.phases.phases import Phase
 from game_mechanics.utils.utils import shuffle_copy
 from game_supplies.card_types.card import Card, Duration, Treasure, Action, Attack, Night
-
-
-class CommonChoices(Enum):
-    NONE_CHOICE = 'x'
-    UNDO = 'undo'
-    HELP_CHOICE = '--help'
-
-
-def _get_player_choice(valid_choices: List[str]):
-    answer = input("Your choice: ")
-
-    help_choice = CommonChoices.HELP_CHOICE.name
-    if answer.endswith(help_choice):
-        help_request = answer.replace(help_choice, '')
-        try:
-            eval(f'{help_request}.help()')
-        except Exception:
-            print(f"I cannot help you with {help_request}")
-        return _get_player_choice(valid_choices)
-    elif answer not in valid_choices:
-        print(f'{answer} is not a valid choice. Please choose one of: {valid_choices}')
-        return _get_player_choice(valid_choices)
-    else:
-        return answer
 
 
 class Player:
@@ -40,10 +15,7 @@ class Player:
         self._discard_pile = Pile(name='Discard Pile', is_visible=True)
         self._hand: Hand = Hand(self.draw_cards(5))
         self._played_cards: List[Card] = []
-        self._actions = 0
-        self._buys = 0
-        self._coins = 0
-        self._victory_points = 0
+        self.victory_points = 0
 
     @property
     def cards_alphabetically(self) -> List[Card]:
@@ -55,8 +27,11 @@ class Player:
     def play_card(self, card: Card):
         if card not in self._hand:
             raise ValueError(f"{card} is not it {self._hand}")
+
+        self._hand.play(card)
+
         if type(card) is Treasure:
-            self._coins += card.coins
+            self.coins += card.coins
         if type(card) is Action:
             for cmd in card.commands:
                 pass
@@ -77,7 +52,7 @@ class Player:
         return [self.draw_card() for _ in range(amount)]
 
     def discard_hand(self):
-        self._discard_pile.put_all(self._hand)
+        self._discard_pile.put_all(self._hand.cards)
         self._hand = []
 
     def discard_play(self):
@@ -87,13 +62,13 @@ class Player:
                 self._played_cards.remove(card)
                 self._discard_pile.put(card)
 
-    def play_action_phase(self):
-        self._hand.sort(key=lambda x: x.name)
-        continue_phase = True
-        while continue_phase and len(self._hand) > 0:
-            self._do_action_choice()
+    def get_playable_cards(self, phase: Phase) -> List[Card]:
+        """
+        Of all the cards in hand - get all the cards that can be played in the given phase.
 
-    def _get_playable_cards(self, phase: Phase) -> List[Card]:
+        :param phase: The phase
+        :return: The playable cards.
+        """
         playable = []
         if phase is Phase.ActionPhase:
             playable_types = (Action,)
@@ -111,20 +86,3 @@ class Player:
                     break  # so we'll add each card only once
 
         return playable
-
-    def _do_action_choice(self):
-        print(f"Choose the card to play, or type '{CommonChoices.NONE_CHOICE}' for none")
-        for i, card in enumerate(self._hand):
-            print(f'{i}. {card.name}')
-        print(f'Your hand: {str(self._hand)}')
-        valid_choices = [str(i) for i in range(1, len(self._hand) + 1)] + [CommonChoices.NONE_CHOICE.name]
-        answer = _get_player_choice(valid_choices)
-
-        if answer is not CommonChoices.NONE_CHOICE:
-            choice = int(answer)
-            chosen_card = self._hand[choice]
-            self._hand.pop(choice)
-            self.play_card(chosen_card)
-
-    def play_buy_phase(self):
-        print(f'You have {self._coins} coins')
