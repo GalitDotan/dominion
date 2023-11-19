@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Optional, Callable
+from typing import List, Optional, Callable, Dict
 from collections import Counter
 
 from game_supplies.card_types.card import Card
@@ -11,15 +11,14 @@ class CardStructure(ABC):
         self._cards: List[Card] = cards
         self._is_visible: bool = is_visible
 
-    def __repr__(self):
+    def __hash__(self):
+        return self.name
+
+    def __repr__(self, long: bool = False):
         basic_repr = f"{self.name}[{len(self)}]"
-        if not self._is_visible:
+        if not long or not self._is_visible or len(self.cards_dict) <= 1:
             return basic_repr
-        card_names = sorted([c.name for c in self._cards])
-        counter = dict(Counter(card_names))
-        if len(counter) <= 1:
-            return basic_repr
-        return f"{basic_repr}: {counter}"
+        return f"{basic_repr}: {self.cards_dict}"
 
     def __len__(self):
         return len(self._cards)
@@ -37,6 +36,11 @@ class CardStructure(ABC):
     @property
     def cards(self) -> List[Card]:
         return self._cards.copy()
+
+    @property
+    def cards_dict(self) -> Dict[Card, int]:
+        # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
+        return dict(Counter(self))
 
     def is_empty(self) -> bool:
         return len(self._cards) == 0

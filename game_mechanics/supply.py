@@ -1,7 +1,7 @@
 from typing import List
-
-from game_mechanics.card_structures.pile import Pile
+from tabulate import tabulate
 from game_mechanics.card_structures.supply_pile import SupplyPile
+from game_mechanics.consts import HeadlineFormats
 
 
 class Supply:
@@ -13,20 +13,17 @@ class Supply:
         self._kingdom_piles: List[SupplyPile] = sorted(kingdom_piles)
         self._other_piles: List[SupplyPile] = sorted(other_piles)
 
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         kingdom_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._kingdom_piles])
         other_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._other_piles])
+        table = [kingdom_piles, other_piles]
         return f"""
-        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-        $$$$$$$$$$$$$$$$$$$$$$$  The Supply  $$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+{HeadlineFormats.H1.format("The Supply")}
         
-            *  {kingdom_piles}
-            
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            
-            *  {other_piles}
+{tabulate({"Kingdom Cards": self._kingdom_piles, "Basic Cards": self._other_piles}, headers="keys", showindex="always", tablefmt="fancy_grid")}
         
-        $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         """
 
     @property
@@ -39,3 +36,10 @@ class Supply:
     @property
     def empty_piles(self):
         return [pile for pile in self.piles if pile.is_empty()]
+
+    def get_piles_allowed_for_buy(self, max_cost: int = 1000) -> List[SupplyPile]:
+        piles = []
+        for pile in self.piles:
+            if not pile.is_empty() and pile.cost <= max_cost:
+                piles.append(pile)
+        return piles

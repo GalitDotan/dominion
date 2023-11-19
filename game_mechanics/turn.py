@@ -1,8 +1,9 @@
 from typing import List
 
 from game_mechanics.card_structures.trash import Trash
+from game_mechanics.consts import HeadlineFormats
 from game_mechanics.interactions.action_choices import do_action_choice
-from game_mechanics.interactions.buy_choices import play_treasures_by_choice
+from game_mechanics.interactions.buy_choices import play_treasures_by_choice, buy_card_by_choice
 from game_mechanics.phases.phases import Phase
 from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
@@ -23,39 +24,59 @@ class Turn:
         Play one turn of the game (with all its phases).
         """
         self.player.turns_played += 1
-        self._action_phase()
-        self._buy_phase()
-        self._night_phase()
-        self._cleanup_phase()
+
+        phases = [self._action_phase, self._buy_phase, self._night_phase, self._cleanup_phase]
+
+        for phase in phases:
+            print(str(self))
+            phase()
+
+    def __repr__(self, long: bool = False):
+        opponents = '\r\n'.join([f'{str(player)}' for player in self.other_players])
+        you_h1 = HeadlineFormats.H1.format("You")
+        opponents_h1 = HeadlineFormats.H1.format("The Other Players")
+        return f"""
+{you_h1}
+{self.turn_state}
+{self.player}
+{opponents_h1}
+{opponents}
+{self.supply}
+        """
 
     def _action_phase(self):
         continue_phase = True
         playable_cards = self.player.get_playable_cards(Phase.ActionPhase)
-        if playable_cards:
-            print("Welcome to your Action Phase!")
-        else:
+        if not playable_cards:
             print("You have no action cards in hand... moving to buy phase")
+            return
+        print(HeadlineFormats.H1.format("Welcome to your Action Phase!"))
         while continue_phase and self.turn_state.actions > 0 and len(playable_cards) > 0:
-            do_action_choice(self.player)
+            do_action_choice(self.player, self.turn_state)
             playable_cards = self.player.get_playable_cards(Phase.ActionPhase)
 
     def _buy_phase(self):
-        print("Welcome to your Buy Phase!")
+        print(HeadlineFormats.H1.format("Welcome to your Buy Phase!"))
 
         continue_play_treasures = True
         playable_cards = self.player.get_playable_cards(Phase.BuyPhase)
+        print(f'Playable cards: {playable_cards}')
         if len(playable_cards) > 0:
             print("Play your treasures")
         while continue_play_treasures and self.turn_state.buys > 0 and len(playable_cards) > 0:
-            continue_play_treasures = play_treasures_by_choice(self.player)
+            continue_play_treasures = play_treasures_by_choice(self.player, self.turn_state)
             playable_cards = self.player.get_playable_cards(Phase.BuyPhase)
 
         print("Now, let's buy some cards")
         print(str(self.supply))
+        continue_buys = True
+        piles_to_buy_from = self.supply.get_piles_allowed_for_buy(max_cost=self.turn_state.coins)
+        while continue_buys and len(piles_to_buy_from) > 0:
+            buy_card_by_choice(self.player, self.turn_state, self.supply)
 
     def _night_phase(self, include_night: bool = False):
         if include_night:
-            print("Welcome to your Night Phase!")
+            print(HeadlineFormats.H1.format("Welcome to your Night Phase!"))
         return
 
     def _cleanup_phase(self):

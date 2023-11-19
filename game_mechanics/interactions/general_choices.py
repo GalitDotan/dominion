@@ -1,6 +1,7 @@
 from enum import Enum
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
+from game_mechanics.consts import HeadlineFormats
 from game_mechanics.phases.phases import Phase
 from game_mechanics.player.player import Player
 from game_supplies.card_types.card import Card
@@ -12,10 +13,10 @@ class CommonChoices(Enum):
     HELP_CHOICE = '--help'
 
 
-def get_player_choice(valid_choices: List[str], message: str):
-    print(message)
-    for i, card_name in enumerate(valid_choices):
-        print(f'{i}. {card_name}')
+def get_player_choice(valid_choices: List[str], headline: str):
+    print(HeadlineFormats.H3.format(headline))
+    for i, choice in enumerate(valid_choices):
+        print(f'{i}. {choice}')
     answer = input("Your choice: ")
 
     help_choice = CommonChoices.HELP_CHOICE.name
@@ -25,12 +26,15 @@ def get_player_choice(valid_choices: List[str], message: str):
             eval(f'{help_request}.help()')
         except Exception:
             print(f"I cannot help you with {help_request}")
-        return get_player_choice(valid_choices, message)
-    elif answer not in valid_choices:
-        print(f'{answer} is not a valid choice. Please choose one of: {valid_choices}')
-        return get_player_choice(valid_choices, message)
-    else:
-        return answer
+        return get_player_choice(valid_choices, headline)
+    if answer in valid_choices:
+        return valid_choices.index(answer)
+
+    i = int(answer)
+    return i
+
+    # print(f'{answer} is not a valid choice. Please choose one of: {valid_choices}')
+    # return get_player_choice(valid_choices, headline)
 
 
 def get_player_multy_choice(valid_choices: List[str], message: str) -> List[str]:
@@ -55,11 +59,9 @@ def choose_cards_from_hand(player: Player) -> List[Card]:
     return removed_cards
 
 
-def display_choices_from_hand(player: Player, phase: Phase) -> Tuple[List[Card], List[str], str]:
-    all_cards = player.cards_alphabetically
+def display_choices_from_hand(player: Player, phase: Phase) -> Tuple[Dict[Card, int], str]:
     playable_cards = player.get_playable_cards(phase)
-    print(f"Your hard: {all_cards}")
+    print(f"Your hand: {player.hand.cards_dict}")
     print(f"Playable cards: {playable_cards}")
     message = f"Choose the card to play, or type '{CommonChoices.NONE_CHOICE}' for none"
-    valid_choices = [str(i) for i in range(1, len(playable_cards) + 1)] + [CommonChoices.NONE_CHOICE.name]
-    return playable_cards, valid_choices, message
+    return playable_cards, message

@@ -1,13 +1,14 @@
 from random import shuffle
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 from random_word import RandomWords
 
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.phases.phases import Phase
+from game_mechanics.player.turn_state import TurnState
 from game_mechanics.utils.utils import shuffle_copy
-from game_supplies.card_types.card import Card, Duration, Treasure, Action, Attack, Night
+from game_supplies.card_types.card import Card, Duration, Treasure, Action, Attack, Night, Victory
 
 
 def _generate_name():
@@ -17,10 +18,22 @@ def _generate_name():
     return f"{first_name}{last_name}"
 
 
+def _calc_vp(cards: List[Card]) -> int:
+    """
+    Calc the sum of victory points received by the given cards.
+    :param cards: a list of cards.
+    :return: sum of victory points.
+    """
+    vp = 0
+    for card in cards:
+        if isinstance(card, Victory):
+            vp += card.victory_points
+    return vp
+
+
 class Player:
     def __init__(self, cards: List[Card], name: Optional[str] = None):
         self.name = name if name else _generate_name()
-
         self._all_cards: List[Card] = cards  # all cards the player has
 
         # player's card structures
@@ -30,8 +43,11 @@ class Player:
         self.played_cards: List[Card] = []
 
         # player's stats
-        self.victory_points = 0
+        self.victory_points = _calc_vp(cards)
         self.turns_played = 0
+
+    def __repr__(self, long: bool = False):
+        return f"{self.name}[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
 
     def __lt__(self, other: "Player"):  # is self losing to other
         return self.victory_points < other.victory_points or (
@@ -51,21 +67,27 @@ class Player:
     def cards_by_value(self) -> List[Card]:
         return sorted(self._all_cards, key=lambda x: x.value)
 
-    def play_card(self, card: Card):
+    def play_card_from_hand(self, card: Card, turn_state: TurnState):
+        """
+        Play a card from players hand and update state accordingly.
+
+        :param card: the card.
+        :param turn_state: current turn state.
+        """
         if card not in self.hand:
-            raise ValueError(f"{card} is not it {self.hand}")
+            raise ValueError(f"{card} is not in {self.hand}")
 
         self.hand.remove(card)
 
-        if type(card) is Treasure:
-            self.coins += card.coins
-        if type(card) is Action:
+        if isinstance(card, Treasure):
+            turn_state.coins += card.coins
+        if isinstance(card, Action):
             for cmd in card.commands:
                 pass
-        if type(card) is Attack:
+        if isinstance(card, Attack):
             for cmd in card.attacks:
                 pass
-        if type(Card) is Night:
+        if isinstance(card, Night):
             pass
 
     def draw_card(self):
@@ -85,18 +107,18 @@ class Player:
     def discard_play(self):
         self.discard_pile.put_all(self.played_cards)
         for card in self.played_cards:
-            if type(Card) is not Duration:
+            if not isinstance(card, Duration):
                 self.played_cards.remove(card)
                 self.discard_pile.put(card)
 
-    def get_playable_cards(self, phase: Phase) -> List[Card]:
+    def get_playable_cards(self, phase: Phase) -> Dict[Card, int]:
         """
         Of all the cards in hand - get all the cards that can be played in the given phase.
 
         :param phase: The phase
         :return: The playable cards.
         """
-        playable = []
+        playable = {}
         if phase is Phase.ActionPhase:
             playable_types = (Action,)
         elif phase is Phase.BuyPhase:
@@ -106,10 +128,9 @@ class Player:
         else:
             playable_types = ()
 
-        for card in self.hand:
+        for card, cnt in self.hand.cards_dict.items():
             for playable_type in playable_types:
-                if type(card) is playable_type:
-                    playable.append(card)
-                    break  # so we'll add each card only once
+                if isinstance(card, playable_type):
+                    playable[card] = cnt
 
         return playable

@@ -12,7 +12,7 @@ class SupplyPile(Pile):
             raise ValueError("Supply pile cannot be initiated empty")
         self.initial_cost = self.cards[0].cost
 
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         basic_repr = f"{self.name}[{len(self)}]"
         if not self._is_visible:
             return basic_repr
@@ -27,4 +27,8 @@ class SupplyPile(Pile):
 
     def __lt__(self, other):
         return self.initial_cost < other.initial_cost or (
-                    self.initial_cost == other.initial_cost and self.name < other.name)
+                self.initial_cost == other.initial_cost and self.name < other.name)
+
+    @property
+    def cost(self):
+        return self.cards[-1].cost

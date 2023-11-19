@@ -3,3 +3,6 @@ class TurnState:
         self.actions = actions
         self.buys = buys
         self.coins = coins
+
+    def __repr__(self):
+        return f"Actions: {self.actions}, Buys: {self.buys}, Coins: {self.coins}"

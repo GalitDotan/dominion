@@ -15,7 +15,7 @@ class Card(ABC):
         self.is_reveled: bool = is_reveled
 
     @abstractmethod
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         raise NotImplementedError()
 
     def __hash__(self):
@@ -35,8 +35,8 @@ class Card(ABC):
         return str(self)
 
     @property
-    def type(self):
-        types = [t for t in ALL_CARD_TYPES if type(self) is t]
+    def card_type(self):
+        types = [t for t in ALL_CARD_TYPES if isinstance(self, t)]
         if len(types) == 1:
             return str(types[0])
         return ' - '.join([str(t) for t in types])
@@ -48,18 +48,21 @@ class Action(Card):
         super().__init__(name, cost)
         self.commands: list = commands
 
-    def __repr__(self):
-        return f"""
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                ### {self.name} ###
-
-                # Type: {self.type}
-                # Cost: {self.cost}
-
-                {self.description}
-
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                """
+    def __repr__(self, long: bool = False):
+        if long:
+            return f"""
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    ### {self.name} ###
+    
+                    # Type: {self.card_type}
+                    # Cost: {self.cost}
+    
+                    {self.description}
+    
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    """
+        else:
+            return self.name
 
     @property
     def description(self):
@@ -68,22 +71,26 @@ class Action(Card):
 
 class Treasure(Card):
 
-    def __init__(self, name: str, cost: int, coins: int):
-        super().__init__(name, cost)
+    def __init__(self, name: str, cost: int, coins: int, automatic_play: bool = True, *args, **kwargs):
+        super().__init__(name, cost, *args, **kwargs)
         self.coins = coins
+        self.automatic_play: bool = automatic_play
 
-    def __repr__(self):
-        return f"""
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ### {self.name} ###
-
-        # Type: {self.type}
-        # Cost: {self.cost}
-
-        ~ {self.coins} ~
-
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        """
+    def __repr__(self, long: bool = False):
+        if long:
+            return f"""
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ### {self.name} ###
+    
+            # Type: {self.card_type}
+            # Cost: {self.cost}
+    
+            ~ {self.coins} ~
+    
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            """
+        else:
+            return self.name
 
     def play(self):
         return self.coins
@@ -94,38 +101,44 @@ class Curse(Card):
         super().__init__(name, cost)
         self.vp = -1
 
-    def __repr__(self):
-        return f"""
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ### Curse ###
-
-        # Type: {self.type}
-        # Cost: {self.cost}
-
-        ~ {self.vp} VP ~
-
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        """
+    def __repr__(self, long: bool = False):
+        if long:
+            return f"""
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ### Curse ###
+    
+            # Type: {self.card_type}
+            # Cost: {self.cost}
+    
+            ~ {self.vp} VP ~
+    
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            """
+        else:
+            return self.name
 
 
 class Victory(Card):
 
-    def __init__(self, name, cost, vp, *args, **kwargs):
+    def __init__(self, name: str, cost: int, vp: int, *args, **kwargs):
         super().__init__(name=name, cost=cost, *args, **kwargs)
-        self._vp = vp
+        self._vp: int = vp
 
-    def __repr__(self):
-        return f"""
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        ### {self.name} ###
-
-        # Type: {self.type}
-        # Cost: {self.cost}
-
-        ~ {self._vp} VP ~
-
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        """
+    def __repr__(self, long: bool = False):
+        if long:
+            return f"""
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            ### {self.name} ###
+    
+            # Type: {self.card_type}
+            # Cost: {self.cost}
+    
+            ~ {self._vp} VP ~
+    
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            """
+        else:
+            return self.name
 
     @property
     def victory_points(self):
@@ -133,7 +146,7 @@ class Victory(Card):
 
 
 class Reaction(Card):
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         pass
 
 
@@ -146,19 +159,19 @@ class Attack(Card):
         super().__init__(name, cost)
         self.attacks: List = []
 
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         pass
 
 
 class Duration(Card):
 
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         pass
 
 
 class Night(Card):
 
-    def __repr__(self):
+    def __repr__(self, long: bool = False):
         pass
 
 
