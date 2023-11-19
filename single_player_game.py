@@ -4,7 +4,8 @@ from typing import List, Tuple
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.end_conditions import game_over
-from game_mechanics.card_structures.pile import Pile
+from game_mechanics.player.bot_player import BotPlayer
+from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
 from game_mechanics.turn import Turn
@@ -64,10 +65,10 @@ def run(num_players: int = 2, start_cards: List[Card] = None):
 
     start_cards = start_cards if start_cards else _get_default_player_cards()
 
-    my_player = Player(start_cards, name="Siri")
-    bot_players = [Player(start_cards) for _ in range(num_players - 1)]
+    my_player = HumanPlayer(start_cards, name="Siri")
+    bot_players = [BotPlayer(start_cards) for _ in range(num_players - 1)]
 
-    players = bot_players.copy()
+    players: List[Player] = bot_players.copy()
     players.append(my_player)
     shuffle(players)
 

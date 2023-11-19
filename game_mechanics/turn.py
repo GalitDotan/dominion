@@ -38,7 +38,7 @@ class Turn:
         return f"""
 {you_h1}
 {self.turn_state}
-{self.player.__repr__(long=True)}
+{self.player}
 {opponents_h1}
 {opponents}
 {self.supply}
