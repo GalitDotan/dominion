@@ -14,11 +14,8 @@ class CardStructure(ABC):
     def __hash__(self):
         return self.name
 
-    def __repr__(self, long: bool = False):
-        basic_repr = f"{self.name}[{len(self)}]"
-        if not long or not self._is_visible or len(self.cards_dict) <= 1:
-            return basic_repr
-        return f"{basic_repr}: {self.cards_dict}"
+    def __repr__(self):
+        return f"{self.name}[{len(self)}]"
 
     def __len__(self):
         return len(self._cards)
@@ -42,6 +39,12 @@ class CardStructure(ABC):
         # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
         return dict(Counter(self))
 
+    def detailed_repr(self):
+        basic_repr = repr(self)
+        if not self._is_visible or len(self.cards_dict) <= 1:
+            return basic_repr
+        return f"{basic_repr}: {self.cards_dict}"
+
     def is_empty(self) -> bool:
         return len(self._cards) == 0
 
@@ -53,3 +56,11 @@ class CardStructure(ABC):
             self._cards.sort(key=key)
         else:
             self._cards.sort()
+
+    def remove_all(self) -> list[Card]:
+        """
+        Remove all the cards from the structure.
+        """
+        cards = self._cards
+        self._cards = []
+        return cards

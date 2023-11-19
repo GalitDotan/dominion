@@ -12,7 +12,7 @@ class SupplyPile(Pile):
             raise ValueError("Supply pile cannot be initiated empty")
         self.initial_cost = self.cards[0].cost
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         basic_repr = f"{self.name}[{len(self)}]"
         if not self._is_visible:
             return basic_repr
@@ -22,7 +22,6 @@ class SupplyPile(Pile):
             return basic_repr
         elif len(counter) == 1:
             return f"{basic_repr}: cost: {self.cards[0].cost}"
-        cards_amount_cost = {}
         return f"{basic_repr}: {card_names_counts}"
 
     def __lt__(self, other):

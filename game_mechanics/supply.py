@@ -12,7 +12,7 @@ class Supply:
         self._kingdom_piles: list[SupplyPile] = sorted(kingdom_piles)
         self._other_piles: list[SupplyPile] = sorted(other_piles)
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         kingdom_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._kingdom_piles])
         other_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._other_piles])
         table = [kingdom_piles, other_piles]

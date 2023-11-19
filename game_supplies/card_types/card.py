@@ -13,8 +13,11 @@ class Card(ABC):
         self.is_reveled: bool = is_reveled
 
     @abstractmethod
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         raise NotImplementedError()
+
+    def __str__(self):
+        return self.name
 
     def __hash__(self):
         return hash(self.name)
@@ -46,21 +49,18 @@ class Action(Card):
         super().__init__(name, cost)
         self.commands: list = commands
 
-    def __repr__(self, long: bool = False):
-        if long:
-            return f"""
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    ### {self.name} ###
-    
-                    # Type: {self.card_type}
-                    # Cost: {self.cost}
-    
-                    {self.description}
-    
-                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    """
-        else:
-            return self.name
+    def __repr__(self):
+        return f"""
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                ### {self.name} ###
+
+                # Type: {self.card_type}
+                # Cost: {self.cost}
+
+                {self.description}
+
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                """
 
     @property
     def description(self):
@@ -74,21 +74,18 @@ class Treasure(Card):
         self.coins = coins
         self.automatic_play: bool = automatic_play
 
-    def __repr__(self, long: bool = False):
-        if long:
-            return f"""
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ### {self.name} ###
-    
-            # Type: {self.card_type}
-            # Cost: {self.cost}
-    
-            ~ {self.coins} ~
-    
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            """
-        else:
-            return self.name
+    def __repr__(self):
+        return f"""
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ### {self.name} ###
+
+        # Type: {self.card_type}
+        # Cost: {self.cost}
+
+        ~ {self.coins} ~
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        """
 
     def play(self):
         return self.coins
@@ -99,21 +96,18 @@ class Curse(Card):
         super().__init__(name, cost)
         self.vp = -1
 
-    def __repr__(self, long: bool = False):
-        if long:
-            return f"""
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ### Curse ###
-    
-            # Type: {self.card_type}
-            # Cost: {self.cost}
-    
-            ~ {self.vp} VP ~
-    
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            """
-        else:
-            return self.name
+    def __repr__(self):
+        return f"""
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ### Curse ###
+
+        # Type: {self.card_type}
+        # Cost: {self.cost}
+
+        ~ {self.vp} VP ~
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        """
 
 
 class Victory(Card):
@@ -122,21 +116,18 @@ class Victory(Card):
         super().__init__(name=name, cost=cost, *args, **kwargs)
         self._vp: int = vp
 
-    def __repr__(self, long: bool = False):
-        if long:
-            return f"""
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            ### {self.name} ###
-    
-            # Type: {self.card_type}
-            # Cost: {self.cost}
-    
-            ~ {self._vp} VP ~
-    
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            """
-        else:
-            return self.name
+    def __repr__(self):
+        return f"""
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        ### {self.name} ###
+
+        # Type: {self.card_type}
+        # Cost: {self.cost}
+
+        ~ {self._vp} VP ~
+
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        """
 
     @property
     def victory_points(self):
@@ -144,7 +135,7 @@ class Victory(Card):
 
 
 class Reaction(Card):
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         pass
 
 
@@ -157,19 +148,19 @@ class Attack(Card):
         super().__init__(name, cost)
         self.attacks: list = []
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         pass
 
 
 class Duration(Card):
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         pass
 
 
 class Night(Card):
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         pass
 
 

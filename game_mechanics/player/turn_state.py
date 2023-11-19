@@ -4,5 +4,5 @@ class TurnState:
         self.buys = buys
         self.coins = coins
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         return f"Actions: {self.actions}, Buys: {self.buys}, Coins: {self.coins}"

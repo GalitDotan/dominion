@@ -22,9 +22,7 @@ class Pile(CardStructure):
         """
         Draw all the cards from the pile.
         """
-        cards = self._cards
-        self._cards = []
-        return cards
+        return self.remove_all()
 
     def put(self, card: Card):
         """

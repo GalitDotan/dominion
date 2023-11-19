@@ -46,9 +46,8 @@ class Player:
         self.victory_points = _calc_vp(cards)
         self.turns_played = 0
 
-    def __repr__(self, long: bool = False):
-        return f"{self.name}[{self.victory_points} VP]: {self.hand.__repr__(long=long)}, " \
-               f"{self.draw_pile.__repr__(long=long)}, {self.discard_pile.__repr__(long=long)}"
+    def __repr__(self):
+        return f"{self.name}[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
 
     def __lt__(self, other: "Player"):  # is self losing to other
         return self.victory_points < other.victory_points or (
@@ -60,6 +59,10 @@ class Player:
     def __gt__(self, other: "Player"):  # is self winning other
         return self.victory_points > other.victory_points or (
                 self.victory_points == other.victory_points and self.turns_played < other.turns_played)
+
+    def detailed_repr(self):
+        return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}, " \
+               f"{self.draw_pile.detailed_repr()}, {self.discard_pile.detailed_repr()}"
 
     @property
     def cards_alphabetically(self) -> list[Card]:
@@ -102,8 +105,8 @@ class Player:
         return [self.draw_card() for _ in range(amount)]
 
     def discard_hand(self):
-        self.discard_pile.put_all(self.hand.cards)
-        self.hand = []
+        cards = self.hand.remove_all()
+        self.discard_pile.put_all(cards)
 
     def discard_play(self):
         self.discard_pile.put_all(self.played_cards)

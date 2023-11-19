@@ -37,7 +37,7 @@ class Turn:
         if isinstance(self.player, HumanPlayer):
             print(str(message))
 
-    def __repr__(self, long: bool = False):
+    def __repr__(self):
         opponents = '\r\n'.join([f'{str(player)}' for player in self.other_players])
         you_h1 = HeadlineFormats.H1.format(f"You [{self.player.name}]")
         opponents_h1 = HeadlineFormats.H1.format("The Other Players")
