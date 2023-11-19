@@ -7,7 +7,7 @@ from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
 from game_mechanics.player.turn_state import TurnState
 from game_mechanics.supply import Supply
-from game_supplies.card_types.card import Treasure
+from game_supplies.card_types.treasure_card import Treasure
 
 
 def autoplay_treasures(player: Player, turn_state: TurnState):

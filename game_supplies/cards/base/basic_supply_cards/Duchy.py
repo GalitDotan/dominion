@@ -1,4 +1,4 @@
-from game_supplies.card_types.card import Victory
+from game_supplies.card_types.victory_card import Victory
 
 
 class Duchy(Victory):

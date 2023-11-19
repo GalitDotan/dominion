@@ -8,7 +8,8 @@ from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
 from game_mechanics.turn import Turn
-from game_supplies.card_types.card import Card, Curse
+from game_supplies.card_types.card import Card
+from game_supplies.card_types.curse import Curse
 from game_supplies.cards.base.basic_supply_cards.Copper import Copper
 from game_supplies.cards.base.basic_supply_cards.Duchy import Duchy
 from game_supplies.cards.base.basic_supply_cards.Estate import Estate

@@ -67,7 +67,7 @@ class Turn:
         continue_play_treasures = True
         playable_cards = self.player.get_playable_cards(Phase.BuyPhase)
         if len(playable_cards) > 0:
-            self.print_if_human(f'Playable cards: {playable_cards}')
+            self.print_if_human(f'Playable cards: {[str(card) for card in playable_cards]}')
             self.print_if_human("You may choose treasures to play")
             autoplay_treasures(self.player, self.turn_state)
             playable_cards = self.player.get_playable_cards(Phase.BuyPhase)

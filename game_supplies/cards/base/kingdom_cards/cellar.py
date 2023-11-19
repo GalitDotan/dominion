@@ -1,5 +1,5 @@
 from game_mechanics.commands.change_state_command import ChangeStateCommand
-from game_supplies.card_types.card import Action
+from game_supplies.card_types.action_card import Action
 
 
 class Cellar(Action):

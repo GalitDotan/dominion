@@ -1,4 +1,4 @@
-from game_supplies.card_types.card import Treasure
+from game_supplies.card_types.treasure_card import Treasure
 
 
 class Gold(Treasure):

@@ -1,4 +1,4 @@
-from game_supplies.card_types.card import Action
+from game_supplies.card_types.action_card import Action
 
 
 class Workshop(Action):
