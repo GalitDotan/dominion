@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-from copy import deepcopy
-from typing import List
 
 
 class Card(ABC):
@@ -155,9 +153,9 @@ class AttackCommands:  # TODO: move someplace else
 
 
 class Attack(Card):
-    def __init__(self, name: str, cost: int, attacks: List[AttackCommands]):
+    def __init__(self, name: str, cost: int, attacks: list[AttackCommands]):
         super().__init__(name, cost)
-        self.attacks: List = []
+        self.attacks: list = []
 
     def __repr__(self, long: bool = False):
         pass

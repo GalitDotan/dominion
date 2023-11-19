@@ -1,5 +1,4 @@
 from random import shuffle
-from typing import List, Tuple
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
@@ -31,24 +30,24 @@ FIRST_GAME_CARDS = (Cellar, Moat, Merchant, Village, Workshop, Militia, Remodel,
 OTHER_CARDS = (Province, Duchy, Estate, Curse, Gold, Silver, Copper)
 
 
-def _get_default_player_cards() -> List[Card]:
-    coppers: List[Card] = [Copper() for _ in range(7)]
-    estates: List[Card] = [Estate() for _ in range(3)]
+def _get_default_player_cards() -> list[Card]:
+    coppers: list[Card] = [Copper() for _ in range(7)]
+    estates: list[Card] = [Estate() for _ in range(3)]
     return coppers + estates
 
 
-def _generate_supply_piles(card_types: Tuple, pile_size: int = 10) -> List[SupplyPile]:
+def _generate_supply_piles(card_types: tuple, pile_size: int = 10) -> list[SupplyPile]:
     return [SupplyPile(cards=[card_type() for _ in range(pile_size)], ) for card_type in card_types]
 
 
-def _display_score_board(players: List[Player]):
+def _display_score_board(players: list[Player]):
     players_by_score = sorted(players, reverse=True)
     print(f"*** The winner is {players_by_score[0]} ***")
     for player in players:
         print(f"{player.name}: {player.victory_points} VP [{player.turns_played} turns]")
 
 
-def _display_opening_message(my_player: Player, other_players: List[Player]):
+def _display_opening_message(my_player: Player, other_players: list[Player]):
     other_names = ', '.join([player.name for player in other_players])
     print(f"""
     ##############################################
@@ -59,7 +58,7 @@ def _display_opening_message(my_player: Player, other_players: List[Player]):
     """)
 
 
-def run(num_players: int = 2, start_cards: List[Card] = None):
+def run(num_players: int = 2, start_cards: list[Card] = None):
     if num_players < 2 or num_players > 6:
         raise ValueError("Number of players has to be between 2 and 6")
 
@@ -68,7 +67,7 @@ def run(num_players: int = 2, start_cards: List[Card] = None):
     my_player = HumanPlayer(start_cards, name="Siri")
     bot_players = [BotPlayer(start_cards) for _ in range(num_players - 1)]
 
-    players: List[Player] = bot_players.copy()
+    players: list[Player] = bot_players.copy()
     players.append(my_player)
     shuffle(players)
 

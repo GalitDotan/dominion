@@ -1,14 +1,14 @@
 from abc import ABC
-from typing import List, Optional, Callable, Dict
+from typing import Optional, Callable
 from collections import Counter
 
 from game_supplies.card_types.card import Card
 
 
 class CardStructure(ABC):
-    def __init__(self, cards: Optional[List[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
+    def __init__(self, cards: Optional[list[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
         self.name: str = name if name else cards[0].name
-        self._cards: List[Card] = cards if cards else []
+        self._cards: list[Card] = cards if cards else []
         self._is_visible: bool = is_visible
 
     def __hash__(self):
@@ -34,11 +34,11 @@ class CardStructure(ABC):
         return self._is_visible
 
     @property
-    def cards(self) -> List[Card]:
+    def cards(self) -> list[Card]:
         return self._cards.copy()
 
     @property
-    def cards_dict(self) -> Dict[Card, int]:
+    def cards_dict(self) -> dict[Card, int]:
         # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
         return dict(Counter(self))
 

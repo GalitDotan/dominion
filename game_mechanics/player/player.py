@@ -1,5 +1,5 @@
 from random import shuffle
-from typing import List, Optional, Dict
+from typing import Optional
 
 from random_word import RandomWords
 
@@ -18,7 +18,7 @@ def _generate_name():
     return f"{first_name}{last_name}"
 
 
-def _calc_vp(cards: List[Card]) -> int:
+def _calc_vp(cards: list[Card]) -> int:
     """
     Calc the sum of victory points received by the given cards.
     :param cards: a list of cards.
@@ -32,15 +32,15 @@ def _calc_vp(cards: List[Card]) -> int:
 
 
 class Player:
-    def __init__(self, cards: List[Card], name: Optional[str] = None):
+    def __init__(self, cards: list[Card], name: Optional[str] = None):
         self.name = name if name else _generate_name()
-        self._all_cards: List[Card] = cards  # all cards the player has
+        self._all_cards: list[Card] = cards  # all cards the player has
 
         # player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
         self.discard_pile = Pile(name='Discard Pile', is_visible=True)
         self.hand: Hand = Hand(self.draw_cards(5))
-        self.played_cards: List[Card] = []
+        self.played_cards: list[Card] = []
 
         # player's stats
         self.victory_points = _calc_vp(cards)
@@ -62,10 +62,10 @@ class Player:
                 self.victory_points == other.victory_points and self.turns_played < other.turns_played)
 
     @property
-    def cards_alphabetically(self) -> List[Card]:
+    def cards_alphabetically(self) -> list[Card]:
         return sorted(self._all_cards, key=lambda x: x.name)
 
-    def cards_by_value(self) -> List[Card]:
+    def cards_by_value(self) -> list[Card]:
         return sorted(self._all_cards, key=lambda x: x.value)
 
     def play_card_from_hand(self, card: Card, turn_state: TurnState):
@@ -112,7 +112,7 @@ class Player:
                 self.played_cards.remove(card)
                 self.discard_pile.put(card)
 
-    def get_playable_cards(self, phase: Phase) -> Dict[Card, int]:
+    def get_playable_cards(self, phase: Phase) -> dict[Card, int]:
         """
         Of all the cards in hand - get all the cards that can be played in the given phase.
 
