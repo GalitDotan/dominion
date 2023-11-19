@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Phase(Enum):
-    ActionPhase: 1
-    BuyPhase: 2
-    NightPhase: 3
-    CleanUpPhase: 4
+    ActionPhase = "Action Phase"
+    BuyPhase = "Buy Phase"
+    NightPhase = "Night Phase"
+    CleanUpPhase = "Clean-Up Phase"

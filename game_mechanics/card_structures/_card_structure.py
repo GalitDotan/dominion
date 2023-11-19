@@ -1,21 +1,25 @@
 from abc import ABC
 from typing import List, Optional, Callable
+from collections import Counter
 
 from game_supplies.card_types.card import Card
 
 
 class CardStructure(ABC):
     def __init__(self, cards: List[Card] = (), name: Optional[str] = None, is_visible: bool = True):
-        self._name: str = name if name else cards[0].name
+        self.name: str = name if name else cards[0].name
         self._cards: List[Card] = cards
         self._is_visible: bool = is_visible
 
     def __repr__(self):
-        basic_repr = f"{self._name}[{len(self)}]"
+        basic_repr = f"{self.name}[{len(self)}]"
         if not self._is_visible:
             return basic_repr
         card_names = sorted([c.name for c in self._cards])
-        return f"{basic_repr}: {card_names}"
+        counter = dict(Counter(card_names))
+        if len(counter) <= 1:
+            return basic_repr
+        return f"{basic_repr}: {counter}"
 
     def __len__(self):
         return len(self._cards)

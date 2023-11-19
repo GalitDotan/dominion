@@ -1,6 +1,7 @@
 from random import shuffle
 from typing import List, Tuple
 
+from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.end_conditions import game_over
 from game_mechanics.card_structures.pile import Pile
@@ -35,8 +36,8 @@ def _get_default_player_cards() -> List[Card]:
     return coppers + estates
 
 
-def _generate_piles(card_types: Tuple, pile_size: int = 10) -> List[Pile]:
-    return [Pile(cards=[card_type() for _ in range(pile_size)], ) for card_type in card_types]
+def _generate_supply_piles(card_types: Tuple, pile_size: int = 10) -> List[SupplyPile]:
+    return [SupplyPile(cards=[card_type() for _ in range(pile_size)], ) for card_type in card_types]
 
 
 def _display_score_board(players: List[Player]):
@@ -72,8 +73,8 @@ def run(num_players: int = 2, start_cards: List[Card] = None):
 
     next_player_index = 0
 
-    kingdom_piles = _generate_piles(card_types=FIRST_GAME_CARDS)
-    other_piles = _generate_piles(card_types=OTHER_CARDS)
+    kingdom_piles = _generate_supply_piles(card_types=FIRST_GAME_CARDS)
+    other_piles = _generate_supply_piles(card_types=OTHER_CARDS)
     supply = Supply(kingdom_piles, other_piles)
 
     trash = Trash(name="Trash")

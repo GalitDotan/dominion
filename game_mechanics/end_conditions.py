@@ -20,7 +20,7 @@ def _is_enough_empty_piles(supply: Supply, compare_to: int = 3) -> bool:
 
 
 def _is_any_of_finishing_piles_empty(supply: Supply, finishing_piles: Tuple[str] = DEFAULT_FINISH_PILES) -> bool:
-    empty_pile_names = [pile._name for pile in supply.empty_piles]
+    empty_pile_names = [pile.name for pile in supply.empty_piles]
     for pile in finishing_piles:
         if pile in empty_pile_names:
             return True

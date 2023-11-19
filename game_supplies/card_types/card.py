@@ -18,6 +18,9 @@ class Card(ABC):
     def __repr__(self):
         raise NotImplementedError()
 
+    def __hash__(self):
+        return hash(self.name)
+
     def __eq__(self, other):
         return self.name == other.name
 
