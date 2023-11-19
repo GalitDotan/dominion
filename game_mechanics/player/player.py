@@ -1,5 +1,7 @@
 from random import shuffle
-from typing import List
+from typing import List, Optional
+
+from random_word import RandomWords
 
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
@@ -8,8 +10,17 @@ from game_mechanics.utils.utils import shuffle_copy
 from game_supplies.card_types.card import Card, Duration, Treasure, Action, Attack, Night
 
 
+def _generate_name():
+    rw = RandomWords()
+    first_name = str(rw.get_random_word()).capitalize()
+    last_name = str(rw.get_random_word()).capitalize()
+    return f"{first_name}{last_name}"
+
+
 class Player:
-    def __init__(self, cards: List[Card]):
+    def __init__(self, cards: List[Card], name: Optional[str] = None):
+        self.name = name if name else _generate_name()
+
         self._all_cards: List[Card] = cards  # all cards the player has
 
         # player's card structures
@@ -20,6 +31,18 @@ class Player:
 
         # player's stats
         self.victory_points = 0
+        self.turns_played = 0
+
+    def __lt__(self, other: "Player"):  # is self losing to other
+        return self.victory_points < other.victory_points or (
+                self.victory_points == other.victory_points and self.turns_played >= other.turns_played)
+
+    def __eq__(self, other: "Player"):
+        return self.victory_points == other.victory_points
+
+    def __gt__(self, other: "Player"):  # is self winning other
+        return self.victory_points > other.victory_points or (
+                self.victory_points == other.victory_points and self.turns_played < other.turns_played)
 
     @property
     def cards_alphabetically(self) -> List[Card]:

@@ -25,12 +25,20 @@ def _get_player_choice(valid_choices: List[str], message: str):
             eval(f'{help_request}.help()')
         except Exception:
             print(f"I cannot help you with {help_request}")
-        return _get_player_choice(valid_choices, message)
+        return _get_player_multy_choice(valid_choices, message)
     elif answer not in valid_choices:
         print(f'{answer} is not a valid choice. Please choose one of: {valid_choices}')
-        return _get_player_choice(valid_choices, message)
+        return _get_player_multy_choice(valid_choices, message)
     else:
         return answer
+
+
+def _get_player_multy_choice(valid_choices: List[str], message: str):
+    print(message)
+    for i, card_name in enumerate(valid_choices):
+        print(f'{i}. {card_name}')
+    answers = input("Your choices: ").split()
+    return answers
 
 
 def do_action_choice(player: Player):
@@ -40,7 +48,7 @@ def do_action_choice(player: Player):
     print(f"Playable cards: {playable_cards}")
     message = f"Choose the card to play, or type '{CommonChoices.NONE_CHOICE}' for none"
     valid_choices = [str(i) for i in range(1, len(playable_cards) + 1)] + [CommonChoices.NONE_CHOICE.name]
-    answer = _get_player_choice(valid_choices, message)
+    answer = _get_player_multy_choice(valid_choices, message)
 
     if answer is not CommonChoices.NONE_CHOICE:
         choice = int(answer)
@@ -55,5 +63,18 @@ def play_buy_phase(self):
     print()
 
 
-def choose_cards_to_discard(cards_in_hand: List[Card]):
-    _get_player_choice
+def choose_cards_from_hand(player: Player) -> List[Card]:
+    cards = player.hand.cards
+    hand_cards = [card.name for card in cards]
+    answer = _get_player_multy_choice(hand_cards, "Choose which cards to ")
+    removed_cards = []
+    for i in answer:
+        card = cards[int(i)]
+        player.hand.remove(card)
+        removed_cards.append(card)
+    return removed_cards
+
+
+def choose_cards_to_discard(player: Player):
+    removed_cards = choose_cards_from_hand(player)
+    player.discard_pile.put_all(removed_cards)

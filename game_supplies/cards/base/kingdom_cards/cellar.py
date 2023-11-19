@@ -7,4 +7,4 @@ class Cellar(Action):
         super().__init__(name='Cellar',
                          cost=2,
                          commands=[ChangeStateCommand(plus_actions=1),
-                                   Command(plus_cards=1)])
+                                   ])
