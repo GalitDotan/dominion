@@ -1,5 +1,3 @@
-from typing import Any, List
-
 from game_mechanics.interactions.general_choices import CommonChoices, get_player_choice, choose_cards_from_hand, \
     display_choices_from_hand
 from game_mechanics.phases.phases import Phase

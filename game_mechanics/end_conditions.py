@@ -1,7 +1,6 @@
 from typing import Tuple
 
 from game_mechanics.supply import Supply
-from game_supplies.card_types.card import Card
 from game_supplies.cards.base.basic_supply_cards.Province import Province
 
 DEFAULT_FINISH_PILES = (Province().name,)
