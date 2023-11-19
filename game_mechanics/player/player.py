@@ -47,7 +47,8 @@ class Player:
         self.turns_played = 0
 
     def __repr__(self, long: bool = False):
-        return f"{self.name}[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
+        return f"{self.name}[{self.victory_points} VP]: {self.hand.__repr__(long=long)}, " \
+               f"{self.draw_pile.__repr__(long=long)}, {self.discard_pile.__repr__(long=long)}"
 
     def __lt__(self, other: "Player"):  # is self losing to other
         return self.victory_points < other.victory_points or (

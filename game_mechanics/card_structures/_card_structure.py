@@ -6,9 +6,9 @@ from game_supplies.card_types.card import Card
 
 
 class CardStructure(ABC):
-    def __init__(self, cards: List[Card] = (), name: Optional[str] = None, is_visible: bool = True):
+    def __init__(self, cards: Optional[List[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
         self.name: str = name if name else cards[0].name
-        self._cards: List[Card] = cards
+        self._cards: List[Card] = cards if cards else []
         self._is_visible: bool = is_visible
 
     def __hash__(self):

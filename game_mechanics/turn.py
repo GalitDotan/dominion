@@ -38,7 +38,7 @@ class Turn:
         return f"""
 {you_h1}
 {self.turn_state}
-{self.player}
+{self.player.__repr__(long=True)}
 {opponents_h1}
 {opponents}
 {self.supply}
@@ -71,7 +71,7 @@ class Turn:
         print(str(self.supply))
         continue_buys = True
         piles_to_buy_from = self.supply.get_piles_allowed_for_buy(max_cost=self.turn_state.coins)
-        while continue_buys and len(piles_to_buy_from) > 0:
+        while continue_buys and len(piles_to_buy_from) > 0 and self.turn_state.buys > 0:
             buy_card_by_choice(self.player, self.turn_state, self.supply)
 
     def _night_phase(self, include_night: bool = False):
