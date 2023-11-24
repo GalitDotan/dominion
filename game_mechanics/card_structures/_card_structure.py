@@ -7,7 +7,8 @@ from game_supplies.card_types.card import Card
 
 class CardStructure(ABC):
     def __init__(self, cards: Optional[list[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
-        self.name: str = name if name else cards[0].name
+        default_name = cards[0].name if cards and len(cards) > 0 else self.__class__.__name__
+        self.name: str = name if name else default_name
         self._cards: list[Card] = cards if cards else []
         self._is_visible: bool = is_visible
 
@@ -67,3 +68,9 @@ class CardStructure(ABC):
 
     def remove(self, card: Card):
         self._cards.remove(card)
+
+    def append(self, card: Card):
+        self._cards.append(card)
+
+    def extend(self, cards: list[Card]):
+        self._cards.extend(cards)

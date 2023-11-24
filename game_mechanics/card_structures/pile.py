@@ -28,11 +28,11 @@ class Pile(CardStructure):
         """
         Put a card on top of the pile.
         """
-        self._cards.append(card)
+        self.append(card)
 
     def put_all(self, cards: list[Card]):
         """
         Put all given cards on top of the pile.
         Last card of the input would become the top card of the pile.
         """
-        self._cards.extend(cards)
+        self.extend(cards)

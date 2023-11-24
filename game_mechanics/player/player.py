@@ -5,6 +5,7 @@ from random_word import RandomWords
 
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
+from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.player.turn_state import TurnState
 from game_mechanics.utils.utils import shuffle_copy
 from game_supplies.card_types.action_card import Action
@@ -49,7 +50,7 @@ class Player:
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
         self.discard_pile = Pile(name='Discard Pile', is_visible=True)
         self.hand: Hand = Hand(self.draw_cards(5))
-        self.played_cards: list[Card] = []
+        self.play_area = PlayArea()
 
         # player's stats
         self.victory_points = _calc_vp(cards)
@@ -91,6 +92,7 @@ class Player:
             raise ValueError(f"{card} is not in {self.hand}")
 
         self.hand.remove(card)
+        self.play_area.play(card)
 
         if isinstance(card, Treasure):
             turn_state.coins += card.coins
@@ -118,8 +120,5 @@ class Player:
         self.discard_pile.put_all(cards)
 
     def discard_play(self):
-        self.discard_pile.put_all(self.played_cards)
-        for card in self.played_cards:
-            if not isinstance(card, Duration):
-                self.played_cards.remove(card)
-                self.discard_pile.put(card)
+        cards = self.play_area.do_cleanup()
+        self.discard_pile.put_all(cards)
