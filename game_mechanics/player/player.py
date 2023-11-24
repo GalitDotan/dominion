@@ -5,16 +5,15 @@ from random_word import RandomWords
 
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
-from game_mechanics.phases.phases import Phase
 from game_mechanics.player.turn_state import TurnState
 from game_mechanics.utils.utils import shuffle_copy
-from game_supplies.card_types.card import Card
-from game_supplies.card_types.night_card import Night
-from game_supplies.card_types.duration_card import Duration
-from game_supplies.card_types.attack_card import Attack
-from game_supplies.card_types.victory_card import Victory
-from game_supplies.card_types.treasure_card import Treasure
 from game_supplies.card_types.action_card import Action
+from game_supplies.card_types.attack_card import Attack
+from game_supplies.card_types.card import Card
+from game_supplies.card_types.duration_card import Duration
+from game_supplies.card_types.night_card import Night
+from game_supplies.card_types.treasure_card import Treasure
+from game_supplies.card_types.victory_card import Victory
 
 
 def _generate_name():
@@ -86,7 +85,7 @@ class Player:
         Play a card from _players_order hand and update state accordingly.
 
         :param card: the card.
-        :param turn_state: current turn state.
+        :param turn_state: current game_stages state.
         """
         if card not in self.hand:
             raise ValueError(f"{card} is not in {self.hand}")
@@ -124,27 +123,3 @@ class Player:
             if not isinstance(card, Duration):
                 self.played_cards.remove(card)
                 self.discard_pile.put(card)
-
-    def get_playable_cards(self, phase: Phase) -> dict[Card, int]:
-        """
-        Of all the cards in hand - get all the cards that can be played in the given phase.
-
-        :param phase: The phase
-        :return: The playable cards.
-        """
-        playable = {}
-        if phase is Phase.ActionPhase:
-            playable_types = (Action,)
-        elif phase is Phase.BuyPhase:
-            playable_types = (Treasure,)
-        elif phase is Phase.NightPhase:
-            playable_types = (Night,)
-        else:
-            playable_types = ()
-
-        for card, cnt in self.hand.cards_dict.items():
-            for playable_type in playable_types:
-                if isinstance(card, playable_type):
-                    playable[card] = cnt
-
-        return playable

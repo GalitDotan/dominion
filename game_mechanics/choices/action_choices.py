@@ -2,7 +2,7 @@ from game_mechanics.choices.bot.generic_choices import get_bot_player_choice
 from game_mechanics.choices.common_choices import CommonChoices
 from game_mechanics.choices.human.generic_choices import display_choices_from_human_hand, get_human_player_choice
 
-from game_mechanics.phases.phases import Phase
+from game_mechanics.phases.phases import PhaseName
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
@@ -17,14 +17,14 @@ def play_action_by_choice(player: Player, turn_state: TurnState) -> bool:
     :param turn_state: current state
     :return: Was a change made?
     """
-    playable_cards = player.get_playable_cards(Phase.ActionPhase)
+    playable_cards = player.get_playable_cards(PhaseName.ActionPhase)
     playable_cards_keys = list(playable_cards.keys())
     valid_choices = [CommonChoices.NONE_CHOICE.name] + [str(card) for card in playable_cards_keys]
     if isinstance(player, BotPlayer):
         chosen_card = get_bot_player_choice(player, turn_state, playable_cards)
     else:
         player: HumanPlayer
-        display_choices_from_human_hand(player, phase=Phase.ActionPhase)
+        display_choices_from_human_hand(player, phase=PhaseName.ActionPhase)
         answer = get_human_player_choice(valid_choices)
 
         if answer is CommonChoices.NONE_CHOICE:

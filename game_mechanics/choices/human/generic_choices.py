@@ -1,15 +1,10 @@
 from enum import Enum
 
+from game_mechanics.choices.common_choices import CommonChoices
 from game_mechanics.consts import HeadlineFormats
-from game_mechanics.phases.phases import Phase
+from game_mechanics.phases.phases import PhaseName
 from game_mechanics.player.player import Player
 from game_supplies.card_types.card import Card
-
-
-class CommonChoices(Enum):
-    NONE_CHOICE = 'x'
-    UNDO = 'undo'
-    HELP_CHOICE = '--help'
 
 
 def get_human_player_choice(valid_choices: list[str]):
@@ -57,8 +52,7 @@ def choose_cards_from_human_hand(player: Player) -> list[Card]:
     return removed_cards
 
 
-def display_choices_from_human_hand(player: Player, phase: Phase):
-    playable_cards = player.get_playable_cards(phase)
+def display_choices_from_human_hand(player: Player, playable_cards: dict[Card, int]):
     print(f"Your hand: {player.hand.cards_dict}")
     print(f"Playable cards: {playable_cards}")
     message = f"Choose the card to play, or type '{CommonChoices.NONE_CHOICE}' for none"

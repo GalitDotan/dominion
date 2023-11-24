@@ -3,13 +3,13 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
+from game_mechanics.game_stages.turn import Turn
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
 from game_mechanics.supply import Supply
-from game_mechanics.turn.turn import Turn
 from game_supplies.card_types.card import Card
 from game_supplies.card_types.curse import Curse
 from game_supplies.cards.dominion.kingdom_cards.cellar import Cellar

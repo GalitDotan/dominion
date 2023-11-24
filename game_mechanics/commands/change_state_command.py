@@ -12,7 +12,7 @@ class ChangeStateCommand(Command):
         """
         Increase state parameters.
 
-        :param state: turn's state
+        :param state: game_stages's state
         """
         state.actions += self.plus_actions
         state.buys += self.plus_buys

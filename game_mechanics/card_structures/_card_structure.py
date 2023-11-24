@@ -64,3 +64,6 @@ class CardStructure(ABC):
         cards = self._cards
         self._cards = []
         return cards
+
+    def remove(self, card: Card):
+        self._cards.remove(card)
