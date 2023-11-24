@@ -11,7 +11,7 @@ from game_mechanics.player.turn_state import TurnState
 
 def play_action_by_choice(player: Player, turn_state: TurnState) -> bool:
     """
-    Coose an action to play
+    Choose an action to play
 
     :param player: current player
     :param turn_state: current state

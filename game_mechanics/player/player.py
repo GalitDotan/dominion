@@ -38,6 +38,10 @@ def _calc_vp(cards: list[Card]) -> int:
 
 
 class Player:
+    """
+    This class contains all the cards the player currently has.
+    """
+
     def __init__(self, cards: list[Card], name: Optional[str] = None):
         self.name = name if name else _generate_name()
         self._all_cards: list[Card] = cards  # all cards the player has
@@ -79,7 +83,7 @@ class Player:
 
     def play_card_from_hand(self, card: Card, turn_state: TurnState):
         """
-        Play a card from players hand and update state accordingly.
+        Play a card from _players_order hand and update state accordingly.
 
         :param card: the card.
         :param turn_state: current turn state.

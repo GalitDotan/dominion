@@ -6,7 +6,7 @@ from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
 from game_mechanics.player.turn_state import TurnState
-from game_mechanics.supply import Supply
+from game_mechanics.supply import Supply, buy
 from game_supplies.card_types.treasure_card import Treasure
 
 
@@ -54,8 +54,11 @@ def play_treasures_by_choice(player: Player, turn_state: TurnState) -> bool:
 def buy_card_by_choice(player: Player, turn_state: TurnState, supply: Supply) -> bool:
     """
     Allow player to buy a card.
-    Update state accordingly.
-    :param player: the player
+    If a card is bought:
+        1. It is removed from the supply
+        2. It is added to the player's discard pile
+
+    :param player: the buying player.
     :param turn_state: the state
     :param supply: the supply
     :return: did the player buy a card
@@ -76,7 +79,7 @@ def buy_card_by_choice(player: Player, turn_state: TurnState, supply: Supply) ->
         return False
 
     chosen_pile = piles_to_buy_from[int(choice) - 1]
-    card = chosen_pile.draw()  # remove top card from the pile
+    card = buy(chosen_pile)
     turn_state.buys -= 1
     turn_state.coins -= card.cost
     player.discard_pile.put(card)

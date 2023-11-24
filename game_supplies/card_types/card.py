@@ -36,7 +36,7 @@ class Card(ABC):
 
     @property
     def card_type(self):
-        return ' - '.join([str(t) for t in self.__mro__])
+        return type(self)  # TODO: show all inherited types
 
     @abstractmethod
     def detailed_repr(self):

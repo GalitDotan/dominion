@@ -13,17 +13,23 @@ from game_mechanics.supply import Supply
 
 class Turn:
     def __init__(self, player: Player, other_players: list[Player], supply: Supply, trash: Trash):
+        self.name = f"{player.name}'s {player.turns_played + 1} Turn"
         self.player = player
         self.other_players = other_players
         self.supply = supply
         self.trash = trash
 
         self.turn_state = TurnState()
+        self.is_finished: bool = False
+        self.played = []
+        self.added = []
+        self.removed = []
 
     def play(self):
         """
         Play one turn of the game (with all its phases).
         """
+        print(HeadlineFormats.H1.format(f"{self.player.name}'s turn"))
         self.player.turns_played += 1
 
         phases = [self._action_phase, self._buy_phase, self._night_phase, self._cleanup_phase]
@@ -38,16 +44,27 @@ class Turn:
             print(str(message))
 
     def __repr__(self):
-        opponents = '\r\n'.join([f'{str(player)}' for player in self.other_players])
+        opponents = '\r\n'.join([str(player) for player in self.other_players])
         you_h1 = HeadlineFormats.H1.format(f"You [{self.player.name}]")
         opponents_h1 = HeadlineFormats.H1.format("The Other Players")
-        return f"""
+        if not self.is_finished:
+            return f"""
 {you_h1}
 {self.turn_state}
 {self.player}
 {opponents_h1}
 {opponents}
 {self.supply}
+        """
+        end_turn = HeadlineFormats.H2.format(f"{self.player.name}'s turn has ended")
+        played = HeadlineFormats.H3.format(f"Played: {self.played}")
+        added = HeadlineFormats.H3.format(f"Added: {self.added}")
+        removed = HeadlineFormats.H3.format(f"Removed: {self.removed}")
+        return f"""
+        {end_turn}
+        {played}
+        {added}
+        {removed}
         """
 
     def _action_phase(self):
