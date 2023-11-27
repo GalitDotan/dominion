@@ -1,5 +1,5 @@
-from game_mechanics.choices.common_choices import CommonChoices
-from game_mechanics.choices.human.generic_choices import display_choices_from_human_hand, get_human_player_multy_choice
+from game_mechanics.decisions.player_decision import CommonChoices
+from game_mechanics.decisions.human.generic_choices import get_human_player_multy_choice
 from game_mechanics.game_stages.phase.buying_stage import BuyingStage
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.player.bot_player import BotPlayer
@@ -64,8 +64,7 @@ class BuyPhase(Phase):
             choices = list(range(1, len(valid_choices)))
         else:
             player: HumanPlayer
-            message = display_choices_from_human_hand(self.player, playable_cards)
-            choices = get_human_player_multy_choice(valid_choices, message)
+            choices = get_human_player_multy_choice(valid_choices, "Choose treasures to play")
 
         if choices[0] is CommonChoices.NONE_CHOICE:
             return False

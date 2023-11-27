@@ -1,9 +1,5 @@
-from enum import Enum
-
-from game_mechanics.choices.common_choices import CommonChoices
-from game_mechanics.consts import HeadlineFormats
-from game_mechanics.phases.phases import PhaseName
-from game_mechanics.player.player import Player
+from game_mechanics.decisions.player_decision import CommonChoices
+from game_mechanics.player.human_player import HumanPlayer
 from game_supplies.card_types.card import Card
 
 
@@ -34,13 +30,13 @@ def get_human_player_multy_choice(valid_choices: list[str], message: str) -> lis
     print(message)
     for i, card_name in enumerate(valid_choices):
         print(f'{i}. {card_name}')
-    answers = input("Your choices: ")
+    answers = input("Your decisions: ")
     if answers is CommonChoices.NONE_CHOICE:
         return [CommonChoices.NONE_CHOICE.name]
     return answers.split()
 
 
-def choose_cards_from_human_hand(player: Player) -> list[Card]:
+def choose_cards_from_human_hand(player: HumanPlayer) -> list[Card]:
     cards = player.hand.cards
     hand_cards = [card.name for card in cards]
     answer = get_human_player_multy_choice(hand_cards, "Choose which cards to ")
@@ -50,10 +46,3 @@ def choose_cards_from_human_hand(player: Player) -> list[Card]:
         player.hand.remove(card)
         removed_cards.append(card)
     return removed_cards
-
-
-def display_choices_from_human_hand(player: Player, playable_cards: dict[Card, int]):
-    print(f"Your hand: {player.hand.cards_dict}")
-    print(f"Playable cards: {playable_cards}")
-    message = f"Choose the card to play, or type '{CommonChoices.NONE_CHOICE}' for none"
-    print(HeadlineFormats.H3.format(message))

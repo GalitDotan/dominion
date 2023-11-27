@@ -2,8 +2,8 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.choices.common_choices import CommonChoices
-from game_mechanics.choices.human.generic_choices import get_human_player_choice
+from game_mechanics.decisions.player_decision import CommonChoices
+from game_mechanics.decisions.human.generic_choices import get_human_player_choice
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
