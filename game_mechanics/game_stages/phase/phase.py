@@ -7,7 +7,7 @@ from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.player.player import Player
 from game_mechanics.player.turn_state import TurnState
 from game_mechanics.supply import Supply
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
 
 
 class Phase(GameStage):
@@ -47,9 +47,9 @@ class Phase(GameStage):
 
     def get_playable_cards(self) -> dict[Card, int]:
         """
-        Of all the cards in hand - get all the cards that can be played in this phase.
+        Of all the cards_packs in hand - get all the cards_packs that can be played in this phase.
 
-        :return: The playable cards.
+        :return: The playable cards_packs.
         """
         playable = {}
         for card, cnt in self.player.hand.cards_dict.items():

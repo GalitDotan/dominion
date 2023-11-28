@@ -8,13 +8,12 @@ from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.player.turn_state import TurnState
 from game_mechanics.utils.utils import shuffle_copy
-from game_supplies.card_types.action_card import Action
-from game_supplies.card_types.attack_card import Attack
-from game_supplies.card_types.card import Card
-from game_supplies.card_types.duration_card import Duration
-from game_supplies.card_types.night_card import Night
-from game_supplies.card_types.treasure_card import Treasure
-from game_supplies.card_types.victory_card import Victory
+from game_mechanics.game_supplies.card_types.action_card import Action
+from game_mechanics.game_supplies.card_types.attack_card import Attack
+from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.night_card import Night
+from game_mechanics.game_supplies.card_types.treasure_card import Treasure
+from game_mechanics.game_supplies.card_types.victory_card import Victory
 
 
 def _generate_name():
@@ -26,8 +25,8 @@ def _generate_name():
 
 def _calc_vp(cards: list[Card]) -> int:
     """
-    Calc the sum of victory points received by the given cards.
-    :param cards: a list of cards.
+    Calc the sum of victory points received by the given cards_packs.
+    :param cards: a list of cards_packs.
     :return: sum of victory points.
     """
     vp = 0
@@ -39,12 +38,12 @@ def _calc_vp(cards: list[Card]) -> int:
 
 class Player:
     """
-    This class contains all the cards the player currently has.
+    This class contains all the cards_packs the player currently has.
     """
 
     def __init__(self, cards: list[Card], name: Optional[str] = None):
         self.name = name if name else _generate_name()
-        self._all_cards: list[Card] = cards  # all cards the player has
+        self._all_cards: list[Card] = cards.copy()  # all cards_packs the player has
 
         # player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
@@ -53,7 +52,7 @@ class Player:
         self.play_area = PlayArea()
 
         # player's stats
-        self.victory_points = _calc_vp(cards)
+        self.victory_points = _calc_vp(self._all_cards)
         self.turns_played = 0
 
     def __repr__(self):
@@ -70,6 +69,9 @@ class Player:
         return self.victory_points > other.victory_points or (
                 self.victory_points == other.victory_points and self.turns_played < other.turns_played)
 
+    def get_board_view(self) -> str:
+        pass  # TODO: get view
+
     def detailed_repr(self):
         return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}, " \
                f"{self.draw_pile.detailed_repr()}, {self.discard_pile.detailed_repr()}"
@@ -83,7 +85,7 @@ class Player:
 
     def play_card_from_hand(self, card: Card, turn_state: TurnState):
         """
-        Play a card from _players_order hand and update state accordingly.
+        Play a card from _play_order hand and update state accordingly.
 
         :param card: the card.
         :param turn_state: current game_stages state.

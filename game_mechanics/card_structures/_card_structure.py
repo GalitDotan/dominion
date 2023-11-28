@@ -2,7 +2,7 @@ from abc import ABC
 from typing import Optional, Callable
 from collections import Counter
 
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
 
 
 class CardStructure(ABC):
@@ -60,7 +60,7 @@ class CardStructure(ABC):
 
     def remove_all(self) -> list[Card]:
         """
-        Remove all the cards from the structure.
+        Remove all the cards_packs from the structure.
         """
         cards = self._cards
         self._cards = []

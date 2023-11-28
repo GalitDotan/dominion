@@ -1,6 +1,6 @@
 from game_mechanics.decisions.player_decision import CommonChoices
 from game_mechanics.player.human_player import HumanPlayer
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
 
 
 def get_human_player_choice(valid_choices: list[str]):
@@ -39,7 +39,7 @@ def get_human_player_multy_choice(valid_choices: list[str], message: str) -> lis
 def choose_cards_from_human_hand(player: HumanPlayer) -> list[Card]:
     cards = player.hand.cards
     hand_cards = [card.name for card in cards]
-    answer = get_human_player_multy_choice(hand_cards, "Choose which cards to ")
+    answer = get_human_player_multy_choice(hand_cards, "Choose which cards_packs to ")
     removed_cards = []
     for i in answer:
         card = cards[int(i)]

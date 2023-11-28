@@ -1,5 +1,5 @@
 from game_mechanics.game_stages.phase.phase import Phase
-from game_supplies.card_types import Night
+from game_mechanics.game_supplies.card_types.night_card import Night
 
 
 class NightPhase(Phase):

@@ -2,7 +2,7 @@ from collections import Counter
 from typing import Optional
 
 from game_mechanics.card_structures.pile import Pile
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
 
 
 class SupplyPile(Pile):

@@ -1,6 +1,6 @@
 from game_mechanics.card_structures._card_structure import CardStructure
-from game_supplies.card_types import Duration
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.duration_card import Duration
 
 
 class PlayArea(CardStructure):
@@ -12,9 +12,9 @@ class PlayArea(CardStructure):
 
     def do_cleanup(self) -> list[Card]:
         """
-        Remove all cards but duration cards.
+        Remove all cards_packs but duration cards_packs.
 
-        :return: all removed cards.
+        :return: all removed cards_packs.
         """
         all_cards = self.remove_all()
         duration_cards = [card for card in all_cards if type(card) is Duration]

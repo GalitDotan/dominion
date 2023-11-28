@@ -14,7 +14,7 @@ from game_mechanics.supply import Supply, buy
 
 class BuyingStage(GameStage):
     """
-    A stage in which buying cards from the supply is allowed.
+    A stage in which buying cards_packs from the supply is allowed.
     The current state of the coins is updated accordingly.
     """
 
@@ -30,7 +30,7 @@ class BuyingStage(GameStage):
     def play(self):
         buyable_cards = self.get_buyable_cards()
         if not buyable_cards:
-            self.print_if_human("There aren't cards you can buy.")
+            self.print_if_human("There aren't cards_packs you can buy.")
             return
         self.before_run_iterations()
         while self.continue_buying:
@@ -40,7 +40,7 @@ class BuyingStage(GameStage):
         """
         Autoplay treasures, if any exists in hand.
         """
-        self.print_if_human("Now, let's buy some cards")
+        self.print_if_human("Now, let's buy some cards_packs")
         self.print_if_human(str(self.supply))
 
     def run_stage_iteration(self):

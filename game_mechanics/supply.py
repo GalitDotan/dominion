@@ -1,7 +1,7 @@
 from tabulate import tabulate
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.consts import HeadlineFormats
-from game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card import Card
 
 
 def buy(pile: SupplyPile) -> Card:

@@ -1,7 +1,5 @@
-from game_mechanics.card_structures.hand import Hand
 from game_mechanics.consts import HeadlineFormats
 from game_mechanics.decisions.player_decision import PlayerDecision, CommonChoices
-from game_supplies.card_types.card import Card
 
 
 class PlayerPlayDecision(PlayerDecision):
