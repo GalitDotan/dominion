@@ -1,8 +1,6 @@
 from random import shuffle
 from typing import Optional
 
-from random_word import RandomWords
-
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
@@ -14,13 +12,7 @@ from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.game_supplies.card_types.night_card import Night
 from game_mechanics.game_supplies.card_types.treasure_card import Treasure
 from game_mechanics.game_supplies.card_types.victory_card import Victory
-
-
-def _generate_name():
-    rw = RandomWords()
-    first_name = str(rw.get_random_word()).capitalize()
-    last_name = str(rw.get_random_word()).capitalize()
-    return f"{first_name}{last_name}"
+from utils.name_generator import generate_name
 
 
 def _calc_vp(cards: list[Card]) -> int:
@@ -42,7 +34,7 @@ class Player:
     """
 
     def __init__(self, cards: list[Card], name: Optional[str] = None):
-        self.name = name if name else _generate_name()
+        self.name = name if name else generate_name()
         self._all_cards: list[Card] = cards.copy()  # all cards_packs the player has
 
         # player's card structures
@@ -70,7 +62,7 @@ class Player:
                 self.victory_points == other.victory_points and self.turns_played < other.turns_played)
 
     def get_board_view(self) -> str:
-        pass  # TODO: get view
+        pass  # TODO: board view by player
 
     def detailed_repr(self):
         return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}, " \

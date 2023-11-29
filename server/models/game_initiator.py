@@ -20,6 +20,9 @@ def get_default_player_cards() -> list[Card]:
 
 
 class GameInitiator(BaseModel):
+    class Config:
+        arbitrary_types_allowed = True
+
     game_id: str = Field(default_factory=lambda: uuid4())
     num_players: int = Field(ge=MIN_PLAYERS, le=MAX_PLAYERS, exclude=True)
     start_cards: list[Card] = Field(default_factory=lambda: get_default_player_cards())

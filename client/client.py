@@ -1,32 +1,59 @@
+from typing import Optional
+
 import requests
 
-from consts import Endpoints
+from consts import Endpoints, GameStatus
 from game_mechanics.game_stages.turn import Turn
 from game_mechanics.screens.openning_message import OpeningMessage
+from response_model.response_model import ResponseModel
+from utils.name_generator import generate_name
 
 
 class DominionClient:
     def __init__(self):
-        self.server_url = "127.0.0.1"
-        self._url_format = self.server_url + '/{}'
+        self._server_url = "127.0.0.1"
+        self._url_format = self._server_url + '/{}'
 
-    def get_url(self, endpoint: str):
-        return self._url_format.format(endpoint)
+        self.player_name: str = generate_name()
+        self.game_id: Optional[str] = None
 
-    def init_game(self):
-        requests.post(url=self.get_url(Endpoints.INIT_GAME))
+    def _get_response(self, endpoint: str, data: dict) -> ResponseModel:
+        url = self._url_format.format(endpoint)
+        response = requests.post(url=url, data=data)
+        date = ResponseModel(**response.json())
+        return date
 
-    def join_game(self):
-        pass
+    def init_game(self) -> str:
+        response = self._get_response(Endpoints.INIT_GAME, {})
+        self.game_id = response.game_id
+        return response.message
 
-    def run(self):
+    def start_game(self) -> str:
+        response = self._get_response(Endpoints.INIT_GAME, {'game_id': self.game_id})
+        return response.message
+
+    def join_game(self) -> str:
+        response = self._get_response(Endpoints.JOIN_GAME, {'game_id': self.game_id, 'player_name': self.player_name})
+        self.game_id = response.game_id
+        return response.message
+
+    def view_game_board(self) -> str:
+        response = self._get_response(Endpoints.VIEW_GAME_BOARD,
+                                      {'game_id': self.game_id, 'player_name': self.player_name})
+        return response.message
+
+    def get_game_status(self) -> str:
+        response = self._get_response(Endpoints.VIEW_GAME_BOARD,
+                                      {'game_id': self.game_id, 'player_name': self.player_name})
+        return response.game_status.name
+
+    def play_game(self):
         """
-        Run a single-player Dominion game.
+        Play a Dominion game.
         """
-        print(OpeningMessage(self._my_player, self._bot_players))
-        game_on = True
-        while True:
-            curr_player = self._play_order[self.player_index]
+        game_Status = self.get_game_status()
+        while game_Status == GameStatus.IN_PROGRESS:
+            curr_player = self._play_order[self.player_index]  # TODO: fix
             other_players = self._play_order.copy()
             other_players.remove(curr_player)
 
@@ -34,5 +61,10 @@ class DominionClient:
             turn.play()
             self.to_next_player()
 
-        score_bard = ScoreBoard(self._play_order)
-        print(score_bard)
+    def run(self):
+        pass  # TODO: run client
+
+
+if __name__ == '__main__':
+    client = DominionClient()
+    client.run()

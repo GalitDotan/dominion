@@ -28,10 +28,15 @@ class Endpoints:
     ADD_BOT = 'add-bot-to-game'  # TODO: implement this
 
 
-class GameStatus(Enum, str):
+class GameStatus(Enum):
     INITIATED = 'INITIATED'
     IN_PROGRESS = 'IN_PROGRESS'
     FINISHED = 'FINISHED'
+
+
+class ServerConf:
+    HOST: str = '0.0.0.0'
+    PORT = 8000
 
 
 FIRST_GAME_CARDS = (Cellar, Moat, Merchant, Village, Workshop, Militia, Remodel, Smithy, Market, Mine)

@@ -2,3 +2,4 @@ random_word
 tabulate
 fastapi
 pydantic
+uvicorn

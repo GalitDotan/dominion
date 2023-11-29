@@ -6,6 +6,8 @@ from consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARD
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.player.player import Player
+from game_mechanics.screens.openning_message import OpeningMessage
+from game_mechanics.screens.score_board import ScoreBoard
 from game_mechanics.state import GameState
 
 
@@ -59,12 +61,24 @@ class Game:
     def run(self):
         pass  # TODO: implement
 
+    def get_opponents(self, player_name: str) -> list[Player]:
+        opponents = self.players.copy()
+        opponents.pop(player_name)
+        return list(opponents.values())
+
     def get_player_view(self, player_name: str):
         """
         Get current board view from the PoV of the given player.
         """
         player = self.players[player_name]
-        return player.get_board_view()
+        opponents = self.get_opponents(player_name)
+        if self.status == GameStatus.INITIATED:
+            return OpeningMessage(player, opponents)
+        elif self.status == GameStatus.IN_PROGRESS:
+            return player.get_board_view()
+        elif self.status == GameStatus.FINISHED:
+            return ScoreBoard(self._play_order)
+        raise AttributeError(f'Unknown status {self.status}')
 
     def to_next_player(self):
         """
