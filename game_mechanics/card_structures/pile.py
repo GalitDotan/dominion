@@ -12,10 +12,13 @@ class Pile(CardStructure):
     def __init__(self, cards: list[Card] = (), name: Optional[str] = None, is_visible: bool = True):
         super().__init__(cards, name, is_visible)
 
-    def draw(self) -> Card:
+    def draw(self) -> Optional[Card]:
         """
         Draw from the top of the pile.
+        If empty - doesn't return anything.
         """
+        if self.is_empty():
+            return
         return self._cards.pop()
 
     def draw_all(self) -> list[Card]:
