@@ -1,4 +1,4 @@
-from game_mechanics.decisions.player_decision import CommonChoices
+from game_mechanics.decisions.old.player_decision import CommonChoices
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.game_supplies.card_types.card import Card
 

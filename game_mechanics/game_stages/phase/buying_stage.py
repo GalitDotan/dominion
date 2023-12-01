@@ -2,8 +2,8 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.decisions.player_decision import CommonChoices
-from game_mechanics.decisions.human.generic_choices import get_human_player_choice
+from game_mechanics.decisions.old.player_decision import CommonChoices
+from game_mechanics.decisions.old.human.generic_choices import get_human_player_choice
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
@@ -62,11 +62,11 @@ class BuyingStage(GameStage):
 
     def buy_card_by_choice(self) -> bool:
         """
-        Allow player to buy a card.
+        Allow curr_player to buy a card.
         If a card is bought:
             1. It is removed from the supply
-            2. It is added to the player's discard pile
-        :return: did the player buy a card
+            2. It is added to the curr_player's discard pile
+        :return: did the curr_player buy a card
         """
         piles_to_buy_from = self.supply.get_piles_allowed_for_buy(max_cost=self.turn_state.coins)
         valid_choices = [CommonChoices.NONE_CHOICE.name]

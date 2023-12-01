@@ -29,11 +29,11 @@ def _generate_supply_piles(supply_card_types: tuple,
 class Game:
     def __init__(self, game_id: str, start_cards: list[Card], players: dict[str, Player]):
         """
-        Initiate a single-player Dominion game.
+        Initiate a single-curr_player Dominion game.
 
         Params:
             game_id: the id of the game
-            start_cards: a list of cards each player would receive at the beginning of the game.
+            start_cards: a list of cards each curr_player would receive at the beginning of the game.
             players: a list of players.
         """
         self.id = game_id
@@ -81,7 +81,7 @@ class Game:
 
     def get_player_view(self, player_name: str):
         """
-        Get current board view from the PoV of the given player.
+        Get current board view from the PoV of the given curr_player.
         """
         player = self.players[player_name]
         opponents = self.game_state.get_player_opponents(player)
@@ -98,6 +98,22 @@ class Game:
         Check whether any of the end conditions are met.
         """
         return self._is_enough_empty_piles() or self._is_any_of_finishing_piles_empty(finishing_piles)
+
+    def get_decision(self, player_name: str):
+        """
+        Get the waiting decision of the given player name
+        """
+        if player_name not in self.players:
+            raise ValueError(f'No such player {player_name}')
+        return self.game_state.get_decision(player_name)
+
+    def apply_decision(self, player_name: str, option_chosen: list[int] | int):
+        """
+        Get the waiting decision of the given player name
+        """
+        if player_name not in self.players:
+            raise ValueError(f'No such player {player_name}')
+        return self.game_state.apply_decision(player_name, option_chosen)
 
     def _is_enough_empty_piles(self) -> bool:
         return self.game_state.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]

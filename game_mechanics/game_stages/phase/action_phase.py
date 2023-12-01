@@ -1,6 +1,6 @@
-from game_mechanics.decisions.bot.generic_choices import get_bot_player_choice
-from game_mechanics.decisions.human.generic_choices import get_human_player_choice
-from game_mechanics.decisions.player_decision import CommonChoices
+from game_mechanics.decisions.old.bot.generic_choices import get_bot_player_choice
+from game_mechanics.decisions.old.human.generic_choices import get_human_player_choice
+from game_mechanics.decisions.old.player_decision import CommonChoices
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.game_supplies.card_types.action_card import Action
 from game_mechanics.game_supplies.card_types.card import Card
@@ -35,7 +35,7 @@ class ActionPhase(Phase):
             chosen_card = get_bot_player_choice(self.player, playable_cards)
         else:
             player: HumanPlayer
-            # TODO: display_choices_from_human_hand(player, phase=PhaseName.ActionPhase)
+            # TODO: display_choices_from_human_hand(curr_player, phase=PhaseName.ActionPhase)
             answer = get_human_player_choice(valid_choices)
             if answer is CommonChoices.NONE_CHOICE:
                 return False

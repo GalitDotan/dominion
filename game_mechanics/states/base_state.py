@@ -10,13 +10,13 @@ class BaseState(ABC):
 
 class BasePlayerState(BaseState, ABC):
     """
-    A state that saves the different changeable elements of a Dominion game related to a single player.
+    A state that saves the different changeable elements of a Dominion game related to a single curr_player.
     """
     pass
 
 
 class BasePublicState(BaseState, ABC):
     """
-    A state that saves the different changeable elements of a Dominion game related to a single player.
+    A state that saves the different changeable elements of a Dominion game related to a single curr_player.
     """
     pass

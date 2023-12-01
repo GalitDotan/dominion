@@ -43,9 +43,9 @@ class GameInitiator(BaseModel):
 
     def add_player(self, name: str):
         """
-        Adding a new player to the game.
+        Adding a new curr_player to the game.
 
-        :param name: the player's name
+        :param name: the curr_player's name
         """
         if self.num_players == MAX_PLAYERS:
             raise ValueError('This game is already full')

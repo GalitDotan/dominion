@@ -1,13 +1,13 @@
 from enum import Enum
 
 from game_mechanics.game_supplies.card_types.curse import Curse
-from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.merchant import Merchant
-from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.moat import Moat
-from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.remodel import Remodel
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.cellar import Cellar
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.market import Market
+from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.merchant import Merchant
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.militia import Militia
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.mine import Mine
+from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.moat import Moat
+from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.remodel import Remodel
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.smithy import Smithy
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.village import Village
 from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards.workshop import Workshop
@@ -25,6 +25,9 @@ class Endpoints:
     JOIN_GAME = 'join-game'
     VIEW_GAME_BOARD = 'view-game-board'
     GAME_STATUS = 'game-status'
+    GET_DECISION = 'get-decision'
+    DECIDE = 'decide'
+    VIEW_PLAYERS = 'view-players'
     ADD_BOT = 'add-bot-to-game'  # TODO: implement this
 
 

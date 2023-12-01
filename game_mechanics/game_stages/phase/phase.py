@@ -6,15 +6,12 @@ from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.player.player import Player
 from game_mechanics.states.game_state import GameState
-from game_mechanics.states.player_turn_state import PlayerTurnState
 
 
 class Phase(GameStage):
-    def __init__(self, player: Player, opponents: list[Player], turn_state: PlayerTurnState, game_state: GameState,
-                 name: Optional[str] = None):
+    def __init__(self, player: Player, opponents: list[Player], game_state: GameState, name: Optional[str] = None):
         super().__init__(player=player, opponents=opponents, game_state=game_state, name=name)
         self.continue_phase: bool = True
-        self.turn_state = turn_state
 
     def __repr__(self):
         return self.name
@@ -24,6 +21,13 @@ class Phase(GameStage):
         return ()
 
     def play(self):
+        """
+        Play this phase.
+        Each type of phase can implement what happens before, during and after phase iterations.
+        before_run_iterations() would happen ones in the beginning.
+        Then there's a loop of run_phase_iteration().
+        Then after_run_iterations() would run one time.
+        """
         playable_cards = self.get_playable_cards()
         if not playable_cards:
             self.print_if_human("You have no action playable in hand... finishing phase")
@@ -51,9 +55,9 @@ class Phase(GameStage):
         :return: The playable cards.
         """
         playable = {}
-        for card, cnt in self.player.hand.cards_dict.items():
+        for card, cnt in self.player.state.hand.cards_dict.items():
             for playable_type in self.playable_types:
-                if isinstance(card, playable_type):
+                if isinstance(card, playable_type):  # TODO: fix this
                     playable[card] = cnt
 
         return playable

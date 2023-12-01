@@ -3,6 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from consts import GameStatus
+from game_mechanics.decisions.game_decisions import GameDecision
 
 
 class ResponseModel(BaseModel):
@@ -11,4 +12,5 @@ class ResponseModel(BaseModel):
 
     game_id: int
     game_status: GameStatus
+    game_decision: Optional[GameDecision] = None
     message: Optional[str] = "Ok"

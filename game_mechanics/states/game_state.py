@@ -3,6 +3,7 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
+from game_mechanics.decisions.game_decisions import GameDecision
 from game_mechanics.player.player import Player
 from game_mechanics.states.base_state import BasePublicState
 from game_mechanics.supply import Supply
@@ -18,7 +19,7 @@ class GameState(BasePublicState):
 
     def __init__(self, kingdom_piles: list[SupplyPile], standard_piles: list[SupplyPile], players: dict[str, Player]):
         """
-        Establish player order.
+        Establish curr_player order.
         Initiate all the card structures that are part of the game.
 
         Params:
@@ -35,17 +36,19 @@ class GameState(BasePublicState):
         self.player_index = 0
         self._num_players = len(players)
 
+        self.waiting_decisions: dict[str, Optional[GameDecision]] = {name: None for name in self._play_order}
+
     @property
     def curr_player(self):
         return self._play_order[self.player_index]
 
     def get_player_opponents(self, player: Optional[Player] = None) -> list[Player]:
         """
-        Get all the opponents of a player.
-        If no player name was supplied - returns the opponents of the current player.
+        Get all the opponents of a curr_player.
+        If no curr_player name was supplied - returns the opponents of the current curr_player.
 
         Params:
-            player_name: the player's name
+            player_name: the curr_player's name
 
         Returns:
             A list of opponents (players).
@@ -58,6 +61,20 @@ class GameState(BasePublicState):
 
     def move_to_next_player(self):
         """
-        Update next player index.
+        Update next curr_player index.
         """
         self.player_index = (self.player_index + 1) % self._num_players
+
+    def get_decision(self, player_name: str):
+        """
+        Get the waiting decision of the given player name
+        """
+        return self.waiting_decisions[player_name]
+
+    def apply_decision(self, player_name: str, option_chosen: list[int] | int):
+        """
+        Get the waiting decision of the given player name
+        """
+        decision: GameDecision = self.waiting_decisions[player_name]
+        decision.decide(option_chosen)
+        self.waiting_decisions[player_name] = None

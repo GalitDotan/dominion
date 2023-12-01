@@ -24,7 +24,7 @@ class GameStage:
 
     def print_if_human(self, message: Any):
         """
-        Print to screen, only if the player is human.
+        Print to screen, only if the curr_player is human.
         """
         if self.verbose and isinstance(self.player, HumanPlayer):
             print(str(message))

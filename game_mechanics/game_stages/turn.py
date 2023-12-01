@@ -9,7 +9,6 @@ from game_mechanics.game_stages.phase.night_phase import NightPhase
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
-from game_mechanics.states.player_turn_state import PlayerTurnState
 from game_mechanics.states.game_state import GameState
 
 
@@ -25,33 +24,37 @@ class Turn(GameStage):
     The play function is responsible for managing all the state changes and the decision.
     """
 
-    def __init__(self, player: Player, opponents: list[Player], game_state: GameState):
+    def __init__(self, player: Player, opponents: list[Player], game_state: GameState,
+                 phase_order: tuple[type] = (ActionPhase, BuyPhase, NightPhase, CleanUpPhase)):
         super().__init__(player, opponents, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
 
-        self.turn_state = PlayerTurnState()
-        self.opponents_turn_stage = {opponent: PlayerTurnState(actions=0, buys=1, coins=0) for opponent in
-                                     self.opponents}
         self.is_finished: bool = False
         self.played = []
         self.added = []
         self.removed = []
 
+        self.phase_order = phase_order
+
+    def start(self):
+        """
+        Start this turn.
+        """
+        self.player.on_turn_start(my_turn=True)
+        for opponent in self.opponents:
+            opponent.on_turn_start(my_turn=False)
+
     def play(self):
         """
         Play one game_stages of the game (with all its phases).
         """
-        print(HeadlineFormats.H1.format(f"{self.player.name}'s game_stages"))
-        self.player.turns_played += 1
+        self.start()
 
-        for CurrPhase in [ActionPhase, BuyPhase, NightPhase, CleanUpPhase]:
-            CurrPhase: type
-            if isinstance(self.player, HumanPlayer):
-                self.print_if_human(self)
-            phase: Phase = CurrPhase(player=self.player, opponents=self.opponents, turn_state=self.turn_state,
+        for CurrPhase in self.phase_order:
+            phase: Phase = CurrPhase(player=self.player, opponents=self.opponents, turn_state=self.player.turn_state,
                                      game_state=self.game_state)
             phase.play()
 
-    def print_if_human(self, message: Any):
+    def print_if_human(self, message: Any):  # TODO: remove
         if isinstance(self.player, HumanPlayer):
             print(str(message))
 
@@ -62,7 +65,7 @@ class Turn(GameStage):
         if not self.is_finished:
             return f"""
 {you_h1}
-{self.turn_state}
+{self.player.turn_state}
 {self.player}
 {opponents_h1}
 {opponents}

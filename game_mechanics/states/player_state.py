@@ -9,20 +9,20 @@ from game_mechanics.utils.utils import shuffle_copy
 
 class PlayerState(BasePlayerState):
     """
-    The current state of the game elements of the player:
+    The current state of the game elements of the curr_player:
         1. The Deck (all the cards he owns)
         2. The Hand
-        3. The Discard Pile
+        3. The DiscardCard Pile
         4. The Draw Pile
         5. Different mats
     """
 
     def __init__(self, cards: list[Card], non_card_vp: int = 0):
-        self._all_cards: list[Card] = cards.copy()  # all cards the player has
+        self._all_cards: list[Card] = cards.copy()  # all cards the curr_player has
 
-        # player's card structures
+        # curr_player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
-        self.discard_pile = Pile(name='Discard Pile', is_visible=True)
+        self.discard_pile = Pile(name='DiscardCard Pile', is_visible=True)
         self.hand: Hand = Hand()
         self.play_area: PlayArea = PlayArea()
 

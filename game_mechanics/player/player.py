@@ -13,16 +13,17 @@ from utils.name_generator import generate_name
 
 class Player:
     """
-    A Dominion player.
+    A Dominion curr_player.
     """
 
     def __init__(self, cards: list[Card], name: Optional[str] = None):
         self.name = name if name else generate_name()
         self.turns_played = 0
-        self.player_state = PlayerState(cards=cards)
+        self.state = PlayerState(cards=cards)
+        self.turn_state: Optional[PlayerTurnState] = None  # this would be initiated every turn
 
     def __repr__(self):
-        return f"{self.name}{self.player_state}"
+        return f"{self.name}{self.state}"
 
     def __lt__(self, other: "Player"):  # is self losing to other
         return self.victory_points < other.victory_points or (
@@ -37,16 +38,36 @@ class Player:
 
     @property
     def victory_points(self):
-        return self.player_state.victory_points
+        return self.state.victory_points
 
     def on_game_start(self):
         pass
 
+    def on_turn_start(self, my_turn: bool):
+        self.init_turn_state(my_turn)
+        if my_turn:
+            self.turns_played += 1
+
     def get_board_view(self) -> str:
-        pass  # TODO: board view by player
+        pass  # TODO: board view by curr_player
 
     def detailed_repr(self):
-        return f"{self.name}{self.player_state.detailed_repr()}"
+        return f"{self.name}{self.state.detailed_repr()}"
+
+    def init_turn_state(self, my_turn: bool):
+        """
+        Initiate the state of current turn.
+        By Default:
+            * On my turns - is initiated with 1 action, 1 buy and 0 coins.
+            * On my turns - is initiated with 0 action, 0 buy and 0 coins.
+
+        Params:
+            my turn: is current turn mine.
+        """
+        if my_turn:
+            self.turn_state = PlayerTurnState(actions=1, buys=1, coins=0)
+        else:
+            self.turn_state = PlayerTurnState(actions=0, buys=0, coins=0)
 
     def play_card_from_hand(self, card: Card, turn_state: PlayerTurnState):
         """
@@ -55,11 +76,11 @@ class Player:
         :param card: the card.
         :param turn_state: current game_stages state.
         """
-        if card not in self.player_state.hand:
-            raise ValueError(f"{card} is not in {self.player_state.hand}")
+        if card not in self.state.hand:
+            raise ValueError(f"{card} is not in {self.state.hand}")
 
-        self.player_state.hand.remove(card)
-        self.player_state.play_area.play(card)
+        self.state.hand.remove(card)
+        self.state.play_area.play(card)
 
         if isinstance(card, Treasure):
             turn_state.coins += card.coins
@@ -76,14 +97,14 @@ class Player:
         """
         Get a card from the Draw pile and put it in the Hand.
         """
-        if self.player_state.draw_pile.is_empty():
+        if self.state.draw_pile.is_empty():
             self.shuffle_discard_to_draw_pile()
-        return self.player_state.draw_pile.draw()
+        return self.state.draw_pile.draw()
 
     def draw_cards(self, amount: int):
         """
         Draw a card `amount` times.
-        If the Draw and Discard piles got emptied - it could return less than the desired `amount` of cards.
+        If the Draw and DiscardCard piles got emptied - it could return less than the desired `amount` of cards.
         """
         cards = [self.draw_card() for _ in range(amount)]
         return [card for card in cards if card]  # card could be None
@@ -93,22 +114,22 @@ class Player:
 
     def discard_hand(self):
         """
-        Move all cards from hand to Discard pile.
+        Move all cards from hand to DiscardCard pile.
         """
-        cards = self.player_state.hand.remove_all()
-        self.player_state.discard_pile.put_all(cards)
+        cards = self.state.hand.remove_all()
+        self.state.discard_pile.put_all(cards)
 
     def discard_play(self):
         """
-        Move all non-Duration cards from the Play Area to the Discard pile.
+        Move all non-Duration cards from the Play Area to the DiscardCard pile.
         """
-        cards = self.player_state.play_area.do_cleanup()
-        self.player_state.discard_pile.put_all(cards)
+        cards = self.state.play_area.do_cleanup()
+        self.state.discard_pile.put_all(cards)
 
     def shuffle_discard_to_draw_pile(self):
         """
-        Shuffle all cards in the Discard pile and put them on the bottom of the Draw pile.
+        Shuffle all cards in the DiscardCard pile and put them on the bottom of the Draw pile.
         """
-        cards = self.player_state.discard_pile.draw_all()
+        cards = self.state.discard_pile.draw_all()
         shuffle(cards)
-        self.player_state.discard_pile.put_all(cards)
+        self.state.discard_pile.put_all(cards)

@@ -3,7 +3,7 @@ from game_mechanics.states.base_state import BasePlayerState
 
 class PlayerTurnState(BasePlayerState):
     """
-    The current state of all player's elements that would be discarded/ rebooted at the end of the turn.
+    The current state of all curr_player's elements that would be discarded/ rebooted at the end of the turn.
     """
 
     def __init__(self, actions: int = 1, buys: int = 1, coins: int = 0):

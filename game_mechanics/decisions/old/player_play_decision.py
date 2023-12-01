@@ -1,5 +1,5 @@
 from game_mechanics.consts import HeadlineFormats
-from game_mechanics.decisions.player_decision import PlayerDecision, CommonChoices
+from game_mechanics.decisions.old.player_decision import PlayerDecision, CommonChoices
 
 
 class PlayerPlayDecision(PlayerDecision):
@@ -20,7 +20,7 @@ class PlayerPlayDecision(PlayerDecision):
         """
         Choose an action to play
 
-        :param player: current player
+        :param curr_player: current curr_player
         :param playable_cards: all options to play
         :return: Was a change made?
         """
