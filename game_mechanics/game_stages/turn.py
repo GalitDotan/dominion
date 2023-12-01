@@ -29,6 +29,8 @@ class Turn(GameStage):
         super().__init__(player, opponents, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
 
         self.turn_state = PlayerTurnState()
+        self.opponents_turn_stage = {opponent: PlayerTurnState(actions=0, buys=1, coins=0) for opponent in
+                                     self.opponents}
         self.is_finished: bool = False
         self.played = []
         self.added = []
@@ -64,7 +66,7 @@ class Turn(GameStage):
 {self.player}
 {opponents_h1}
 {opponents}
-{self.supply}
+{self.game_state.supply}
         """
         end_turn = HeadlineFormats.H2.format(f"{self.player.name}'s game_stages has ended")
         played = HeadlineFormats.H3.format(f"Played: {self.played}")
