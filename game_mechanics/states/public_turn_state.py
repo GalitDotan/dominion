@@ -1,7 +1,7 @@
-from game_mechanics.states.base_state import BaseState
+from game_mechanics.states.base_state import BasePublicState
 
 
-class PublicTurnState(BaseState):
+class PublicTurnState(BasePublicState):
     """
     The current state of all public elements that would be discarded/ rebooted at the end of the turn.
     """

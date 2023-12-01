@@ -24,7 +24,7 @@ class BuyPhase(Phase):
 
     def after_run_iterations(self):
         buying_stage = BuyingStage(player=self.player, turn_state=self.turn_state, supply=self.supply,
-                                   other_players=self.other_players, trash=self.trash)
+                                   opponents=self.opponents, trash=self.trash)
         buying_stage.play()
 
     def run_phase_iteration(self):

@@ -14,8 +14,19 @@ from game_mechanics.states.game_state import GameState
 
 
 class Turn(GameStage):
-    def __init__(self, player: Player, other_players: list[Player], game_state: GameState):
-        super().__init__(player, other_players, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
+    """
+    One turn of a Dominion game.
+    Includes 4 stages:
+        1. Action
+        2. Buy
+        3. Night
+        4. Clean-up
+    
+    The play function is responsible for managing all the state changes and the decision.
+    """
+
+    def __init__(self, player: Player, opponents: list[Player], game_state: GameState):
+        super().__init__(player, opponents, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
 
         self.turn_state = PlayerTurnState()
         self.is_finished: bool = False
@@ -34,7 +45,8 @@ class Turn(GameStage):
             CurrPhase: type
             if isinstance(self.player, HumanPlayer):
                 self.print_if_human(self)
-            phase: Phase = CurrPhase(self.player, self.turn_state, self.supply, self.other_players, self.trash)
+            phase: Phase = CurrPhase(player=self.player, opponents=self.opponents, turn_state=self.turn_state,
+                                     game_state=self.game_state)
             phase.play()
 
     def print_if_human(self, message: Any):
@@ -42,7 +54,7 @@ class Turn(GameStage):
             print(str(message))
 
     def __repr__(self):
-        opponents = '\r\n'.join([str(player) for player in self.other_players])
+        opponents = '\r\n'.join([str(player) for player in self.opponents])
         you_h1 = HeadlineFormats.H1.format(f"You [{self.player.name}]")
         opponents_h1 = HeadlineFormats.H1.format("The Other Players")
         if not self.is_finished:

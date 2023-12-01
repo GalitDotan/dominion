@@ -1,19 +1,18 @@
 from abc import abstractmethod
 from typing import Optional
 
-from game_mechanics.card_structures.trash import Trash
 from game_mechanics.consts import HeadlineFormats
 from game_mechanics.game_stages.game_stage import GameStage
-from game_mechanics.player.player import Player
-from game_mechanics.states.player_turn_state import PlayerTurnState
-from game_mechanics.supply import Supply
 from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.player.player import Player
+from game_mechanics.states.game_state import GameState
+from game_mechanics.states.player_turn_state import PlayerTurnState
 
 
 class Phase(GameStage):
-    def __init__(self, player: Player, turn_state: PlayerTurnState, supply: Supply, other_players: list[Player], trash: Trash,
+    def __init__(self, player: Player, opponents: list[Player], turn_state: PlayerTurnState, game_state: GameState,
                  name: Optional[str] = None):
-        super().__init__(player, other_players, supply, trash, name)
+        super().__init__(player=player, opponents=opponents, game_state=game_state, name=name)
         self.continue_phase: bool = True
         self.turn_state = turn_state
 

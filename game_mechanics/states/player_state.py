@@ -1,7 +1,7 @@
-from game_mechanics.states.base_state import BaseState
+from game_mechanics.states.base_state import BasePlayerState
 
 
-class PlayerState(BaseState):
+class PlayerState(BasePlayerState):
     """
     The current state of the game elements of the player:
         1. The Deck (all the cards he owns)

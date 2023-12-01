@@ -7,10 +7,10 @@ from game_mechanics.states.game_state import GameState
 
 
 class GameStage:
-    def __init__(self, player: Player, other_players: list[Player], game_state: GameState, name: Optional[str] = None):
+    def __init__(self, player: Player, opponents: list[Player], game_state: GameState, name: Optional[str] = None):
         self.name = name if name else self.__class__.__name__
         self.player = player
-        self.other_players = other_players
+        self.opponents = opponents
         self.game_state = game_state
         self.verbose: bool = True
 

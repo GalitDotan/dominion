@@ -1,10 +1,10 @@
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.states.base_state import BaseState
+from game_mechanics.states.base_state import BasePublicState
 from game_mechanics.supply import Supply
 
 
-class GameState(BaseState):
+class GameState(BasePublicState):
     """
     The current state of the public elements of the game:
         1. The supply

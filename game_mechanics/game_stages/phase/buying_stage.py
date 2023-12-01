@@ -18,9 +18,9 @@ class BuyingStage(GameStage):
     The current state of the coins is updated accordingly.
     """
 
-    def __init__(self, player: Player, turn_state: PlayerTurnState, supply: Supply, other_players: list[Player], trash: Trash,
+    def __init__(self, player: Player, turn_state: PlayerTurnState, supply: Supply, opponents: list[Player], trash: Trash,
                  name: Optional[str] = None):
-        super().__init__(player, other_players, supply, trash, name)
+        super().__init__(player, opponents, supply, trash, name)
         self.continue_buying = True
         self.turn_state = turn_state
 

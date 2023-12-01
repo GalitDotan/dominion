@@ -59,31 +59,46 @@ class Game:
     def __eq__(self, other):
         return self.id == other.id
 
+    @property
+    def curr_player(self):
+        return self._play_order[self.player_index]
+
     def run(self):
         """
         Run this game.
         """
         self.status = GameStatus.IN_PROGRESS
         while self.status == GameStatus.IN_PROGRESS:
-            curr_player = self._play_order[self.player_index]  # TODO: fix
-            other_players = self._play_order.copy()
-            other_players.remove(curr_player)
+            curr_player = self.curr_player
+            opponents = self.get_player_opponents()
 
-            turn = Turn(curr_player, other_players, self.game_state)
+            turn = Turn(curr_player, opponents, self.game_state)
             turn.play()
-            self.to_next_player()
+            self._to_next_player()
 
-    def get_opponents(self, player_name: str) -> list[Player]:
-        opponents = self.players.copy()
-        opponents.pop(player_name)
-        return list(opponents.values())
+    def get_player_opponents(self, player: Optional[Player] = None) -> list[Player]:
+        """
+        Get all the opponents of a player.
+        If no player name was supplied - returns the opponents of the current player.
+
+        Params:
+            player_name: the player's name
+
+        Returns:
+            A list of opponents (players).
+        """
+        if not player:
+            player = self._play_order[self.player_index]
+        opponents = self._play_order.copy()
+        opponents.remove(player)
+        return list(opponents)
 
     def get_player_view(self, player_name: str):
         """
         Get current board view from the PoV of the given player.
         """
         player = self.players[player_name]
-        opponents = self.get_opponents(player_name)
+        opponents = self.get_player_opponents(player)
         if self.status == GameStatus.INITIATED:
             return OpeningMessage(player, opponents)
         elif self.status == GameStatus.IN_PROGRESS:
@@ -91,12 +106,6 @@ class Game:
         elif self.status == GameStatus.FINISHED:
             return ScoreBoard(self._play_order)
         raise AttributeError(f'Unknown status {self.status}')
-
-    def to_next_player(self):
-        """
-        Update next player index.
-        """
-        self.player_index = (self.player_index + 1) % self._num_players
 
     def game_over(self, finishing_piles: tuple[str] = DEFAULT_FINISH_PILES) -> bool:
         """
@@ -113,3 +122,9 @@ class Game:
             if pile in empty_pile_names:
                 return True
         return False
+
+    def _to_next_player(self):
+        """
+        Update next player index.
+        """
+        self.player_index = (self.player_index + 1) % self._num_players
