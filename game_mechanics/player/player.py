@@ -4,7 +4,7 @@ from typing import Optional
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
-from game_mechanics.player.turn_state import TurnState
+from game_mechanics.states.player_turn_state import PlayerTurnState
 from game_mechanics.utils.utils import shuffle_copy
 from game_mechanics.game_supplies.card_types.action_card import Action
 from game_mechanics.game_supplies.card_types.attack_card import Attack
@@ -75,7 +75,7 @@ class Player:
     def cards_by_value(self) -> list[Card]:
         return sorted(self._all_cards, key=lambda x: x.value)
 
-    def play_card_from_hand(self, card: Card, turn_state: TurnState):
+    def play_card_from_hand(self, card: Card, turn_state: PlayerTurnState):
         """
         Play a card from _play_order hand and update state accordingly.
 

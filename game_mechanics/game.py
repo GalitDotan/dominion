@@ -4,14 +4,15 @@ from typing import Optional
 from consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, DEFAULT_PILE_SIZE, \
     DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS, GameStatus
 from game_mechanics.card_structures.supply_pile import SupplyPile
+from game_mechanics.game_stages.turn import Turn
 from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.player.player import Player
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
-from game_mechanics.state import GameState
+from game_mechanics.states.game_state import GameState
 
 
-def generate_supply_piles(supply_card_types: tuple, supply_pile_sizes: Optional[tuple[int, ...]] = None) -> list[
+def _generate_supply_piles(supply_card_types: tuple, supply_pile_sizes: Optional[tuple[int, ...]] = None) -> list[
     SupplyPile]:  # TODO: change input to list[tuple(Card, int]]
     """
     Receives a list of card types and the size of each pile.
@@ -47,8 +48,8 @@ class Game:
         num_v_cards = V_CARDS_PER_PLAYERS[self._num_players]
         num_curses = CURSES_CARDS_PER_PLAYER[self._num_players]
         sizes = (num_v_cards, num_v_cards, num_v_cards, num_curses, 30, 40, 60)
-        kingdom_piles = generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
-        standard_piles = generate_supply_piles(STANDARD_CARDS, sizes)
+        kingdom_piles = _generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
+        standard_piles = _generate_supply_piles(STANDARD_CARDS, sizes)
 
         self.game_state: GameState = GameState(kingdom_piles, standard_piles)
 
@@ -59,7 +60,18 @@ class Game:
         return self.id == other.id
 
     def run(self):
-        pass  # TODO: implement
+        """
+        Run this game.
+        """
+        self.status = GameStatus.IN_PROGRESS
+        while self.status == GameStatus.IN_PROGRESS:
+            curr_player = self._play_order[self.player_index]  # TODO: fix
+            other_players = self._play_order.copy()
+            other_players.remove(curr_player)
+
+            turn = Turn(curr_player, other_players, self.game_state)
+            turn.play()
+            self.to_next_player()
 
     def get_opponents(self, player_name: str) -> list[Player]:
         opponents = self.players.copy()

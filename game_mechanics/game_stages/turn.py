@@ -1,6 +1,5 @@
 from typing import Any
 
-from game_mechanics.card_structures.trash import Trash
 from game_mechanics.consts import HeadlineFormats
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.game_stages.phase.action_phase import ActionPhase
@@ -10,15 +9,15 @@ from game_mechanics.game_stages.phase.night_phase import NightPhase
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
-from game_mechanics.player.turn_state import TurnState
-from game_mechanics.supply import Supply
+from game_mechanics.states.player_turn_state import PlayerTurnState
+from game_mechanics.states.game_state import GameState
 
 
 class Turn(GameStage):
-    def __init__(self, player: Player, other_players: list[Player], supply: Supply, trash: Trash):
-        super().__init__(player, other_players, supply, trash, name=f"{player.name}'s {player.turns_played + 1} Turn")
+    def __init__(self, player: Player, other_players: list[Player], game_state: GameState):
+        super().__init__(player, other_players, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
 
-        self.turn_state = TurnState()
+        self.turn_state = PlayerTurnState()
         self.is_finished: bool = False
         self.played = []
         self.added = []

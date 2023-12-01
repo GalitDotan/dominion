@@ -1,4 +1,11 @@
-class TurnState:
+from game_mechanics.states.base_state import BaseState
+
+
+class PlayerTurnState(BaseState):
+    """
+    The current state of all player's elements that would be discarded/ rebooted at the end of the turn.
+    """
+
     def __init__(self, actions: int = 1, buys: int = 1, coins: int = 0):
         self.actions = actions
         self.buys = buys

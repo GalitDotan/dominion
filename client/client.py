@@ -4,7 +4,6 @@ import requests
 
 from consts import Endpoints, GameStatus
 from game_mechanics.game_stages.turn import Turn
-from game_mechanics.screens.openning_message import OpeningMessage
 from response_model.response_model import ResponseModel
 from utils.name_generator import generate_name
 
@@ -51,15 +50,7 @@ class DominionClient:
         """
         Play a Dominion game.
         """
-        game_Status = self.get_game_status()
-        while game_Status == GameStatus.IN_PROGRESS:
-            curr_player = self._play_order[self.player_index]  # TODO: fix
-            other_players = self._play_order.copy()
-            other_players.remove(curr_player)
-
-            turn = Turn(curr_player, other_players, self.supply, self.trash)
-            turn.play()
-            self.to_next_player()
+        pass
 
     def run(self):
         pass  # TODO: run client

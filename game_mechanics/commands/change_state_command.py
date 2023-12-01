@@ -1,5 +1,5 @@
 from game_mechanics.commands.command import Command
-from game_mechanics.player.turn_state import TurnState
+from game_mechanics.states.player_turn_state import PlayerTurnState
 
 
 class ChangeStateCommand(Command):
@@ -8,7 +8,7 @@ class ChangeStateCommand(Command):
         self.plus_buys = plus_buys
         self.plus_coins = plus_coins
 
-    def activate(self, state: TurnState, *args, **kwargs):
+    def activate(self, state: PlayerTurnState, *args, **kwargs):
         """
         Increase state parameters.
 

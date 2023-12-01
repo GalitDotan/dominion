@@ -5,13 +5,13 @@ from game_mechanics.card_structures.trash import Trash
 from game_mechanics.consts import HeadlineFormats
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.player.player import Player
-from game_mechanics.player.turn_state import TurnState
+from game_mechanics.states.player_turn_state import PlayerTurnState
 from game_mechanics.supply import Supply
 from game_mechanics.game_supplies.card_types.card import Card
 
 
 class Phase(GameStage):
-    def __init__(self, player: Player, turn_state: TurnState, supply: Supply, other_players: list[Player], trash: Trash,
+    def __init__(self, player: Player, turn_state: PlayerTurnState, supply: Supply, other_players: list[Player], trash: Trash,
                  name: Optional[str] = None):
         super().__init__(player, other_players, supply, trash, name)
         self.continue_phase: bool = True

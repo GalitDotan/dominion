@@ -8,7 +8,7 @@ from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player
-from game_mechanics.player.turn_state import TurnState
+from game_mechanics.states.player_turn_state import PlayerTurnState
 from game_mechanics.supply import Supply, buy
 
 
@@ -18,7 +18,7 @@ class BuyingStage(GameStage):
     The current state of the coins is updated accordingly.
     """
 
-    def __init__(self, player: Player, turn_state: TurnState, supply: Supply, other_players: list[Player], trash: Trash,
+    def __init__(self, player: Player, turn_state: PlayerTurnState, supply: Supply, other_players: list[Player], trash: Trash,
                  name: Optional[str] = None):
         super().__init__(player, other_players, supply, trash, name)
         self.continue_buying = True
