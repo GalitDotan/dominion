@@ -20,7 +20,7 @@ class Pile(CardStructure):
 
     def draw_all(self) -> list[Card]:
         """
-        Draw all the cards_packs from the pile.
+        Draw all the cards from the pile.
         """
         return self.remove_all()
 
@@ -32,7 +32,7 @@ class Pile(CardStructure):
 
     def put_all(self, cards: list[Card]):
         """
-        Put all given cards_packs on top of the pile.
+        Put all given cards on top of the pile.
         Last card of the input would become the top card of the pile.
         """
         self.extend(cards)

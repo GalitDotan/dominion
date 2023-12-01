@@ -18,7 +18,7 @@ class BuyPhase(Phase):
         """
         playable_cards = self.get_playable_cards()
         if len(playable_cards) > 0:
-            self.print_if_human(f'Playable cards_packs: {[str(card) for card in playable_cards]}')
+            self.print_if_human(f'Playable cards: {[str(card) for card in playable_cards]}')
             self.print_if_human("You may choose treasures to play")
             self.autoplay_treasures()
 
@@ -54,7 +54,7 @@ class BuyPhase(Phase):
 
     def play_treasures_by_choice(self) -> bool:
         """
-        Allow player to choose treasure cards_packs from his hand.
+        Allow player to choose treasure cards from his hand.
         """
         playable_cards = self.get_playable_cards()
         playable_cards_keys = list(playable_cards.keys())

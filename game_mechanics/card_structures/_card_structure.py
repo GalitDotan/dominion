@@ -60,7 +60,7 @@ class CardStructure(ABC):
 
     def remove_all(self) -> list[Card]:
         """
-        Remove all the cards_packs from the structure.
+        Remove all the cards from the structure.
         """
         cards = self._cards
         self._cards = []

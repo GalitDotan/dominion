@@ -46,9 +46,9 @@ class Phase(GameStage):
 
     def get_playable_cards(self) -> dict[Card, int]:
         """
-        Of all the cards_packs in hand - get all the cards_packs that can be played in this phase.
+        Of all the cards in hand - get all the cards that can be played in this phase.
 
-        :return: The playable cards_packs.
+        :return: The playable cards.
         """
         playable = {}
         for card, cnt in self.player.hand.cards_dict.items():

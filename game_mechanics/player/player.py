@@ -17,8 +17,8 @@ from utils.name_generator import generate_name
 
 def _calc_vp(cards: list[Card]) -> int:
     """
-    Calc the sum of victory points received by the given cards_packs.
-    :param cards: a list of cards_packs.
+    Calc the sum of victory points received by the given cards.
+    :param cards: a list of cards.
     :return: sum of victory points.
     """
     vp = 0
@@ -30,12 +30,12 @@ def _calc_vp(cards: list[Card]) -> int:
 
 class Player:
     """
-    This class contains all the cards_packs the player currently has.
+    This class contains all the cards the player currently has.
     """
 
     def __init__(self, cards: list[Card], name: Optional[str] = None):
         self.name = name if name else generate_name()
-        self._all_cards: list[Card] = cards.copy()  # all cards_packs the player has
+        self._all_cards: list[Card] = cards.copy()  # all cards the player has
 
         # player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))

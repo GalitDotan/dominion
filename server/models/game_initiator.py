@@ -12,7 +12,7 @@ from game_mechanics.player.player import Player
 
 def get_default_player_cards() -> list[Card]:
     """
-    Get default cards_packs: 7 Coppers and 3 Estates.
+    Get default cards: 7 Coppers and 3 Estates.
     """
     coppers: list[Card] = [Copper() for _ in range(7)]
     estates: list[Card] = [Estate() for _ in range(3)]

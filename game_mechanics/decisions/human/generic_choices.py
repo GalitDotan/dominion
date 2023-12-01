@@ -39,7 +39,7 @@ def get_human_player_multy_choice(valid_choices: list[str], message: str) -> lis
 def choose_cards_from_human_hand(player: HumanPlayer) -> list[Card]:
     cards = player.hand.cards
     hand_cards = [card.name for card in cards]
-    answer = get_human_player_multy_choice(hand_cards, "Choose which cards_packs to ")
+    answer = get_human_player_multy_choice(hand_cards, "Choose which cards to ")
     removed_cards = []
     for i in answer:
         card = cards[int(i)]
