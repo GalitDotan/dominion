@@ -77,7 +77,7 @@ class BaseDecision(ABC):
                 return True
             return choice in range(1, len(self.options) + 1) and self.min_choices_allowed == 1
         for choice in choices:
-            if choice in range(1, len(self.options) + 1):
+            if choice not in range(1, len(self.options) + 1):
                 return False
         return self.min_choices_allowed <= len(choices) <= self.max_choices_allowed
 

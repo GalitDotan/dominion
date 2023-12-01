@@ -20,15 +20,15 @@ from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Silver imp
 
 
 class Endpoints:
-    INIT_GAME = 'init-game'
-    START_GAME = 'start-game'
-    JOIN_GAME = 'join-game'
-    VIEW_GAME_BOARD = 'view-game-board'
-    GAME_STATUS = 'game-status'
-    GET_DECISION = 'get-decision'
-    DECIDE = 'decide'
-    VIEW_PLAYERS = 'view-players'
-    ADD_BOT = 'add-bot-to-game'  # TODO: implement this
+    INIT_GAME = '/init-game'
+    START_GAME = '/start-game'
+    JOIN_GAME = '/join-game'
+    VIEW_GAME_BOARD = '/view-game-board'
+    GAME_STATUS = '/game-status'
+    GET_DECISION = '/get-decision'
+    DECIDE = '/decide'
+    VIEW_PLAYERS = '/view-players'
+    ADD_BOT = '/add-bot-to-game'  # TODO: implement this
 
 
 class GameStatus(Enum):
@@ -40,6 +40,7 @@ class GameStatus(Enum):
 class ServerConf:
     HOST: str = '0.0.0.0'
     PORT = 8000
+    SCHEMA = 'http'
 
 
 FIRST_GAME_CARDS = (Cellar, Moat, Merchant, Village, Workshop, Militia, Remodel, Smithy, Market, Mine)

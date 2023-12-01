@@ -4,16 +4,18 @@ from typing import Optional
 import requests
 
 from base_decision import ClientDecision, BaseDecision
-from consts import Endpoints, GameStatus
+from consts import Endpoints, GameStatus, ServerConf
 from game_mechanics.decisions.game_decisions import GameDecision
 from response_model.response_model import ResponseModel
 from utils.name_generator import generate_name
 
+SERVER_IP = '127.0.0.1'
+
 
 class DominionClient:
     def __init__(self):
-        self._server_url = "127.0.0.1"
-        self._url_format = self._server_url + '/{}'
+        self._server_url = f'{ServerConf.SCHEMA}://{SERVER_IP}:{ServerConf.PORT}'
+        self._url_format = self._server_url + '{}'
 
         self.player_name: str = generate_name()
         self.game_id: Optional[str] = None
@@ -24,6 +26,7 @@ class DominionClient:
         """
         url = self._url_format.format(endpoint)
         response = requests.post(url=url, data=data)
+        response.raise_for_status()
         date = ResponseModel(**response.json())
         return date
 
