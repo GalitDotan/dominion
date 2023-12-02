@@ -1,10 +1,11 @@
 from abc import ABC
+from typing import Any
 
-from base_decision import BaseDecision
+from base_decision import ServerDecision
 from game_mechanics.game_supplies.card_types.card import Card
 
 
-class GameDecision(BaseDecision):
+class GameDecision(ServerDecision, ABC):
     """
     Represents a decision a curr_player has to make.
     """
@@ -23,8 +24,8 @@ class NumDecision(GameDecision):
     Deciding on a number from given range.
     """
 
-    def __init__(self, default: int = 0):
-        super().__init__()
+    def __init__(self, options: list[Any], min_choices_allowed: int, max_choices_allowed: int, default: int = 0):
+        super().__init__(options, min_choices_allowed, max_choices_allowed)
         self.num = default
 
 

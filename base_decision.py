@@ -1,5 +1,4 @@
 from abc import ABC
-from asyncio import sleep
 from typing import Any, Optional
 
 NULL_CHOICE: int = -1
@@ -34,10 +33,6 @@ class BaseDecision(ABC):
         if len(self._decisions) == 1:
             return self._decisions[0]
         return self._decisions.copy()
-
-    async def wait_for_decision(self):
-        while not self.decided:
-            await sleep(1)
 
     def decide(self, choices: list[int] | int):
         """
@@ -84,6 +79,23 @@ class BaseDecision(ABC):
 
 class ClientDecision(BaseDecision):
     """
-    A decision of the client.
+    A decision that is generated on Client side.
     """
     pass
+
+
+class ServerDecision(BaseDecision):
+    """
+    A decision that is generated on Server side.
+    """
+
+    async def request_decision(self, websocket):
+        """
+        Send the decision through the websocket and await valid response.
+        If invalid - retry.
+        """
+        choices = await websocket.recv()
+        try:
+            self.decide(choices)
+        except ValueError:
+            await self.request_decision(websocket)

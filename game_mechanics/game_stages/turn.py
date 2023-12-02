@@ -1,6 +1,6 @@
 from typing import Any
 
-from game_mechanics.consts import HeadlineFormats
+from config import HeadlineFormats
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.game_stages.phase.action_phase import ActionPhase
 from game_mechanics.game_stages.phase.buy_phase import BuyPhase

@@ -1,34 +1,44 @@
 from asyncio import sleep
 from typing import Optional
 
-import requests
+import websockets
 
 from base_decision import ClientDecision, BaseDecision
-from consts import Endpoints, GameStatus, ServerConf
+from config import Endpoints, ServerConf
 from game_mechanics.decisions.game_decisions import GameDecision
+from game_status import GameStatus
 from response_model.response_model import ResponseModel
 from utils.name_generator import generate_name
 
-SERVER_IP = '127.0.0.1'
+
+async def hello():
+    uri = f'{ServerConf.SCHEMA}://{ServerConf.IP}:{ServerConf.PORT}'
+    async with websockets.connect(uri) as websocket:
+        name = input("What's your name? ")
+
+        await websocket.send(name)
+        print(f">>> {name}")
+
+        greeting = await websocket.recv()
+        print(f"<<< {greeting}")
 
 
 class DominionClient:
     def __init__(self):
-        self._server_url = f'{ServerConf.SCHEMA}://{SERVER_IP}:{ServerConf.PORT}'
+        self._server_url = f'{ServerConf.SCHEMA}://{ServerConf.IP}:{ServerConf.PORT}'
         self._url_format = self._server_url + '{}'
 
         self.player_name: str = generate_name()
         self.game_id: Optional[str] = None
 
-    def _get_server_response(self, endpoint: str, data: dict) -> ResponseModel:
+    async def _get_server_response(self, endpoint: str, data: dict) -> str | bytes:
         """
         Get response from the game server.
         """
         url = self._url_format.format(endpoint)
-        response = requests.post(url=url, data=data)
-        response.raise_for_status()
-        date = ResponseModel(**response.json())
-        return date
+        async with websockets.connect(url) as websocket:
+            await websocket.send(data)
+            return await websocket.recv()
 
     def init_game(self) -> str:
         """

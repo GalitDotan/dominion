@@ -1,14 +1,15 @@
 from typing import Optional
 
-from consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, DEFAULT_PILE_SIZE, \
-    DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS, GameStatus
 from game_mechanics.card_structures.supply_pile import SupplyPile
+from game_mechanics.consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, \
+    DEFAULT_PILE_SIZE, DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_stages.turn import Turn
 from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.player.player import Player
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
 from game_mechanics.states.game_state import GameState
+from game_status import GameStatus
 
 
 # TODO: change input to list[tuple(Card, int]]

@@ -1,7 +1,7 @@
 from abc import abstractmethod
 from typing import Optional
 
-from game_mechanics.consts import HeadlineFormats
+from config import HeadlineFormats
 from game_mechanics.game_stages.game_stage import GameStage
 from game_mechanics.game_supplies.card_types.card import Card
 from game_mechanics.player.player import Player

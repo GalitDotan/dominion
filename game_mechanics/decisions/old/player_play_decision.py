@@ -1,4 +1,4 @@
-from game_mechanics.consts import HeadlineFormats
+from config import HeadlineFormats
 from game_mechanics.decisions.old.player_decision import PlayerDecision, CommonChoices
 
 

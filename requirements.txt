@@ -3,5 +3,6 @@ tabulate~=0.9
 fastapi~=0.104
 pydantic~=2.5
 uvicorn~=0.24
+requests~=2.31
 asyncio~=3.4
 websockets~=12.0

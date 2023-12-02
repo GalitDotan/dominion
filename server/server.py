@@ -1,11 +1,13 @@
+import asyncio
 from threading import Thread
 
-import uvicorn
-from fastapi import FastAPI
+import websockets
+from fastapi import FastAPI, WebSocket
 from fastapi.exceptions import HTTPException
 
-from consts import Endpoints, GameStatus, ServerConf
+from config import Endpoints, ServerConf
 from game_mechanics.game import Game
+from game_status import GameStatus
 from models.game_initiator import GameInitiator
 from response_model.response_model import ResponseModel
 
@@ -147,10 +149,28 @@ async def get_game_status(game_id: str):
                          game_status=game.status.name)
 
 
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    while True:
+        data = await websocket.receive_text()
+        await websocket.send_text(f"Message text was: {data}")
+
+
 @app.post(Endpoints.ADD_BOT)
 async def add_bot_to_game() -> ResponseModel:
     pass  # TODO: implement bot addition
 
 
+async def init_connection():
+    pass
+
+
+async def main():
+    async with websockets.serve(init_connection, ServerConf.IP, ServerConf.PORT):
+        await asyncio.Future()  # run forever
+
+
 if __name__ == "__main__":
-    uvicorn.run(app, host=ServerConf.HOST, port=ServerConf.PORT)
+    # uvicorn.run(app, host=ServerConf.HOST, port=ServerConf.PORT)
+    asyncio.run(main())
