@@ -1,5 +1,7 @@
-random_word
-tabulate
-fastapi
-pydantic
-uvicorn
+random_word~=1.0
+tabulate~=0.9
+fastapi~=0.104
+pydantic~=2.5
+uvicorn~=0.24
+asyncio~=3.4
+websockets~=12.0
