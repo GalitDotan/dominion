@@ -2,7 +2,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from game_status import GameStatus
+from consts import GameStatus
 from game_mechanics.decisions.game_decisions import GameDecision
 
 

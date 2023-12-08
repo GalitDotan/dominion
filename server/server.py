@@ -10,7 +10,7 @@ from starlette.templating import Jinja2Templates
 from config import Endpoints
 from config import ServerConf
 from game_mechanics.game import Game
-from game_status import GameStatus
+from consts import GameStatus
 from models.game_initiator import GameInitiator
 from response_model.response_model import ResponseModel
 

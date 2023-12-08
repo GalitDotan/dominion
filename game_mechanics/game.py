@@ -9,7 +9,7 @@ from game_mechanics.player.player import Player
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
 from game_mechanics.states.game_state import GameState
-from game_status import GameStatus
+from consts import GameStatus
 
 
 # TODO: change input to list[tuple(Card, int]]

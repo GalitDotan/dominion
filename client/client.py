@@ -6,7 +6,7 @@ import websockets
 from base_decision import ClientDecision, BaseDecision
 from config import Endpoints, ServerConf
 from game_mechanics.decisions.game_decisions import GameDecision
-from game_status import GameStatus
+from consts import GameStatus
 from utils.name_generator import generate_name
 
 
