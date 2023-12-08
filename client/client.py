@@ -7,20 +7,7 @@ from base_decision import ClientDecision, BaseDecision
 from config import Endpoints, ServerConf
 from game_mechanics.decisions.game_decisions import GameDecision
 from game_status import GameStatus
-from response_model.response_model import ResponseModel
 from utils.name_generator import generate_name
-
-
-async def hello():
-    uri = f'{ServerConf.SCHEMA}://{ServerConf.IP}:{ServerConf.PORT}'
-    async with websockets.connect(uri) as websocket:
-        name = input("What's your name? ")
-
-        await websocket.send(name)
-        print(f">>> {name}")
-
-        greeting = await websocket.recv()
-        print(f"<<< {greeting}")
 
 
 class DominionClient:
@@ -128,6 +115,18 @@ class DominionClient:
             self.make_decision(decision)
         decision.decide(choices)
 
+    async def hello(self):
+        uri = f'{ServerConf.SCHEMA}://{ServerConf.IP}/{Endpoints.WEB_SOCKET}:{ServerConf.PORT}'
+        print(uri)
+        async with websockets.connect(uri) as websocket:
+            name = input("What's your name? ")
+
+            await websocket.send(name)
+            print(f">>> {name}")
+
+            greeting = await websocket.recv()
+            print(f"<<< {greeting}")
+
     def run(self):
         print(f'Hello {self.player_name} and welcome to Dominion')
         decision = ClientDecision(options=['Init', 'Join'], min_choices_allowed=1, max_choices_allowed=1)
@@ -151,4 +150,4 @@ class DominionClient:
 
 if __name__ == '__main__':
     client = DominionClient()
-    client.run()
+    client.hello()
