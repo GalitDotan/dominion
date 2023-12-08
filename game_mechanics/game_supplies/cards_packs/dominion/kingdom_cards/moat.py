@@ -5,4 +5,4 @@ class Moat(Action):
     def __init__(self):
         super().__init__(name='Moat',
                          cost=2,
-                         commands=[])
+                         actions=[])

@@ -1,6 +1,6 @@
 from game_mechanics.effects.draw_cards import Draw
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.game_decisions import NumOptions, CardsOptions
+from game_mechanics.game_options.game_options import NumOptions, CardsOptions
 from game_mechanics.states.game_state import GameState
 
 

@@ -1,5 +1,5 @@
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.game_decisions import CardsOptions
+from game_mechanics.game_options.game_options import CardsOptions
 
 
 class TrashFromHand(Effect):

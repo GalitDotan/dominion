@@ -22,7 +22,7 @@ class GameStage:
     def play(self):
         pass
 
-    def print_if_human(self, message: Any):
+    def print(self, message: Any):
         """
         Print to screen, only if the curr_player is human.
         """

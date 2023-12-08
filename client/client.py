@@ -5,7 +5,7 @@ import websockets
 
 from options import ClientOptions, Options
 from config import Endpoints, ServerConf
-from game_mechanics.game_options.game_decisions import GameOptions
+from game_mechanics.game_options.game_options import GameOptions
 from consts import GameStatus
 from utils.name_generator import generate_name
 
@@ -131,12 +131,12 @@ class DominionClient:
         print(f'Hello {self.player_name} and welcome to Dominion')
         decision = ClientOptions(options=['Init', 'Join'], min_choices_allowed=1, max_choices_allowed=1)
         self.make_decision(decision)
-        if decision.decision == 'Init':
+        if decision.chosen_option == 'Init':
             self.init_game()
             print(f'Current players: {self.view_players()}')
             decision = ClientOptions(options=['Yes', 'No'], min_choices_allowed=1, max_choices_allowed=1,
                                      question="Would you like to start the game?")
-            while not decision.decided or decision.decision == 'Yes':
+            while not decision.decided or decision.chosen_option == 'Yes':
                 decision.undo_decision()
                 self.make_decision(decision)
         else:

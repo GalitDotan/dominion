@@ -1,5 +1,5 @@
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.game_decisions import EmptyOptions
+from game_mechanics.game_options.game_options import EmptyOptions
 from game_mechanics.player.player import Player
 from game_mechanics.states.game_state import GameState
 

@@ -54,7 +54,7 @@ class Turn(GameStage):
                                      game_state=self.game_state)
             phase.play()
 
-    def print_if_human(self, message: Any):  # TODO: remove
+    def print(self, message: Any):  # TODO: remove
         if isinstance(self.player, HumanPlayer):
             print(str(message))
 
@@ -84,7 +84,7 @@ class Turn(GameStage):
 
     def _night_phase(self, include_night: bool = False):
         if include_night:
-            self.print_if_human(HeadlineFormats.H1.format("Welcome to your Night Phase!"))
+            self.print(HeadlineFormats.H1.format("Welcome to your Night Phase!"))
         return
 
     def _cleanup_phase(self):

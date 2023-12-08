@@ -1,7 +1,9 @@
 from abc import ABC
-from typing import Any, Optional
+from typing import Optional, TypeVar
 
 NULL_CHOICE: int = -1
+
+T = TypeVar("T")
 
 
 class Options(ABC):
@@ -9,13 +11,13 @@ class Options(ABC):
     Represents a decision a player has to make.
     """
 
-    def __init__(self, options: list[Any], min_choices_allowed: int, max_choices_allowed: int,
+    def __init__(self, options: list[T], min_choices_allowed: int, max_choices_allowed: int,
                  question: str = "What do you choose?"):
         self.question: str = question
-        self.options: list[Any] = options
+        self.options: list[T] = options
         self.decided: bool = False
         self.indexes_chosen: int | list[int] = []
-        self._decisions: Optional[list[Any]] = None
+        self._chosen_options: Optional[list[T]] = None
         self.min_choices_allowed: int = min_choices_allowed
         self.max_choices_allowed: int = max_choices_allowed
 
@@ -27,12 +29,18 @@ class Options(ABC):
         return f'{self.question}\r\n{formatted_options}\r\n>> '
 
     @property
-    def decision(self) -> Any | list[Any]:
+    def chosen_option(self) -> T:
+        if not self.decided:
+            raise Exception('Decisions were not yet made')
+        if len(self._chosen_options) != 1:
+            raise ValueError('There is more than one chosen option')
+        return self._chosen_options[0]
+
+    @property
+    def chosen_options(self) -> list[T]:
         if not self.decided:
             raise Exception("Decisions were not yet made")
-        if len(self._decisions) == 1:
-            return self._decisions[0]
-        return self._decisions.copy()
+        return self._chosen_options.copy()
 
     def decide(self, choices: list[int] | int):
         """
@@ -51,7 +59,7 @@ class Options(ABC):
                 choices = []
             else:
                 choices = [choices]
-        self._decisions = choices
+        self._chosen_options = choices
         self.indexes_chosen = choices
         self.decided = True
 
@@ -59,7 +67,7 @@ class Options(ABC):
         """
         Undo the choice.
         """
-        self._decisions = []
+        self._chosen_options = []
         self.decided = False
 
     def is_valid_choice(self, choices: list[int] | int) -> bool:

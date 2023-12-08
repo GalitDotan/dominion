@@ -3,7 +3,7 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.game_options.game_decisions import GameOptions
+from game_mechanics.game_options.game_options import GameOptions
 from game_mechanics.player.player import Player
 from game_mechanics.states.base_state import BasePublicState
 from game_mechanics.supply import Supply

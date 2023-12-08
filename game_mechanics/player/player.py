@@ -85,7 +85,7 @@ class Player:
         if isinstance(card, Treasure):
             turn_state.coins += card.coins
         if isinstance(card, Action):
-            for cmd in card.commands:
+            for cmd in card.actions:
                 pass
         if isinstance(card, Attack):
             for cmd in card.attacks:

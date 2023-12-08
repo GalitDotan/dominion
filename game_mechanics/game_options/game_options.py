@@ -32,11 +32,20 @@ class NumOptions(GameOptions):
         self.num = default
 
 
-class CardsOptions(GameOptions, ABC):
+class CardsOptions(GameOptions):
     """
     Choosing cards from a given list
     """
 
-    def __init__(self, options: list[Any], min_choices_allowed: int, max_choices_allowed: int):
+    def __init__(self, options: list[Card], min_choices_allowed: int, max_choices_allowed: int):
         super().__init__(options, min_choices_allowed, max_choices_allowed)
         self.chosen_cards: list[Card] = []
+
+    def decide(self, choices: list[int] | int):
+        super().decide(choices)
+        self.chosen_cards = self._chosen_options
+
+
+class PlayableCards(CardsOptions):
+    def __init__(self, options: list[Card]):
+        super().__init__(options, min_choices_allowed=0, max_choices_allowed=1)

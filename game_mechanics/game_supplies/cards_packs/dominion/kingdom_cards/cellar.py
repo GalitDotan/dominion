@@ -6,4 +6,4 @@ class Cellar(Action):
     def __init__(self):
         super().__init__(name='Cellar',
                          cost=2,
-                         commands=[IncStateCounter(actions=1)])
+                         actions=[IncStateCounter(actions=1)])

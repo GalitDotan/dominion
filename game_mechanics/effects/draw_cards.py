@@ -1,4 +1,4 @@
-from game_mechanics.game_options.game_decisions import NumOptions
+from game_mechanics.game_options.game_options import NumOptions
 from game_mechanics.effects.effect import Effect
 
 

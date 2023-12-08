@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from consts import GameStatus
-from game_mechanics.game_options.game_decisions import GameOptions
+from game_mechanics.game_options.game_options import GameOptions
 
 
 class ResponseModel(BaseModel):

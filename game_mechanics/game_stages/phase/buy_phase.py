@@ -1,6 +1,6 @@
 from game_mechanics.game_options.old.human.generic_choices import get_human_player_multy_choice
 from game_mechanics.game_options.old.player_decision import CommonChoices
-from game_mechanics.game_stages.phase.buying_stage import BuyingStage
+from game_mechanics.game_stages.stages.buying_stage import BuyingStage
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.game_supplies.card_types.treasure_card import Treasure
 from game_mechanics.player.bot_player import BotPlayer
@@ -18,8 +18,8 @@ class BuyPhase(Phase):
         """
         playable_cards = self.get_playable_cards()
         if len(playable_cards) > 0:
-            self.print_if_human(f'Playable cards: {[str(card) for card in playable_cards]}')
-            self.print_if_human("You may choose treasures to play")
+            self.print(f'Playable cards: {[str(card) for card in playable_cards]}')
+            self.print("You may choose treasures to play")
             self.autoplay_treasures()
 
     def after_run_iterations(self):

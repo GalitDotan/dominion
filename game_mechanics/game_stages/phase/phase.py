@@ -30,9 +30,9 @@ class Phase(GameStage):
         """
         playable_cards = self.get_playable_cards()
         if not playable_cards:
-            self.print_if_human("You have no action playable in hand... finishing phase")
+            self.print("You have no action playable in hand... finishing phase")
             return
-        self.print_if_human(HeadlineFormats.H1.format(f"Welcome to your {self.name} Phase!"))
+        self.print(HeadlineFormats.H1.format(f"Welcome to your {self.name} Phase!"))
         self.before_run_iterations()
         while self.continue_phase:
             self.run_phase_iteration()
@@ -47,17 +47,4 @@ class Phase(GameStage):
     @abstractmethod
     def run_phase_iteration(self):
         pass
-
-    def get_playable_cards(self) -> dict[Card, int]:
-        """
-        Of all the cards in hand - get all the cards that can be played in this phase.
-
-        :return: The playable cards.
-        """
-        playable = {}
-        for card, cnt in self.player.state.hand.cards_dict.items():
-            for playable_type in self.playable_types:
-                if isinstance(card, playable_type):  # TODO: fix this
-                    playable[card] = cnt
-
-        return playable
+   
