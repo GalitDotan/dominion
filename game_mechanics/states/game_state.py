@@ -3,7 +3,7 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.decisions.game_decisions import GameDecision
+from game_mechanics.game_options.game_decisions import GameOptions
 from game_mechanics.player.player import Player
 from game_mechanics.states.base_state import BasePublicState
 from game_mechanics.supply import Supply
@@ -36,7 +36,7 @@ class GameState(BasePublicState):
         self.player_index = 0
         self._num_players = len(players)
 
-        self.waiting_decisions: dict[str, Optional[GameDecision]] = {name: None for name in self._play_order}
+        self.waiting_decisions: dict[str, Optional[GameOptions]] = {name: None for name in self._play_order}
 
     @property
     def curr_player(self):
@@ -75,6 +75,6 @@ class GameState(BasePublicState):
         """
         Get the waiting decision of the given player name
         """
-        decision: GameDecision = self.waiting_decisions[player_name]
+        decision: GameOptions = self.waiting_decisions[player_name]
         decision.decide(option_chosen)
         self.waiting_decisions[player_name] = None

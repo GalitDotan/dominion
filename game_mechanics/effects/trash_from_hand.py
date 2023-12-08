@@ -1,9 +1,8 @@
-from game_mechanics.decisions.game_decisions import TrashDecision
 from game_mechanics.effects.effect import Effect
+from game_mechanics.game_options.game_decisions import CardsOptions
 
 
 class TrashFromHand(Effect):
-    def on_activation(self, decision: TrashDecision):
+    def on_activation(self, decision: CardsOptions):
         to_trash = decision.cards
-        self.
         self.player.discard_hand()

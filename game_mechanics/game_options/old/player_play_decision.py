@@ -1,5 +1,5 @@
 from config import HeadlineFormats
-from game_mechanics.decisions.old.player_decision import PlayerDecision, CommonChoices
+from game_mechanics.game_options.old.player_decision import PlayerDecision, CommonChoices
 
 
 class PlayerPlayDecision(PlayerDecision):

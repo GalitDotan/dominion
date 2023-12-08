@@ -1,8 +1,8 @@
 from abc import abstractmethod, ABC
 from typing import Optional
 
-from base_decision import BaseDecision
-from game_mechanics.decisions.game_decisions import GameDecision
+from options import Options
+from game_mechanics.game_options.game_decisions import GameOptions
 from game_mechanics.states.game_state import GameState
 
 
@@ -14,7 +14,7 @@ class Effect(ABC):
     def __init__(self, followup_effect: Optional['Effect'] = None):
         self.followup_effect = followup_effect
 
-    def activate(self, game_state: GameState, decision: GameDecision):
+    def activate(self, game_state: GameState, decision: GameOptions):
         """
         Activate this effect according to a player's decision.
 
@@ -23,10 +23,10 @@ class Effect(ABC):
             decision: The decision of the player.
         """
         decision.request_decision()
-        result: Optional[GameDecision] = self.on_activation(game_state, decision)
+        result: Optional[GameOptions] = self.on_activation(game_state, decision)
         if self.followup_effect:
             self.followup_effect.activate(game_state, result)
 
     @abstractmethod
-    def on_activation(self, game_state: GameState, decision: BaseDecision):
+    def on_activation(self, game_state: GameState, decision: Options):
         pass

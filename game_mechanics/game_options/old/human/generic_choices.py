@@ -1,4 +1,4 @@
-from game_mechanics.decisions.old.player_decision import CommonChoices
+from game_mechanics.game_options.old.player_decision import CommonChoices
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.game_supplies.card_types.card import Card
 
@@ -30,7 +30,7 @@ def get_human_player_multy_choice(valid_choices: list[str], message: str) -> lis
     print(message)
     for i, card_name in enumerate(valid_choices):
         print(f'{i}. {card_name}')
-    answers = input("Your decisions: ")
+    answers = input("Your game_options: ")
     if answers is CommonChoices.NONE_CHOICE:
         return [CommonChoices.NONE_CHOICE.name]
     return answers.split()

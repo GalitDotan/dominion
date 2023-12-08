@@ -4,7 +4,7 @@ from typing import Any, Optional
 NULL_CHOICE: int = -1
 
 
-class BaseDecision(ABC):
+class Options(ABC):
     """
     Represents a decision a player has to make.
     """
@@ -77,14 +77,14 @@ class BaseDecision(ABC):
         return self.min_choices_allowed <= len(choices) <= self.max_choices_allowed
 
 
-class ClientDecision(BaseDecision):
+class ClientOptions(Options):
     """
     A decision that is generated on Client side.
     """
     pass
 
 
-class ServerDecision(BaseDecision):
+class ServerOptions(Options):
     """
     A decision that is generated on Server side.
     """
@@ -94,7 +94,7 @@ class ServerDecision(BaseDecision):
         Send the decision through the websocket and await valid response.
         If invalid - retry.
         """
-        choices = await websocket.recv()
+        choices = await websocket.recv()  # TODO: not here...
         try:
             self.decide(choices)
         except ValueError:

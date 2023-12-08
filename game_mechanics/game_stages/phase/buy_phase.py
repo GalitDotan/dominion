@@ -1,5 +1,5 @@
-from game_mechanics.decisions.old.human.generic_choices import get_human_player_multy_choice
-from game_mechanics.decisions.old.player_decision import CommonChoices
+from game_mechanics.game_options.old.human.generic_choices import get_human_player_multy_choice
+from game_mechanics.game_options.old.player_decision import CommonChoices
 from game_mechanics.game_stages.phase.buying_stage import BuyingStage
 from game_mechanics.game_stages.phase.phase import Phase
 from game_mechanics.game_supplies.card_types.treasure_card import Treasure

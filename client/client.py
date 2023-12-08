@@ -3,9 +3,9 @@ from typing import Optional
 
 import websockets
 
-from base_decision import ClientDecision, BaseDecision
+from options import ClientOptions, Options
 from config import Endpoints, ServerConf
-from game_mechanics.decisions.game_decisions import GameDecision
+from game_mechanics.game_options.game_decisions import GameOptions
 from consts import GameStatus
 from utils.name_generator import generate_name
 
@@ -71,7 +71,7 @@ class DominionClient:
                                              {'game_id': self.game_id, 'player_name': self.player_name})
         return response.game_status
 
-    def get_decision(self) -> Optional[GameDecision]:
+    def get_decision(self) -> Optional[GameOptions]:
         """
         Check if there's a decision to make.
         If there is - get it.
@@ -99,7 +99,7 @@ class DominionClient:
                 self.make_decision(decision)
                 self.send_decision_response(decision.indexes_chosen)
 
-    def make_decision(self, decision: BaseDecision):
+    def make_decision(self, decision: Options):
         """
         Print decision and get client's response.
         If valid - update decision.
@@ -129,13 +129,13 @@ class DominionClient:
 
     def run(self):
         print(f'Hello {self.player_name} and welcome to Dominion')
-        decision = ClientDecision(options=['Init', 'Join'], min_choices_allowed=1, max_choices_allowed=1)
+        decision = ClientOptions(options=['Init', 'Join'], min_choices_allowed=1, max_choices_allowed=1)
         self.make_decision(decision)
         if decision.decision == 'Init':
             self.init_game()
             print(f'Current players: {self.view_players()}')
-            decision = ClientDecision(options=['Yes', 'No'], min_choices_allowed=1, max_choices_allowed=1,
-                                      question="Would you like to start the game?")
+            decision = ClientOptions(options=['Yes', 'No'], min_choices_allowed=1, max_choices_allowed=1,
+                                     question="Would you like to start the game?")
             while not decision.decided or decision.decision == 'Yes':
                 decision.undo_decision()
                 self.make_decision(decision)
