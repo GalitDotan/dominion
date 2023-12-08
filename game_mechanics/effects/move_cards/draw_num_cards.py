@@ -7,5 +7,5 @@ class DrawNum(Effect):
         super().__init__(game_state)
         self.num = num
 
-    def on_activation(self, decision: None = None):
+    def on_activation(self, game_state: None, player):
         self.player.draw(self.num)

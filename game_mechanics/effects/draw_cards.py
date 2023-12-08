@@ -3,5 +3,5 @@ from game_mechanics.effects.effect import Effect
 
 
 class Draw(Effect):
-    def on_activation(self, decision: NumOptions):
+    def on_activation(self, game_state: NumOptions, player):
         self.player.draw(decision.num)

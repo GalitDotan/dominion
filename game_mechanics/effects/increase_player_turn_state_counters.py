@@ -9,7 +9,7 @@ class IncStateCounter(Effect):
         self.actions = actions
         self.buys = buys
 
-    def on_activation(self, decision: None = None):
+    def on_activation(self, game_state: None, player):
         turn_state = self.turn_state
         turn_state.coins += self.coins
         turn_state.actions += self.actions

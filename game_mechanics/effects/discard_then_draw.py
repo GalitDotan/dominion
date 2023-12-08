@@ -12,7 +12,7 @@ class DiscardThenDraw(Effect):
     def __init__(self):
         super().__init__(followup_effect=Draw())
 
-    def on_activation(self, game_state: GameState, decision: CardsOptions):
+    def on_activation(self, game_state: GameState, decision: CardsOptions, player):
         to_discard = decision.cards
         game_state.curr_player.discard(to_discard)
         return NumOptions(len(to_discard))

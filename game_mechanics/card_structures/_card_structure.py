@@ -1,6 +1,7 @@
 from abc import ABC
-from typing import Optional, Callable
 from collections import Counter
+from random import shuffle
+from typing import Optional, Callable
 
 from game_mechanics.game_supplies.card_types.card import Card
 
@@ -74,3 +75,9 @@ class CardStructure(ABC):
 
     def extend(self, cards: list[Card]):
         self._cards.extend(cards)
+
+    def shuffle(self):
+        """
+        Shuffle the cards in the structure.
+        """
+        shuffle(self._cards)

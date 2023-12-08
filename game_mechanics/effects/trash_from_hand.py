@@ -3,6 +3,6 @@ from game_mechanics.game_options.game_decisions import CardsOptions
 
 
 class TrashFromHand(Effect):
-    def on_activation(self, decision: CardsOptions):
+    def on_activation(self, game_state: CardsOptions, player):
         to_trash = decision.cards
         self.player.discard_hand()
