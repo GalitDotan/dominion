@@ -26,6 +26,7 @@ class Effect(ABC):
         """
         if not on_player:
             on_player = game_state.curr_player
+        waiting_reactions = []
         options.request_decision()  # TODO: fix
         result: Optional[GameOptions] = self.on_activation(game_state, options, on_player)
         if self.followup_effect:

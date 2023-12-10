@@ -3,6 +3,7 @@ from typing import Optional
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
+from game_mechanics.effects.reactions.reaction import Reaction
 from game_mechanics.game_options.game_options import GameOptions
 from game_mechanics.player.player import Player
 from game_mechanics.states.base_state import BasePublicState
@@ -11,10 +12,7 @@ from game_mechanics.supply import Supply
 
 class GameState(BasePublicState):
     """
-    The current state of the public elements of the game:
-        1. The supply
-        2. The trash
-        3. Public mats
+    All changeable elements of the game would be here.
     """
 
     def __init__(self, kingdom_piles: list[SupplyPile], standard_piles: list[SupplyPile], players: dict[str, Player]):
@@ -37,6 +35,7 @@ class GameState(BasePublicState):
         self._num_players = len(players)
 
         self.waiting_decisions: dict[str, Optional[GameOptions]] = {name: None for name in self._play_order}
+        self.waiting_reactions: list[Reaction] = []
 
     @property
     def curr_player(self):

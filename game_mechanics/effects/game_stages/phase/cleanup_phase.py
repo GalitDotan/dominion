@@ -1,4 +1,4 @@
-from game_mechanics.game_stages.phase.phase import Phase
+from game_mechanics.effects.game_stages.phase.phase import Phase
 from game_mechanics.player.player import Player
 from game_mechanics.states.game_state import GameState
 

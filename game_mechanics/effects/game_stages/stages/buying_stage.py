@@ -4,7 +4,7 @@ from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.game_options.old.player_decision import CommonChoices
 from game_mechanics.game_options.old.human.generic_choices import get_human_player_choice
-from game_mechanics.game_stages.game_stage import GameStage
+from game_mechanics.effects.game_stages.game_stage import GameStage
 from game_mechanics.player.bot_player import BotPlayer
 from game_mechanics.player.human_player import HumanPlayer
 from game_mechanics.player.player import Player

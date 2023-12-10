@@ -9,8 +9,9 @@ from starlette.templating import Jinja2Templates
 
 from config import Endpoints
 from config import ServerConf
-from game_mechanics.game import Game
 from consts import GameStatus
+from game_mechanics.game import Game
+from game_mechanics.game_runner import GameRunner
 from models.game_initiator import GameInitiator
 from response_model.response_model import ResponseModel
 
@@ -23,14 +24,9 @@ root = 'static/templates'
 # init game configuration
 games: dict[str, Game] = {}
 game_initiators: dict[str, GameInitiator]
-game_runners: set[Thread] = set()
+game_threads: set[Thread] = set()
 
-
-def game_runner(game: Game):
-    """
-    This function runs the given game from beginning to end.
-    """
-    game.run()
+game_runner = GameRunner()
 
 
 def _get_game_if_exists(game_id: str, search_active: bool = True) -> Game or GameInitiator:
@@ -94,9 +90,7 @@ async def start_game(game_id: str) -> ResponseModel:
     game = initiator.init_game()
     games[game.id] = game
     game_initiators.pop(initiator.game_id)
-    runner = Thread(target=game_runner, args=(game,))
-    game_runners.add(runner)
-    runner.run()
+    game_threads.add(game_runner.threaded_run(game))
     return ResponseModel(game_id=game_id,
                          game_status=GameStatus.IN_PROGRESS,
                          message="Game started")

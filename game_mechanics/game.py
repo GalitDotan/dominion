@@ -1,30 +1,15 @@
 from typing import Optional
 
-from game_mechanics.card_structures.supply_pile import SupplyPile
-from game_mechanics.consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, \
-    DEFAULT_PILE_SIZE, DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
-from game_mechanics.game_stages.turn import Turn
+from consts import GameStatus
+from game_mechanics.effects.game_stages.turn import Turn
+from game_mechanics.game_consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, \
+    DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.init_utils import generate_supply_piles
 from game_mechanics.player.player import Player
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
 from game_mechanics.states.game_state import GameState
-from consts import GameStatus
-
-
-# TODO: change input to list[tuple(Card, int]]
-def _generate_supply_piles(supply_card_types: tuple,
-                           supply_pile_sizes: Optional[tuple[int, ...]] = None) -> list[SupplyPile]:
-    """
-    Receives a list of card types and the size of each pile.
-
-    Returns:
-        A list of supply piles.
-    """
-    supply_pile_sizes = supply_pile_sizes if supply_pile_sizes else [DEFAULT_PILE_SIZE for _ in
-                                                                     range(len(supply_card_types))]
-    return [SupplyPile(cards=[card_type() for _ in range(pile_size)]) for card_type, pile_size in
-            zip(supply_card_types, supply_pile_sizes)]
 
 
 class Game:
@@ -63,8 +48,8 @@ class Game:
         num_v_cards = V_CARDS_PER_PLAYERS[self._num_players]
         num_curses = CURSES_CARDS_PER_PLAYER[self._num_players]
         sizes = (num_v_cards, num_v_cards, num_v_cards, num_curses, 30, 40, 60)
-        kingdom_piles = _generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
-        standard_piles = _generate_supply_piles(STANDARD_CARDS, sizes)
+        kingdom_piles = generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
+        standard_piles = generate_supply_piles(STANDARD_CARDS, sizes)
         self.game_state = GameState(kingdom_piles, standard_piles, self.players)
 
     def run(self):
