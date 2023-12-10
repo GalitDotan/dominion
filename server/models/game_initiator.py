@@ -2,13 +2,6 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-from game_mechanics.game_consts import MIN_PLAYERS, MAX_PLAYERS
-from game_mechanics.game import Game
-from game_mechanics.game_supplies.card_types.card import Card
-from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Copper import Copper
-from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Estate import Estate
-from game_mechanics.player.player import Player
-
 
 def get_default_player_cards() -> list[Card]:
     """
