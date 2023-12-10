@@ -2,89 +2,105 @@ import os.path
 from threading import Thread
 
 import uvicorn
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
-from starlette.staticfiles import StaticFiles
-from starlette.templating import Jinja2Templates
 
-from game_mechanics.game_master import GameMaster, GameConfiguration
+from game_mechanics.game_config import GameConfiguration, GameStatus
+from game_mechanics.game_master import GameMaster
 from game_mechanics.game_runner import GameRunner
+from server.connection_manager import WebSocketsManager
 from server_consts import ServerConf
 
-# init app
+ROOT = 'static/templates'
+CHAT_FILE = 'chat.html'
+
 app = FastAPI()
-app.mount("/server/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
-root = 'static/templates'
 
-# init game configuration
-games: dict[str, GameMaster] = {}
-game_initiators: dict[str, GameConfiguration]
-game_threads: set[Thread] = set()
+ws_manager = WebSocketsManager()
 
-game_runner = GameRunner()
-
-
-def _get_game_if_exists(game_id: str, search_active: bool = True) -> GameMaster | GameConfiguration:
-    """
-    Returns the game matching the id, if exists and is active.
-
-    Params:
-        game_id: the id of the game.
-        search_active: if true - searches an active game. Otherwise, searches the matching GameInitiator.
-
-    Returns:
-        the matching game.
-
-    Raises:
-        HTTPException: 404, if given id is not an active game.
-    """
-    game_dict = games if search_active else game_initiators
-    if game_id not in game_dict:
-        raise HTTPException(404, detail=f"The ID {game_id} does not exist")
-    return game_dict[game_id]
-
-
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: list[WebSocket] = []  # TODO: each client should have a game id
-
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_connections.remove(websocket)
-
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
-
-    async def broadcast(self, message: str):
-        for connection in self.active_connections:
-            await connection.send_text(message)
-
-
-manager = ConnectionManager()
+not_started_games: dict[str:GameConfiguration] = {}
+running_games: set[GameMaster] = set()
+threads: set[Thread] = set()
 
 
 @app.get("/", response_class=HTMLResponse)
 async def get():
-    with open(os.path.join(root, 'chat.html')) as fh:
+    with open(os.path.join(ROOT, CHAT_FILE)) as fh:
         data = fh.read()
     return HTMLResponse(content=data, media_type="text/html")
 
 
-@app.websocket('/ws/{client_name}')
-async def websocket_endpoint(websocket: WebSocket, client_name: str):
-    await manager.connect(websocket)
+@app.websocket('/ws/{client_id}')
+async def game_initiation_manager(websocket: WebSocket, client_id: str):
+    await ws_manager.connect(client_id, websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_name} says: {data}")
+            await ws_manager.send_personal_message(f"Type 'init' or 'join <id>'", client_id)
+            choice = await websocket.receive_text()
+            if choice == 'init':
+                _init_game(client_id)
+            elif choice.startswith('join'):
+                game_id = choice.removeprefix('join ')
+                _join_game(client_id, game_id)
+            else:
+                raise HTTPException(status_code=404, detail=f'Unknown request {choice}')
+            _play_game(client_id)
+
+
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_name} left the chat")
+        ws_manager.disconnect(client_id)
+        await ws_manager.broadcast(f"Player #{client_id} got disconnected")
+
+
+def _init_game(client_id: str):
+    game_conf = GameConfiguration()
+    await ws_manager.send_personal_message(f"Your new game: {game_conf.game_id}", client_id)
+    await ws_manager.broadcast(f"Client #{client_id} initiated game: {game_conf.game_id}")
+    started = False
+    while not started:
+        await ws_manager.send_personal_message(f"Type 'start' whenever you wish to start the game", client_id)
+        data = await ws_manager.receive_text(client_id)
+        if data == 'start':
+            started = True
+            _start_game(client_id)
+        else:
+            await ws_manager.send_personal_message(f"You wrote: {data}", client_id)
+            await ws_manager.broadcast(f"Client #{client_id} says: {data}")
+
+
+def _join_game(client_id: str, game_id: str):
+    games: list[GameConfiguration] = list(not_started_games.values())
+    for game in games:
+        if game.game_id == game_id:
+            game.player_ids.append(client_id)
+            await ws_manager.send_personal_message(
+                f"You have joined {game.game_id}. Please wait for host to start the game", client_id)
+            _wait_root(client_id)
+            break
+
+
+def _start_game(client_id: str):
+    game = not_started_games.pop(client_id)
+    gm = GameMaster(game_conf=game)
+    ws_manager.broadcast(f'Starting game {game.game_id}')
+    th = GameRunner.threaded_run(gm)
+    threads.add(th)
+    running_games.add(gm)
+
+
+def _wait_root(client_id: str, wait_for_status: GameStatus = GameStatus.IN_PROGRESS):
+    game = not_started_games[client_id]
+    while game.status != wait_for_status:
+        await ws_manager.send_personal_message(f"Welcome to the chat room. Here you'll wait for your game to start",
+                                               client_id)
+        data = await ws_manager.receive_text(client_id)
+        await ws_manager.send_personal_message(f"You wrote: {data}", client_id)
+        await ws_manager.broadcast(f"Client #{client_id} says: {data}")
+
+
+def _play_game(client_id: str):
+    gm: GameMaster = [gm for gm in running_games if client_id in running_games.game_conf.player_ids][0]
 
 
 if __name__ == "__main__":

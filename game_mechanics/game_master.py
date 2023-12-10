@@ -1,12 +1,4 @@
-class GameConfiguration:
-    """
-    The configuration of the game:
-    Which cards does the game include,
-    The players.
-    """
-
-    def __init__(self):
-        pass
+from game_mechanics.game_config import GameConfiguration
 
 
 class GameMaster:
@@ -16,7 +8,10 @@ class GameMaster:
     """
 
     def __init__(self, game_conf: GameConfiguration):
-        pass
+        self.game_conf = game_conf
+
+    def __hash__(self):
+        return hash(self.game_conf)
 
     def run_game(self):
         pass

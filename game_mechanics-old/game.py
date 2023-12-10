@@ -1,6 +1,6 @@
 from typing import Optional
 
-from consts import GameStatus
+from game_mechanics.game_config import GameStatus
 from game_mechanics.effects.game_stages.turn import Turn
 from game_mechanics.game_consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, \
     DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
