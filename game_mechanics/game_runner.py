@@ -1,6 +1,6 @@
 from threading import Thread
 
-from game_mechanics.game_master import GameMaster
+from game_mechanics.states.game_state import GameState
 
 
 class GameRunner:
@@ -9,14 +9,14 @@ class GameRunner:
     """
 
     @classmethod
-    def _run(cls, gm: GameMaster):
+    def _run(cls, gm: GameState):
         """
         This function runs the given game from beginning to end.
         """
         gm.run_game()
 
     @classmethod
-    def threaded_run(cls, gm: GameMaster) -> Thread:
+    def threaded_run(cls, gm: GameState) -> Thread:
         """
         Runs a Dominion in a new Thread.
 

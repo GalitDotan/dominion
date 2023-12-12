@@ -7,8 +7,8 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
 
 from game_mechanics.game_config import GameConfiguration, GameStatus
-from game_mechanics.game_master import GameMaster
 from game_mechanics.game_runner import GameRunner
+from game_mechanics.states.game_state import GameState
 from server.connection_manager import WebSocketsManager
 from server_consts import ServerConf
 
@@ -20,7 +20,7 @@ app = FastAPI()
 ws_manager = WebSocketsManager()
 
 not_started_games: dict[str:GameConfiguration] = {}
-running_games: set[GameMaster] = set()
+running_games: set[GameState] = set()
 threads: set[Thread] = set()
 
 
@@ -53,7 +53,7 @@ async def game_initiation_manager(websocket: WebSocket, client_id: str):
         await ws_manager.broadcast(f"Player #{client_id} got disconnected")
 
 
-def _init_game(client_id: str):
+async def _init_game(client_id: str):
     game_conf = GameConfiguration()
     await ws_manager.send_personal_message(f"Your new game: {game_conf.game_id}", client_id)
     await ws_manager.broadcast(f"Client #{client_id} initiated game: {game_conf.game_id}")
@@ -69,7 +69,7 @@ def _init_game(client_id: str):
             await ws_manager.broadcast(f"Client #{client_id} says: {data}")
 
 
-def _join_game(client_id: str, game_id: str):
+async def _join_game(client_id: str, game_id: str):
     games: list[GameConfiguration] = list(not_started_games.values())
     for game in games:
         if game.game_id == game_id:
@@ -82,14 +82,14 @@ def _join_game(client_id: str, game_id: str):
 
 def _start_game(client_id: str):
     game = not_started_games.pop(client_id)
-    gm = GameMaster(game_conf=game)
+    gm = GameState(game_conf=game)
     ws_manager.broadcast(f'Starting game {game.game_id}')
     th = GameRunner.threaded_run(gm)
     threads.add(th)
     running_games.add(gm)
 
 
-def _wait_root(client_id: str, wait_for_status: GameStatus = GameStatus.IN_PROGRESS):
+async def _wait_root(client_id: str, wait_for_status: GameStatus = GameStatus.IN_PROGRESS):
     game = not_started_games[client_id]
     while game.status != wait_for_status:
         await ws_manager.send_personal_message(f"Welcome to the chat room. Here you'll wait for your game to start",
@@ -100,7 +100,7 @@ def _wait_root(client_id: str, wait_for_status: GameStatus = GameStatus.IN_PROGR
 
 
 def _play_game(client_id: str):
-    gm: GameMaster = [gm for gm in running_games if client_id in running_games.game_conf.player_ids][0]
+    gm: GameState = [gm for gm in running_games if client_id in running_games.game_conf.player_ids][0]
 
 
 if __name__ == "__main__":

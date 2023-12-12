@@ -26,6 +26,8 @@ class GameConfiguration(BaseModel):
     game_id: str = Field(default_factory=lambda: uuid4())
     player_ids: list[str] = []
     status: GameStatus = GameStatus.INITIATED
+    kingdom_piles: list[str] = []  # TODO
+    standard_piles: list[str] = []  # TODO
 
     def __hash__(self):
         return hash(self.game_id)
