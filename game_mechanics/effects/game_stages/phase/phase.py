@@ -5,11 +5,11 @@ from options import Options
 
 
 class Phase(GameStage):
-    def on_activation(self, game_state, decision: Options, player: str):
+    def on_activation(self, game, decision: Options, player: str):
         pass
 
-    def __init__(self, player: str, opponents: list[str], game_state, name: Optional[str] = None):
-        super().__init__(player=player, opponents=opponents, game_state=game_state, name=name)
+    def __init__(self, player: str, opponents: list[str], game, name: Optional[str] = None):
+        super().__init__(player=player, opponents=opponents, game=game, name=name)
         self.continue_phase: bool = True
 
     def __repr__(self):

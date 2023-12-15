@@ -17,23 +17,23 @@ class Effect(ABC):
     def __repr__(self):
         pass
 
-    def activate(self, game_state, options: GameOptions, on_player: Optional[str] = None):
+    def activate(self, game, options: GameOptions, on_player: Optional[str] = None):
         """
         Activate this effect according to a player's decision.
 
         Params:
-            game_state: The current state of the game.
+            game: The current state of the game.
             decision: The decision of the player.
             on_player: on which player to apply the effect. Default - current player.
         """
         if not on_player:
-            on_player = game_state.curr_player
+            on_player = game.curr_player
         waiting_reactions = []
         options.request_decision()  # TODO: fix
-        result: Optional[GameOptions] = self.on_activation(game_state, options, on_player)
+        result: Optional[GameOptions] = self.on_activation(game, options, on_player)
         if self.followup_effect:
-            self.followup_effect.activate(game_state, result)
+            self.followup_effect.activate(game, result)
 
     @abstractmethod
-    def on_activation(self, game_state, decision: Options, player: str):
+    def on_activation(self, game, decision: Options, player: str):
         pass

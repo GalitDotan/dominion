@@ -1,13 +1,13 @@
 from game_mechanics.effects.effect import Effect
 from game_mechanics.game_options.empty_options import EmptyOptions
-from game_mechanics.states.game_state import GameState
+from game_mechanics.states.game import Game
 
 
 class ShuffleDiscardToDrawPile(Effect):
     def __init__(self):
         super().__init__()
 
-    def on_activation(self, game_state: GameState, decision: EmptyOptions, player: Player):
+    def on_activation(self, game: Game, decision: EmptyOptions, player: Player):
         """
         Shuffle the discard pile into the draw pile.
         """

@@ -5,7 +5,7 @@ from game_mechanics.effects.game_stages.phase.buy_phase import BuyPhase
 from game_mechanics.effects.game_stages.phase.cleanup_phase import CleanUpPhase
 from game_mechanics.effects.game_stages.phase.night_phase import NightPhase
 from game_mechanics.effects.game_stages.phase.phase import Phase
-from game_mechanics.states.game_state import GameState
+from game_mechanics.states.game import Game
 
 
 class Turn(GameStage):
@@ -20,9 +20,9 @@ class Turn(GameStage):
     The play function is responsible for managing all the state changes and the decision.
     """
 
-    def __init__(self, player: str, opponents: list[str], game_state: GameState,
+    def __init__(self, player: str, opponents: list[str], game: Game,
                  phase_order: tuple[type] = (ActionPhase, BuyPhase, NightPhase, CleanUpPhase)):
-        super().__init__(player, opponents, game_state, name=f"{player.name}'s {player.turns_played + 1} Turn")
+        super().__init__(player, opponents, game, name=f"{player.name}'s {player.turns_played + 1} Turn")
 
         self.is_finished: bool = False
         self.played = []
@@ -47,7 +47,7 @@ class Turn(GameStage):
 
         for CurrPhase in self.phase_order:
             phase: Phase = CurrPhase(player=self.player, opponents=self.opponents, turn_state=self.player.turn_state,
-                                     game_state=self.game_state)
+                                     game=self.game)
             phase.play()
 
     def __repr__(self):
@@ -61,7 +61,7 @@ class Turn(GameStage):
 {self.player}
 {opponents_h1}
 {opponents}
-{self.game_state.supply}
+{self.game.supply}
         """
         end_turn = HeadlineFormats.H2.format(f"{self.player.name}'s game_stages has ended")
         played = HeadlineFormats.H3.format(f"Played: {self.played}")

@@ -7,7 +7,7 @@ from game_mechanics.states.player_state import PlayerState
 from game_mechanics.supply import Supply
 
 
-class GameState:
+class Game:
     """
     All changeable elements of the game would be here.
     """
@@ -82,7 +82,7 @@ class GameState:
         sizes = (num_v_cards, num_v_cards, num_v_cards, num_curses, 30, 40, 60)
         kingdom_piles = generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
         standard_piles = generate_supply_piles(STANDARD_CARDS, sizes)
-        self.game_state = GameState(kingdom_piles, standard_piles, self.players)
+        self.game = Game(kingdom_piles, standard_piles, self.players)
 
     def run(self):
         """
@@ -90,19 +90,19 @@ class GameState:
         """
         self.status = GameStatus.IN_PROGRESS
         while self.status == GameStatus.IN_PROGRESS:
-            curr_player = self.game_state.curr_player
-            opponents = self.game_state.get_player_opponents()
+            curr_player = self.game.curr_player
+            opponents = self.game.get_player_opponents()
 
-            turn = Turn(curr_player, opponents, self.game_state)
+            turn = Turn(curr_player, opponents, self.game)
             turn.play()
-            self.game_state.move_to_next_player()
+            self.game.move_to_next_player()
 
     def get_player_view(self, player_name: str):
         """
         Get current board view from the PoV of the given curr_player.
         """
         player = self.players[player_name]
-        opponents = self.game_state.get_player_opponents(player)
+        opponents = self.game.get_player_opponents(player)
         if self.status == GameStatus.INITIATED:
             return OpeningMessage(player, opponents)
         elif self.status == GameStatus.IN_PROGRESS:
@@ -118,10 +118,10 @@ class GameState:
         return self._is_enough_empty_piles() or self._is_any_of_finishing_piles_empty(finishing_piles)
 
     def _is_enough_empty_piles(self) -> bool:
-        return self.game_state.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]
+        return self.game.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]
 
     def _is_any_of_finishing_piles_empty(self, finishing_piles: tuple[str]) -> bool:
-        empty_pile_names = [pile.name for pile in self.game_state.supply.empty_piles]
+        empty_pile_names = [pile.name for pile in self.game.supply.empty_piles]
         for pile in finishing_piles:
             if pile in empty_pile_names:
                 return True
