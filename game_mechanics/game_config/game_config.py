@@ -1,10 +1,11 @@
-from typing import Callable
+from typing import Optional, Callable, Any
 from uuid import uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic import Field
+from pydantic.functional_validators import model_validator
 
-from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
-from game_mechanics.card_structures.supply_pile.supply_pile_generator import PileGenerator
+from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.game_config.game_conf_consts import DEFAULT_PILE_SIZE, DEFAULT_COPPER_AMOUNT, \
     DEFAULT_SILVER_AMOUNT, DEFAULT_GOLD_AMOUNT, V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER
 from game_mechanics.game_status import GameStatus
@@ -17,6 +18,26 @@ def victory_cards_by_players(game_conf: 'GameConfiguration') -> int:
 
 def curse_cards_by_players(game_conf: 'GameConfiguration') -> int:
     return CURSES_CARDS_PER_PLAYER[game_conf.num_players]
+
+
+class PileGenerator(BaseModel):
+    generators: Card | tuple[Card, Optional[Callable[['GameConfiguration'], int] | int]] | list[
+        tuple[Card, Optional[Callable[['GameConfiguration'], int] | int]]]
+    name: Card
+
+    @model_validator(mode='before')
+    @classmethod
+    def validate_name(cls, data: Any):
+        if 'name' not in data:
+            generators = data['generators']
+            if type(generators) is Card:
+                name = generators
+            elif type(generators) is tuple:
+                name = generators[0]
+            else:  # if there is more than one type of card in the pile
+                name = data['generators'][-1][0]  # the name of the top card
+            data['name'] = name
+        return data
 
 
 class GameConfiguration(BaseModel):

@@ -6,7 +6,6 @@ from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
-from game_mechanics.game_config.game_config import GameConfiguration
 from game_mechanics.game_status import GameStatus
 from game_mechanics.game_supplies.cards_packs.all_cards import Card
 from game_mechanics.states.player_state import Player
@@ -24,7 +23,7 @@ class Game:
     All changeable elements of the game would be here.
     """
 
-    def __init__(self, game_conf: GameConfiguration):
+    def __init__(self, game_conf):
         """
         Establish curr_player order.
         Initiate all the card structures that are part of the game.

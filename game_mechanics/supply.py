@@ -1,7 +1,7 @@
 from tabulate import tabulate
 
 from consts import HeadlineFormats
-from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
+from game_mechanics.card_structures.supply_pile import SupplyPile
 
 
 class Supply:
