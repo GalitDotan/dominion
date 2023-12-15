@@ -1,10 +1,10 @@
 from typing import Optional
 
-from game_mechanics.game_config import GameStatus
+from game_mechanics.game_status import GameStatus
 from game_mechanics.effects.game_stages.turn import Turn
 from game_mechanics.game_consts import V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER, FIRST_GAME_CARDS, STANDARD_CARDS, \
     DEFAULT_FINISH_PILES, EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
-from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card_type import CardType
 from game_mechanics.init_utils import generate_supply_piles
 from game_mechanics.screens.openning_message import OpeningMessage
 from game_mechanics.screens.score_board import ScoreBoard
@@ -12,7 +12,7 @@ from game_mechanics.states.game_state import GameState
 
 
 class Game:
-    def __init__(self, game_id: str, start_cards: list[Card], players: dict[str, str]):
+    def __init__(self, game_id: str, start_cards: list[CardType], players: dict[str, str]):
         """
         Initiate a single-curr_player Dominion game.
 

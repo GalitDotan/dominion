@@ -1,9 +1,9 @@
 from random import shuffle
 
-from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card_type import CardType
 
 
-def shuffle_copy(cards: list[Card]):
+def shuffle_copy(cards: list[CardType]):
     """
     Copy the list and return a shuffled version of it.
 

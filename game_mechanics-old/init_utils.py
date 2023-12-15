@@ -1,6 +1,6 @@
 from typing import Optional
 
-from game_mechanics.card_structures.supply_pile import SupplyPile
+from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
 from game_mechanics.game_consts import DEFAULT_PILE_SIZE
 
 

@@ -8,7 +8,7 @@ import game_mechanics.effects.game_stages.phase.night_phase as night_phase
 from game_mechanics.effects.effect import Effect
 
 
-class Card(ABC):
+class CardType(ABC):
     """
     A card in a game. Stats can be modified
     """
@@ -43,7 +43,7 @@ class Card(ABC):
     def __eq__(self, other):
         return self.name == other.name
 
-    def __lt__(self, other: 'Card'):
+    def __lt__(self, other: 'CardType'):
         if self.cost < other.cost:
             return True
         if self.cost > other.cost:

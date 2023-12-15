@@ -1,10 +1,12 @@
 from random import shuffle
-from typing import Optional
+from typing import Optional, Callable
 
+from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.reactions.reaction import Reaction
-from game_mechanics.game_config import GameConfiguration
+from game_mechanics.game_config.game_config import GameConfiguration
 from game_mechanics.game_options.game_options import GameOptions
+from game_mechanics.game_supplies.cards_packs.all_cards import Card
 from game_mechanics.states.player_state import PlayerState
 from game_mechanics.supply import Supply
 
@@ -24,7 +26,9 @@ class GameState:
         """
         self.game_conf = game_conf
 
-        self.supply = Supply(self.game_conf.kingdom_piles, self.game_conf.standard_piles)
+        self.supply = Supply(
+            kingdom_piles=self.game_conf.generate_supply_piles(self.game_conf.kingdom_piles_generators),
+            standard_piles=self.game_conf.generate_supply_piles(self.game_conf.standard_piles_generators))
         self.trash = Trash(name="Trash")
 
         self.players: dict[str, PlayerState] = {player_name: PlayerState(cards=[], name=player_name) for player_name in
@@ -85,3 +89,10 @@ class GameState:
         decision: GameOptions = self.waiting_decisions[player_name]
         decision.decide(option_chosen)
         self.waiting_decisions[player_name] = None
+
+    def _generate_supply_piles(self,
+                               piles_requested: list[
+                                   tuple[Card, Optional[Callable[[GameConfiguration], int] | int]]]):
+        piles: list[SupplyPile] = []
+
+        return piles

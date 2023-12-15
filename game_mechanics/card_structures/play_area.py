@@ -1,5 +1,5 @@
 from game_mechanics.card_structures._card_structure import CardStructure
-from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card_type import CardType
 from game_mechanics.game_supplies.card_types.duration_card import Duration
 
 
@@ -9,7 +9,7 @@ class PlayArea(CardStructure):
     It stores all the cards that are currently "in-play"
     """
 
-    def play(self, card: Card):
+    def play(self, card: CardType):
         """
         Put a card here.
         Assuming the cars is no longer in other card structures.
@@ -29,7 +29,7 @@ class PlayArea(CardStructure):
         self.remove(card)
         # TODO: add functionality on resolve
 
-    def do_cleanup(self) -> list[Card]:
+    def do_cleanup(self) -> list[CardType]:
         """
         Remove all cards but duration cards.
 

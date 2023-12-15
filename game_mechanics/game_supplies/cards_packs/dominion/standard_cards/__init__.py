@@ -1,0 +1,7 @@
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Copper import Copper
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Curse import Curse
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Duchy import Duchy
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Estate import Estate
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Gold import Gold
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Province import Province
+from game_mechanics.game_supplies.cards_packs.dominion.standard_cards.Silver import Silver

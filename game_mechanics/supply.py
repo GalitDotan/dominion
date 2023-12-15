@@ -1,39 +1,34 @@
 from tabulate import tabulate
 
-from game_mechanics.card_structures.supply_pile import SupplyPile
 from consts import HeadlineFormats
-from game_mechanics.game_supplies.card_types.card import Card
-
-
-def buy(pile: SupplyPile) -> Card:
-    return pile.draw()
+from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
 
 
 class Supply:
     """
-    Represents all the _other_piles on the table.
+    Represents all the _standard_piles on the table.
     """
 
-    def __init__(self, kingdom_piles: list[SupplyPile], other_piles: list[SupplyPile]):
-        self._kingdom_piles: list[SupplyPile] = sorted(kingdom_piles)
-        self._other_piles: list[SupplyPile] = sorted(other_piles)
+    def __init__(self, kingdom_piles: list[SupplyPile], standard_piles: list[SupplyPile]):
+        self._kingdom_piles: list[SupplyPile] = kingdom_piles
+        self._standard_piles: list[SupplyPile] = standard_piles
 
     def __repr__(self):
         kingdom_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._kingdom_piles])
-        other_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._other_piles])
+        other_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._standard_piles])
         table = [kingdom_piles, other_piles]
         return f"""
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 {HeadlineFormats.H1.format("The Supply")}
         
-{tabulate({"Kingdom Cards": self._kingdom_piles, "Basic Cards": self._other_piles}, headers="keys", showindex="always", tablefmt="fancy_grid")}
+{tabulate({"Kingdom Cards": self._kingdom_piles, "Basic Cards": self._standard_piles}, headers="keys", showindex="always", tablefmt="fancy_grid")}
         
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         """
 
     @property
     def piles(self):
-        return sorted(self._kingdom_piles + self._other_piles)
+        return sorted(self._kingdom_piles + self._standard_piles)
 
     def get_num_of_empty(self):
         return len(self.empty_piles)

@@ -3,14 +3,14 @@ from collections import Counter
 from random import shuffle
 from typing import Optional, Callable
 
-from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card_type import CardType
 
 
 class CardStructure(ABC):
-    def __init__(self, cards: Optional[list[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
+    def __init__(self, cards: Optional[list[CardType]] = None, name: Optional[str] = None, is_visible: bool = True):
         default_name = cards[0].name if cards and len(cards) > 0 else self.__class__.__name__
         self.name: str = name if name else default_name
-        self._cards: list[Card] = cards if cards else []
+        self._cards: list[CardType] = cards if cards else []
         self._is_visible: bool = is_visible
 
     def __hash__(self):
@@ -33,11 +33,11 @@ class CardStructure(ABC):
         return self._is_visible
 
     @property
-    def cards(self) -> list[Card]:
+    def cards(self) -> list[CardType]:
         return self._cards.copy()
 
     @property
-    def cards_dict(self) -> dict[Card, int]:
+    def cards_dict(self) -> dict[CardType, int]:
         # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
         return dict(Counter(self))
 
@@ -59,7 +59,7 @@ class CardStructure(ABC):
         else:
             self._cards.sort()
 
-    def remove_all(self) -> list[Card]:
+    def remove_all(self) -> list[CardType]:
         """
         Remove all the cards from the structure.
         """
@@ -67,13 +67,13 @@ class CardStructure(ABC):
         self._cards = []
         return cards
 
-    def remove(self, card: Card):
+    def remove(self, card: CardType):
         self._cards.remove(card)
 
-    def append(self, card: Card):
+    def append(self, card: CardType):
         self._cards.append(card)
 
-    def extend(self, cards: list[Card]):
+    def extend(self, cards: list[CardType]):
         self._cards.extend(cards)
 
     def shuffle(self):

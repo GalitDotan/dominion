@@ -7,7 +7,8 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
 
-from game_mechanics.game_config import GameConfiguration, GameStatus
+from game_mechanics.game_config import GameConfiguration
+from game_mechanics.game_status import GameStatus
 from game_mechanics.game_runner import GameRunner
 from game_mechanics.states.game_state import GameState
 from server.connection_manager import WebSocketsManager

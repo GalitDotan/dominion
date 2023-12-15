@@ -1,0 +1,18 @@
+DEFAULT_PILE_SIZE = 10
+DEFAULT_COPPER_AMOUNT = 60
+DEFAULT_SILVER_AMOUNT = 40
+DEFAULT_GOLD_AMOUNT = 30
+V_CARDS_PER_PLAYERS = {
+    2: 8,
+    3: 12,
+    4: 12,
+    5: 15,
+    6: 15
+}
+CURSES_CARDS_PER_PLAYER = {
+    2: 10,
+    3: 20,
+    4: 30,
+    5: 40,
+    6: 50
+}

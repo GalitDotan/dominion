@@ -1,8 +1,8 @@
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_supplies.card_types.card import Card
+from game_mechanics.game_supplies.card_types.card_type import CardType
 
 
-class Action(Card):
+class Action(CardType):
 
     def __init__(self, name: str, cost: int, actions: list[Effect]):
         super().__init__(name, cost)
