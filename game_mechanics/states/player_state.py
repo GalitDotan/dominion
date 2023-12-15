@@ -5,13 +5,12 @@ from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.game_supplies.card_types.card_type import CardType
 from game_mechanics.game_supplies.card_types.victory_card import Victory
-from game_mechanics.states.base_state import BasePlayerState
-from game_mechanics.states.player_turn_state import PlayerTurnState
+from game_mechanics.states.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_name
 
 
-class PlayerState(BasePlayerState):
+class Player:
     """
     The current state of the game elements of the curr_player:
         1. The Deck (all the cards he owns)
@@ -36,19 +35,19 @@ class PlayerState(BasePlayerState):
         self._non_card_vp = non_card_vp  # All VP that does not come from cards
 
         self.turns_played = 0
-        self.turn_state: Optional[PlayerTurnState] = None  # this would be initiated every turn
+        self.turn_state: Optional[PlayerTurnStats] = None  # this would be initiated every turn
 
     def __repr__(self):
         return f"[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
 
-    def __lt__(self, other: "PlayerState"):  # is self losing to other
+    def __lt__(self, other: "Player"):  # is self losing to other
         return self.victory_points < other.victory_points or (
                 self.victory_points == other.victory_points and self.turns_played >= other.turns_played)
 
-    def __eq__(self, other: "PlayerState"):
+    def __eq__(self, other: "Player"):
         return self.victory_points == other.victory_points
 
-    def __gt__(self, other: "PlayerState"):  # is self winning other
+    def __gt__(self, other: "Player"):  # is self winning other
         return self.victory_points > other.victory_points or (
                 self.victory_points == other.victory_points and self.turns_played < other.turns_played)
 
@@ -88,9 +87,9 @@ class PlayerState(BasePlayerState):
             my turn: is current turn mine.
         """
         if my_turn:
-            self.turn_state = PlayerTurnState(actions=1, buys=1, coins=0)
+            self.turn_state = PlayerTurnStats(actions=1, buys=1, coins=0)
         else:
-            self.turn_state = PlayerTurnState(actions=0, buys=0, coins=0)
+            self.turn_state = PlayerTurnStats(actions=0, buys=0, coins=0)
 
     def detailed_repr(self):
         return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \

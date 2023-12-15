@@ -3,7 +3,7 @@ from typing import Optional
 
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.game_config.game_config import GameConfiguration
-from game_mechanics.states.player_state import PlayerState
+from game_mechanics.states.player_state import Player
 from game_mechanics.supply import Supply
 
 
@@ -27,8 +27,8 @@ class Game:
             standard_piles=self.game_conf.generate_supply_piles(self.game_conf.standard_piles_generators))
         self.trash = Trash(name="Trash")
 
-        self.players: dict[str, PlayerState] = {player_name: PlayerState(cards=[], name=player_name) for player_name in
-                                                self.game_conf.player_names}
+        self.players: dict[str, Player] = {player_name: Player(cards=[], name=player_name) for player_name in
+                                           self.game_conf.player_names}
 
         self._play_order: list[str] = list(self.players.keys())
         shuffle(self._play_order)

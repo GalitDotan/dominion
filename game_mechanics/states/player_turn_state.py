@@ -1,7 +1,4 @@
-from game_mechanics.states.base_state import BasePlayerState
-
-
-class PlayerTurnState(BasePlayerState):
+class PlayerTurnStats:
     """
     The current state of all curr_player's elements that would be discarded/ rebooted at the end of the turn.
     """
