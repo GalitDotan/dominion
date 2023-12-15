@@ -2,9 +2,21 @@ from random import shuffle
 from typing import Optional
 
 from game_mechanics.card_structures.trash import Trash
+from game_mechanics.effects.effect import Effect
+from game_mechanics.effects.game_setup import GameSetup
+from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
+from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_config.game_config import GameConfiguration
+from game_mechanics.game_status import GameStatus
+from game_mechanics.game_supplies.cards_packs.all_cards import Card
 from game_mechanics.states.player_state import Player
 from game_mechanics.supply import Supply
+
+
+class PlayerTurn(Effect):
+    def activate(self, game):
+        curr_player = game.curr_player
+        opponents = game.get_player_opponents()
 
 
 class Game:
@@ -36,11 +48,10 @@ class Game:
         self.player_index = 0
         self._num_players = len(self.players)
 
+        self.applied_effects: list[Effect] = []
+
     def __hash__(self):
         return hash(self.game_conf)
-
-    def run_game(self):
-        pass
 
     @property
     def curr_player(self):
@@ -73,55 +84,37 @@ class Game:
         """
         self.player_index = (self.player_index + 1) % self._num_players
 
-    def start(self):
-        """
-        Generate the initial game state.
-        """
-        num_v_cards = V_CARDS_PER_PLAYERS[self._num_players]
-        num_curses = CURSES_CARDS_PER_PLAYER[self._num_players]
-        sizes = (num_v_cards, num_v_cards, num_v_cards, num_curses, 30, 40, 60)
-        kingdom_piles = generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
-        standard_piles = generate_supply_piles(STANDARD_CARDS, sizes)
-        self.game = Game(kingdom_piles, standard_piles, self.players)
+    def is_in_progress(self) -> bool:
+        return self.game_conf.status == GameStatus.IN_PROGRESS
 
     def run(self):
         """
         Run this game.
         """
-        self.status = GameStatus.IN_PROGRESS
-        while self.status == GameStatus.IN_PROGRESS:
-            curr_player = self.game.curr_player
-            opponents = self.game.get_player_opponents()
+        self.game_conf.status = GameStatus.IN_PROGRESS
+        self.apply_effect(GameSetup())
+        while not self.game_over():
+            self.apply_effect(PlayerTurn())
+        self.apply_effect(EndGamePhase())
 
-            turn = Turn(curr_player, opponents, self.game)
-            turn.play()
-            self.game.move_to_next_player()
-
-    def get_player_view(self, player_name: str):
+    def apply_effect(self, effect: Effect):
         """
-        Get current board view from the PoV of the given curr_player.
+        Activate given effect and add it to the list.
         """
-        player = self.players[player_name]
-        opponents = self.game.get_player_opponents(player)
-        if self.status == GameStatus.INITIATED:
-            return OpeningMessage(player, opponents)
-        elif self.status == GameStatus.IN_PROGRESS:
-            return player.get_board_view()
-        elif self.status == GameStatus.FINISHED:
-            return ScoreBoard(self.player_list)
-        raise AttributeError(f'Unknown status {self.status}')
+        effect.activate(self)
+        self.applied_effects.append(effect)
 
-    def game_over(self, finishing_piles: tuple[str] = DEFAULT_FINISH_PILES) -> bool:
+    def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
         """
         Check whether any of the end conditions are met.
         """
         return self._is_enough_empty_piles() or self._is_any_of_finishing_piles_empty(finishing_piles)
 
     def _is_enough_empty_piles(self) -> bool:
-        return self.game.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]
+        return self.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]
 
     def _is_any_of_finishing_piles_empty(self, finishing_piles: tuple[str]) -> bool:
-        empty_pile_names = [pile.name for pile in self.game.supply.empty_piles]
+        empty_pile_names = [pile.name for pile in self.supply.empty_piles]
         for pile in finishing_piles:
             if pile in empty_pile_names:
                 return True

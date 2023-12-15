@@ -13,7 +13,7 @@ class GameRunner:
         """
         This function runs the given game from beginning to end.
         """
-        game.run_game()
+        game.run()
 
     @classmethod
     def threaded_run(cls, gm: Game) -> Thread:
