@@ -28,7 +28,7 @@ class GameState(BasePublicState):
         self.supply = Supply(self.game_conf.kingdom_piles, self.game_conf.standard_piles)
         self.trash = Trash(name="Trash")
 
-        self.players = {player_id: PlayerState(cards=[], name=player_id) for player_id in self.game_conf.player_ids}
+        self.players = {player_id: PlayerState(cards=[], name=player_id) for player_id in self.game_conf.player_names}
 
         self._play_order: list[str] = list(self.players.keys())
         shuffle(self._play_order)

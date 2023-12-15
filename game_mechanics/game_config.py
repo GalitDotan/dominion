@@ -23,11 +23,14 @@ class GameConfiguration(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    game_id: str = Field(default_factory=lambda: uuid4())
-    player_ids: list[str] = []
+    game_id: str = Field(default_factory=lambda: str(uuid4()))
+    player_names: list[str] = []
     status: GameStatus = GameStatus.INITIATED
     kingdom_piles: list[str] = []  # TODO
     standard_piles: list[str] = []  # TODO
 
     def __hash__(self):
         return hash(self.game_id)
+
+    def __repr__(self):
+        return f'{self.game_id}[{self.status}]:{self.player_names}'

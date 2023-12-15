@@ -26,4 +26,15 @@ class WebSocketsManager:
 
     async def receive_text(self, client_id: str):
         websocket = self.active_connections[client_id]
-        await websocket.receive_text()
+        return await websocket.receive_text()
+
+    def rename_active_client(self, curr_name: str, new_name: str):
+        """
+        Rename a client's name.
+
+         Params:
+            curr_name: The currently saved name.
+            new_name: The new name.
+        """
+        conn = self.active_connections.pop(curr_name)
+        self.active_connections[new_name] = conn
