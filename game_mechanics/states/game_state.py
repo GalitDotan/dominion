@@ -5,12 +5,11 @@ from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.reactions.reaction import Reaction
 from game_mechanics.game_config import GameConfiguration
 from game_mechanics.game_options.game_options import GameOptions
-from game_mechanics.states.base_state import BasePublicState
 from game_mechanics.states.player_state import PlayerState
 from game_mechanics.supply import Supply
 
 
-class GameState(BasePublicState):
+class GameState:
     """
     All changeable elements of the game would be here.
     """
@@ -28,7 +27,8 @@ class GameState(BasePublicState):
         self.supply = Supply(self.game_conf.kingdom_piles, self.game_conf.standard_piles)
         self.trash = Trash(name="Trash")
 
-        self.players = {player_id: PlayerState(cards=[], name=player_id) for player_id in self.game_conf.player_names}
+        self.players: dict[str, PlayerState] = {player_name: PlayerState(cards=[], name=player_name) for player_name in
+                                                self.game_conf.player_names}
 
         self._play_order: list[str] = list(self.players.keys())
         shuffle(self._play_order)
@@ -85,8 +85,3 @@ class GameState(BasePublicState):
         decision: GameOptions = self.waiting_decisions[player_name]
         decision.decide(option_chosen)
         self.waiting_decisions[player_name] = None
-
-    """
-        The manager of the game.
-        It runs the game, asks the players for decisions and applies them.
-        """

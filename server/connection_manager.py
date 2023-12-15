@@ -9,9 +9,9 @@ class WebSocketsManager:
     def __init__(self):
         self.active_connections: dict[str, WebSocket] = {}
 
-    async def connect(self, client_id: str, websocket: WebSocket):
+    async def connect(self, client_name: str, websocket: WebSocket):
         await websocket.accept()
-        self.active_connections[client_id] = websocket
+        self.active_connections[client_name] = websocket
 
     def disconnect(self, client_id: str):
         self.active_connections.pop(client_id)

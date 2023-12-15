@@ -9,11 +9,11 @@ class GameRunner:
     """
 
     @classmethod
-    def _run(cls, gm: GameState):
+    def _run(cls, game_state: GameState):
         """
         This function runs the given game from beginning to end.
         """
-        gm.run_game()
+        game_state.run_game()
 
     @classmethod
     def threaded_run(cls, gm: GameState) -> Thread:

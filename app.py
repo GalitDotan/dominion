@@ -21,7 +21,7 @@ app = FastAPI()
 ws_manager = WebSocketsManager()
 
 awaiting_game_confs: dict[str:GameConfiguration] = {}
-running_games: set[GameState] = set()
+game_states: set[GameState] = set()
 threads: set[Thread] = set()
 
 
@@ -41,26 +41,23 @@ async def game_initiation_manager(websocket: WebSocket, name: str):
         ws_manager.rename_active_client(name, new_name)
         name = new_name
         await ws_manager.send_personal_message(f"Welcome, {name}", name)
-        while True:
-            await ws_manager.send_personal_message(f"Type 'init' or 'join <id>'", name)
-            choice = await websocket.receive_text()
-            if choice == 'init':
-                await _init_game(name)
-            elif choice.startswith('join'):
-                game_id = choice.removeprefix('join ')
-                await _join_game(name, game_id)
-            else:
-                raise HTTPException(status_code=404, detail=f'Unknown request {choice}')
-            # after game was started
-            await _play_game(name)
-
-
+        await ws_manager.send_personal_message(f"Type 'init' or 'join <id>'", name)
+        choice = await websocket.receive_text()
+        if choice == 'init':
+            game_state = await _init_game(name)
+        elif choice.startswith('join'):
+            game_id = choice.removeprefix('join ')
+            game_state = await _join_game(name, game_id)
+        else:
+            raise HTTPException(status_code=404, detail=f'Unknown request {choice}')
+        # after game was started
+        return await _play_game(game_state, name)
     except WebSocketDisconnect:
         ws_manager.disconnect(name)
         await ws_manager.broadcast(f"Player #{name} got disconnected")
 
 
-async def _init_game(name: str):
+async def _init_game(name: str) -> GameState:
     """
     Waiting for the current client to type start.
     """
@@ -68,19 +65,17 @@ async def _init_game(name: str):
     awaiting_game_confs[name] = game_conf
     await ws_manager.send_personal_message(f"Your new game: {game_conf.game_id}", name)
     await ws_manager.broadcast(f"{name} initiated game: {game_conf.game_id}")
-    started = False
-    while not started:
+    while True:
         await ws_manager.send_personal_message(f"Type 'start' whenever you wish to start the game", name)
         data = await ws_manager.receive_text(name)
         if data == 'start':
-            started = True
-            _start_game(name)
+            return _start_game(name)
         else:
             await ws_manager.send_personal_message(f"You wrote: {data}", name)
             await ws_manager.broadcast(f"{name} says: {data}")
 
 
-async def _join_game(name: str, game_id: str):
+async def _join_game(name: str, game_id: str) -> GameState:
     """
     Join an already initiated game.
     This is allowed only for games that hadn't been started yet.
@@ -88,23 +83,25 @@ async def _join_game(name: str, game_id: str):
     :param name: Client's name.
     :param game_id: The game ID.
     """
-    game = _find_not_started_game(game_id)
-    game.player_names.append(name)
-    await ws_manager.send_personal_message(f"You have joined {game.game_id}. "
+    game_conf = _find_not_started_game(game_id)
+    game_conf.player_names.append(name)
+    await ws_manager.send_personal_message(f"You have joined {game_conf.game_id}. "
                                            f"Please wait for host to start the game", name)
     await _wait_root(name, game_id)
+    return _find_in_progres_game(game_id)
 
 
-def _start_game(game_host_name: str):
+def _start_game(game_host_name: str) -> GameState:
     """
     Start a game by the host name.
     """
-    game = awaiting_game_confs.pop(game_host_name)
-    gm = GameState(game_conf=game)
-    ws_manager.broadcast(f'Starting game {game.game_id}')
-    th = GameRunner.threaded_run(gm)
+    game_conf = awaiting_game_confs.pop(game_host_name)
+    game_state = GameState(game_conf=game_conf)
+    ws_manager.broadcast(f'Starting game {game_conf.game_id}')
+    th = GameRunner.threaded_run(game_state)
     threads.add(th)
-    running_games.add(gm)
+    game_states.add(game_state)
+    return game_state
 
 
 async def _wait_root(name: str, game_id: str):
@@ -120,8 +117,9 @@ async def _wait_root(name: str, game_id: str):
         await ws_manager.broadcast(f"{name} says: {data}")
 
 
-async def _play_game(name: str):
-    gm: GameState = [gm for gm in running_games if name in running_games.game_conf.player_names][0]
+async def _play_game(game_state: GameState, player_name: str):
+    while game_state.game_conf.status == GameStatus.IN_PROGRESS:
+        pass
 
 
 def _find_not_started_game(game_id: str) -> Optional[GameConfiguration]:
@@ -132,6 +130,15 @@ def _find_not_started_game(game_id: str) -> Optional[GameConfiguration]:
     for game in game_confs:
         if game.game_id == game_id:
             return game
+
+
+def _find_in_progres_game(game_id: str) -> Optional[GameState]:
+    """
+    Find a GameConfiguration by game_id.
+    """
+    for game_state in game_states:
+        if game_state.game_conf.game_id == game_id:
+            return game_state
 
 
 if __name__ == "__main__":
