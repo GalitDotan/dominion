@@ -1,12 +1,8 @@
 from random import shuffle
-from typing import Optional, Callable
+from typing import Optional
 
-from game_mechanics.card_structures.supply_pile.supply_pile import SupplyPile
 from game_mechanics.card_structures.trash import Trash
-from game_mechanics.effects.reactions.reaction import Reaction
 from game_mechanics.game_config.game_config import GameConfiguration
-from game_mechanics.game_options.game_options import GameOptions
-from game_mechanics.game_supplies.cards_packs.all_cards import Card
 from game_mechanics.states.player_state import PlayerState
 from game_mechanics.supply import Supply
 
@@ -40,9 +36,6 @@ class GameState:
         self.player_index = 0
         self._num_players = len(self.players)
 
-        self.waiting_decisions: dict[str, Optional[GameOptions]] = {name: None for name in self._play_order}
-        self.waiting_reactions: list[Reaction] = []
-
     def __hash__(self):
         return hash(self.game_conf)
 
@@ -52,6 +45,10 @@ class GameState:
     @property
     def curr_player(self):
         return self._play_order[self.player_index]
+
+    @property
+    def player_list(self):
+        return list(self.players.values())
 
     def get_player_opponents(self, player: Optional[str] = None) -> list[str]:
         """
@@ -76,23 +73,56 @@ class GameState:
         """
         self.player_index = (self.player_index + 1) % self._num_players
 
-    def get_decision(self, player_name: str):
+    def start(self):
         """
-        Get the waiting decision of the given player name
+        Generate the initial game state.
         """
-        return self.waiting_decisions[player_name]
+        num_v_cards = V_CARDS_PER_PLAYERS[self._num_players]
+        num_curses = CURSES_CARDS_PER_PLAYER[self._num_players]
+        sizes = (num_v_cards, num_v_cards, num_v_cards, num_curses, 30, 40, 60)
+        kingdom_piles = generate_supply_piles(FIRST_GAME_CARDS)  # TODO: allow other cards
+        standard_piles = generate_supply_piles(STANDARD_CARDS, sizes)
+        self.game_state = GameState(kingdom_piles, standard_piles, self.players)
 
-    def apply_decision(self, player_name: str, option_chosen: list[int] | int):
+    def run(self):
         """
-        Get the waiting decision of the given player name
+        Run this game.
         """
-        decision: GameOptions = self.waiting_decisions[player_name]
-        decision.decide(option_chosen)
-        self.waiting_decisions[player_name] = None
+        self.status = GameStatus.IN_PROGRESS
+        while self.status == GameStatus.IN_PROGRESS:
+            curr_player = self.game_state.curr_player
+            opponents = self.game_state.get_player_opponents()
 
-    def _generate_supply_piles(self,
-                               piles_requested: list[
-                                   tuple[Card, Optional[Callable[[GameConfiguration], int] | int]]]):
-        piles: list[SupplyPile] = []
+            turn = Turn(curr_player, opponents, self.game_state)
+            turn.play()
+            self.game_state.move_to_next_player()
 
-        return piles
+    def get_player_view(self, player_name: str):
+        """
+        Get current board view from the PoV of the given curr_player.
+        """
+        player = self.players[player_name]
+        opponents = self.game_state.get_player_opponents(player)
+        if self.status == GameStatus.INITIATED:
+            return OpeningMessage(player, opponents)
+        elif self.status == GameStatus.IN_PROGRESS:
+            return player.get_board_view()
+        elif self.status == GameStatus.FINISHED:
+            return ScoreBoard(self.player_list)
+        raise AttributeError(f'Unknown status {self.status}')
+
+    def game_over(self, finishing_piles: tuple[str] = DEFAULT_FINISH_PILES) -> bool:
+        """
+        Check whether any of the end conditions are met.
+        """
+        return self._is_enough_empty_piles() or self._is_any_of_finishing_piles_empty(finishing_piles)
+
+    def _is_enough_empty_piles(self) -> bool:
+        return self.game_state.supply.get_num_of_empty() >= EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS[self._num_players]
+
+    def _is_any_of_finishing_piles_empty(self, finishing_piles: tuple[str]) -> bool:
+        empty_pile_names = [pile.name for pile in self.game_state.supply.empty_piles]
+        for pile in finishing_piles:
+            if pile in empty_pile_names:
+                return True
+        return False
