@@ -7,9 +7,9 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
 
+from game_mechanics.game import Game
 from game_mechanics.game_config.game_config import GameConfiguration
 from game_mechanics.game_runner import GameRunner
-from game_mechanics.game import Game
 from game_mechanics.game_status import GameStatus
 from server.connection_manager import WebSocketsManager
 from server.server_consts import ServerConf
@@ -110,7 +110,7 @@ def _start_game(game_host_name: str) -> Game:
     """
     game_conf = awaiting_game_confs.pop(game_host_name)
     game = Game(game_conf=game_conf)
-    ws_manager.broadcast(f'Starting game {game_conf.game_id}')
+    await ws_manager.broadcast(f'Starting game {game_conf.game_id}')
     th = GameRunner.threaded_run(game)
     threads.add(th)
     games.add(game)
