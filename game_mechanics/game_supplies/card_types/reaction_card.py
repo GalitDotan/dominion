@@ -1,6 +1,6 @@
-from game_mechanics.game_supplies.card_types.card_type import CardType
+from game_mechanics.game_supplies.card_types.base_card import BaseCard
 
 
-class Reaction(CardType):
+class ReactionCard(BaseCard):
     def detailed_repr(self):
         pass

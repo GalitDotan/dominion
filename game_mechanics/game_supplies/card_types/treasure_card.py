@@ -1,7 +1,7 @@
-from game_mechanics.game_supplies.card_types.card_type import CardType
+from game_mechanics.game_supplies.card_types.base_card import BaseCard
 
 
-class Treasure(CardType):
+class TreasureCard(BaseCard):
 
     def __init__(self, name: str, cost: int, coins: int, automatic_play: bool = True, *args, **kwargs):
         super().__init__(name, cost, *args, **kwargs)

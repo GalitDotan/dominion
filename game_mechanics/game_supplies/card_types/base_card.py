@@ -8,20 +8,19 @@ import game_mechanics.effects.game_stages.phase.night_phase as night_phase
 from game_mechanics.effects.effect import Effect
 
 
-class CardType(ABC):
+class BaseCard(Effect, ABC):
     """
     A card in a game. Stats can be modified
     """
 
-    def __init__(self, name: str, cost: int, default_pile_size: int = 10, is_reveled: bool = False,
+    def __init__(self, name: str, cost: int, is_reveled: bool = False,
                  actions: list[tuple[Effect]] = (), treasures: list[tuple[Effect]] = (),
-                 night_effects: list[tuple[Effect]] = (),
-                 cleanup_effects: list[tuple[Effect]] = (), end_game_effects: list[tuple[Effect]] = ()):
-        self.name: str = name
+                 night_effects: list[tuple[Effect]] = (), cleanup_effects: list[tuple[Effect]] = (),
+                 end_game_effects: list[tuple[Effect]] = ()):
+        super().__init__(name)
         self.cost: int = cost
-        self.default_pile_size: int = default_pile_size
         self.is_reveled: bool = is_reveled
-        self.on_play: dict[type[
+        self.activation_by_phase: dict[type[
             action_phase.ActionPhase | buy_phase.BuyPhase | night_phase.NightPhase |
             cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[tuple[Effect]]] = {
             action_phase.ActionPhase: actions,
@@ -43,7 +42,7 @@ class CardType(ABC):
     def __eq__(self, other):
         return self.name == other.name
 
-    def __lt__(self, other: 'CardType'):
+    def __lt__(self, other: 'BaseCard'):
         if self.cost < other.cost:
             return True
         if self.cost > other.cost:
@@ -57,3 +56,6 @@ class CardType(ABC):
     @abstractmethod
     def detailed_repr(self):
         raise NotImplemented
+
+    def activate(self, game):
+        pass

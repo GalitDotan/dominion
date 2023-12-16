@@ -3,8 +3,8 @@ from typing import Optional
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
-from game_mechanics.game_supplies.card_types.card_type import CardType
-from game_mechanics.game_supplies.card_types.victory_card import Victory
+from game_mechanics.game_supplies.card_types.base_card import BaseCard
+from game_mechanics.game_supplies.card_types.victory_card import VictoryCard
 from game_mechanics.states.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_name
@@ -20,10 +20,10 @@ class Player:
         5. Different mats
     """
 
-    def __init__(self, name: str, cards: list[CardType], non_card_vp: int = 0):
+    def __init__(self, name: str, cards: list[BaseCard], non_card_vp: int = 0):
         self.name = name if name else generate_name()
 
-        self._all_cards: list[CardType] = cards.copy()  # all cards the curr_player has
+        self._all_cards: list[BaseCard] = cards.copy()  # all cards the curr_player has
 
         # curr_player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
@@ -61,7 +61,7 @@ class Player:
         """
         vp = self._non_card_vp
         for card in self._all_cards:
-            if isinstance(card, Victory):
+            if isinstance(card, VictoryCard):
                 vp += card.victory_points
         return vp
 
@@ -95,8 +95,8 @@ class Player:
         return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \
                f"{self.discard_pile.detailed_repr()}"
 
-    def get_cards_alphabetically(self) -> list[CardType]:
+    def get_cards_alphabetically(self) -> list[BaseCard]:
         return sorted(self._all_cards, key=lambda x: x.name)
 
-    def get_cards_by_value(self) -> list[CardType]:
+    def get_cards_by_value(self) -> list[BaseCard]:
         return sorted(self._all_cards, key=lambda x: x.value)

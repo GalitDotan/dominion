@@ -1,7 +1,7 @@
-from game_mechanics.game_supplies.card_types.card_type import CardType
+from game_mechanics.game_supplies.card_types.base_card import BaseCard
 
 
-class Victory(CardType):
+class VictoryCard(BaseCard):
 
     def __init__(self, name: str, cost: int, vp: int, *args, **kwargs):
         super().__init__(name=name, cost=cost, *args, **kwargs)

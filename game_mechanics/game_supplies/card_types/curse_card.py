@@ -1,7 +1,7 @@
-from game_mechanics.game_supplies.card_types.card_type import CardType
+from game_mechanics.game_supplies.card_types.base_card import BaseCard
 
 
-class CurseType(CardType):
+class CurseCard(BaseCard):
     def __init__(self, name: str = 'Curse', cost: int = 0):
         super().__init__(name, cost)
         self.vp = -1

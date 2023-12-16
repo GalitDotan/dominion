@@ -9,7 +9,7 @@ from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.game_config.game_conf_consts import DEFAULT_PILE_SIZE, DEFAULT_COPPER_AMOUNT, \
     DEFAULT_SILVER_AMOUNT, DEFAULT_GOLD_AMOUNT, V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER
 from game_mechanics.game_status import GameStatus
-from game_mechanics.game_supplies.cards_packs.all_cards import Card
+from game_mechanics.game_supplies.all_cards import Card
 
 
 def victory_cards_by_players(game_conf: 'GameConfiguration') -> int:

@@ -7,7 +7,7 @@ from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_status import GameStatus
-from game_mechanics.game_supplies.cards_packs.all_cards import Card
+from game_mechanics.game_supplies.all_cards import Card
 from game_mechanics.states.player_state import Player
 from game_mechanics.supply import Supply
 
