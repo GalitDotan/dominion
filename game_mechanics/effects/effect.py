@@ -22,3 +22,11 @@ class Effect(ABC):
             game: The current state of the game.
         """
         pass
+
+
+class VPEffect(Effect):
+    def activate(self, game):
+        pass
+
+    def estimate(self, game):
+        pass

@@ -6,37 +6,30 @@ import game_mechanics.effects.game_stages.phase.buy_phase as buy_phase
 import game_mechanics.effects.game_stages.phase.cleanup_phase as cleanup_phase
 import game_mechanics.effects.game_stages.phase.end_game_phase as end_game_phase
 import game_mechanics.effects.game_stages.phase.night_phase as night_phase
-from game_mechanics.effects.effect import Effect
+from game_mechanics.effects.effect import Effect, VPEffect
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class VPEffect(Effect):
-    def activate(self, game):
-        pass
-
-    def estimate(self, game):
-        pass
-
-
-class BaseCard(Effect, ABC):
+class BaseCard(ABC):
     """
     A card in a game. Stats can be modified
     """
 
-    def __init__(self, name: str,
+    def __init__(self,
+                 name: str,
                  types: CardType | list[CardType],
                  cost: int,
-                 action_effects: Optional[list[Effect | tuple[Effect]]] = (),
-                 treasure_effects: Optional[list[Effect | tuple[Effect]]] = (),
-                 night_effects: Optional[list[Effect | tuple[Effect]]] = (),
-                 cleanup_effects: Optional[list[Effect | tuple[Effect]]] = (),
-                 end_game_effects: Optional[list[Effect | tuple[Effect]]] = ()):
-        super().__init__(name)
+                 action_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
+                 treasure_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
+                 night_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
+                 cleanup_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
+                 end_game_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = ()):
+        self.name = name
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
         self._effects_by_phase: dict[type[
             action_phase.ActionPhase | buy_phase.BuyPhase | night_phase.NightPhase |
-            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[Effect | tuple[Effect]]] = {
+            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[type[Effect] | tuple[type[Effect]]]] = {
             action_phase.ActionPhase: action_effects,
             buy_phase.BuyPhase: treasure_effects,
             night_phase.NightPhase: night_effects,
@@ -69,17 +62,22 @@ class BaseCard(Effect, ABC):
 
     @property
     def types(self) -> list[CardType]:
+        """
+        All types of the card.
+        """
         return self._types.copy()
 
-    def effects_to_activate(self, game) -> list[Effect | tuple[Effect]]:
-        phase = game.curr_phase
-        if not phase:
-            return []
-        return self._effects_by_phase[phase]
+    def effects_to_activate(self, game, phase=None) -> list[type[Effect] | tuple[type[Effect]]]:
+        """
+        Get the types of effects to activate by phase.
+        Default phase - current.
+        """
+        phase = phase if phase else game.curr_phase
+        return [t if type(t) is tuple else (t,) for t in self._effects_by_phase.get(phase, [])]
 
-    def activate(self, game):
+    def play(self, game):
         for effect in self.effects_to_activate(game):
-            effect.activate(game)
+            game.apply_effect(effect())
 
     def estimate_vp_worth(self, game):
         vp_effects = self._effects_by_phase.get(end_game_phase.EndGamePhase)
