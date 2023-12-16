@@ -75,7 +75,7 @@ async def _init_game(name: str) -> Game:
     game_conf = GameConfiguration(player_names=[name])
     awaiting_game_confs[name] = game_conf
     await ws_manager.send_personal_message(f"Your new game: {game_conf.game_id}", name)
-    await ws_manager.broadcast(f"{name} initiated game: {game_conf.game_id}")
+    await ws_manager.broadcast(f"{name} initiated game. To join type 'join {game_conf.game_id}'")
     await ws_manager.send_personal_message(f"Type 'start' whenever you wish to start the game", name)
     while True:
         data = await ws_manager.receive_text(name)
