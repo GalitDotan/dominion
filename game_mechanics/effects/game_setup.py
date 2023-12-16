@@ -1,10 +1,15 @@
 from game_mechanics.effects.effect import Effect
+from game_mechanics.effects.move_cards.draw_num_cards import DrawNum
 
 
 class GameSetup(Effect):
+    def __init__(self):
+        super().__init__()
+        self.cards_to_draw = 5
 
-    def activate(self, game):
+    def activate(self, game, player=None):
         """
-        Each player draws 5 cards.
+        Each player draws cards.
         """
-        pass
+        for player in game.players.values():
+            game.apply_effect(DrawNum(self.cards_to_draw), player)

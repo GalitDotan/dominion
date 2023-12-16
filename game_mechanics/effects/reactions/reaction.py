@@ -22,4 +22,4 @@ class Reaction(Effect):
         Activate reaction if condition is satisfied.
         """
         if self.should_activate(game):
-            self.activate(game, EmptyOptions())
+            self.activate(game)

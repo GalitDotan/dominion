@@ -1,5 +1,5 @@
 from game_mechanics.effects.effect import Effect
-from game_mechanics.states.game import Game
+from game_mechanics.player.game import Game
 from options import Options
 
 

@@ -9,19 +9,21 @@ class Phase(GameStage, ABC):
         super().__init__()
         self.continue_phase: bool = True
 
-    def activate(self, game):
+    def activate(self, game, player=None):
         """
         Play this phase.
         Each type of phase can implement what happens before, during and after phase iterations.
         before_run_iterations() would happen ones in the beginning.
         Then there's a loop of run_phase_iteration().
         Then after_run_iterations() would run one time.
+        :param player:
         """
-        playable_cards = self.get_playable_cards()
+        game.send_player_view(f'Starting {self.name}')
+        game.curr_phase = self
+        playable_cards = game.get_playable_cards()
         if not playable_cards:
-            self.print("You have no action playable in hand... finishing phase")
+            game.send_player_view(f'No playable cards for {self.name}')
             return
-        self.print(HeadlineFormats.H1.format(f"Welcome to your {self.name} Phase!"))
         self.before_run_iterations()
         while self.continue_phase:
             self.run_phase_iteration()

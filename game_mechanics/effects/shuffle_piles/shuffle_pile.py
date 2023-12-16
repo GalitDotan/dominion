@@ -1,6 +1,6 @@
 from game_mechanics.effects.effect import Effect
 from game_mechanics.game_options.empty_options import EmptyOptions
-from game_mechanics.states.game import Game
+from game_mechanics.player.game import Game
 
 
 class ShuffleDiscardToDrawPile(Effect):

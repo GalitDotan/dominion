@@ -10,8 +10,8 @@ class CardStructure(ABC):
     def __init__(self, cards: Optional[list[BaseCard]] = None, name: Optional[str] = None, is_visible: bool = True):
         default_name = cards[0].name if cards and len(cards) > 0 else self.__class__.__name__
         self.name: str = name if name else default_name
-        self._cards: list[BaseCard] = cards if cards else []
-        self._is_visible: bool = is_visible
+        self.cards: list[BaseCard] = cards if cards else []
+        self.is_visible: bool = is_visible
 
     def __hash__(self):
         return self.name
@@ -20,21 +20,17 @@ class CardStructure(ABC):
         return f"{self.name}[{len(self)}]"
 
     def __len__(self):
-        return len(self._cards)
+        return len(self.cards)
 
     def __iter__(self):
-        return self._cards.__iter__()
+        return self.cards.__iter__()
 
     def __getitem__(self, item: int):
-        return self._cards[item]
+        return self.cards[item]
 
     @property
     def visible(self) -> bool:
-        return self._is_visible
-
-    @property
-    def cards(self) -> list[BaseCard]:
-        return self._cards.copy()
+        return self.is_visible
 
     @property
     def cards_dict(self) -> dict[BaseCard, int]:
@@ -43,41 +39,41 @@ class CardStructure(ABC):
 
     def detailed_repr(self):
         basic_repr = repr(self)
-        if not self._is_visible or len(self.cards_dict) <= 1:
+        if not self.is_visible or len(self.cards_dict) <= 1:
             return basic_repr
         return f"{basic_repr}: {self.cards_dict}"
 
     def is_empty(self) -> bool:
-        return len(self._cards) == 0
+        return len(self.cards) == 0
 
     def pop(self, i: int):
-        self._cards.pop(i)
+        self.cards.pop(i)
 
     def sort(self, key: Optional[Callable] = None):
         if key is not None:
-            self._cards.sort(key=key)
+            self.cards.sort(key=key)
         else:
-            self._cards.sort()
+            self.cards.sort()
 
     def remove_all(self) -> list[BaseCard]:
         """
         Remove all the cards from the structure.
         """
-        cards = self._cards
-        self._cards = []
+        cards = self.cards
+        self.cards = []
         return cards
 
     def remove(self, card: BaseCard):
-        self._cards.remove(card)
+        self.cards.remove(card)
 
     def append(self, card: BaseCard):
-        self._cards.append(card)
+        self.cards.append(card)
 
     def extend(self, cards: list[BaseCard]):
-        self._cards.extend(cards)
+        self.cards.extend(cards)
 
     def shuffle(self):
         """
         Shuffle the cards in the structure.
         """
-        shuffle(self._cards)
+        shuffle(self.cards)

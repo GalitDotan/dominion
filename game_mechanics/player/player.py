@@ -4,7 +4,7 @@ from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.game_supplies.base_card import BaseCard
-from game_mechanics.states.player_turn_state import PlayerTurnStats
+from game_mechanics.player.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_name
 
@@ -65,16 +65,10 @@ class Player:
             vp += card.estimate_vp_worth(game)
         return vp
 
-    def on_game_start(self):  # TODO: move to effects
-        pass
-
     def on_turn_start(self, my_turn: bool):  # TODO: move to effects
         self.init_turn_state(my_turn)
         if my_turn:
             self.turns_played += 1
-
-    def get_board_view(self) -> str:
-        pass  # TODO: board view by curr_player
 
     def init_turn_state(self, my_turn: bool):
         """

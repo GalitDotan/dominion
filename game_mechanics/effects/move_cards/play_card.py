@@ -1,6 +1,6 @@
 from game_mechanics.effects.effect import Effect
 from game_mechanics.game_options.name_options import CheckboxOptions
-from game_mechanics.states.game import Game
+from game_mechanics.player.game import Game
 
 
 class PlayCard(Effect):

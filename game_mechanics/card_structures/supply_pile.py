@@ -14,9 +14,9 @@ class SupplyPile(Pile):
 
     def __repr__(self):
         basic_repr = f"{self.name}[{len(self)}]"
-        if not self._is_visible:
+        if not self.is_visible:
             return basic_repr
-        counter = dict(Counter(self._cards))
+        counter = dict(Counter(self.cards))
         card_names_counts = {card.name: (f'amount: {cnt}', f'cost: {card.cost}') for card, cnt in counter.items()}
         if len(counter) == 0:
             return basic_repr

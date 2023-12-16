@@ -67,6 +67,9 @@ class BaseCard(ABC):
         """
         return self._types.copy()
 
+    def is_playable(self, phase):
+        return len(self._effects_by_phase.get(phase, [])) > 0
+
     def effects_to_activate(self, game, phase=None) -> list[type[Effect] | tuple[type[Effect]]]:
         """
         Get the types of effects to activate by phase.

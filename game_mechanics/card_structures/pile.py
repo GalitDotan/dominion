@@ -1,6 +1,6 @@
 from typing import Optional
 
-from game_mechanics.card_structures._card_structure import CardStructure
+from game_mechanics.card_structures.card_structure import CardStructure
 from game_mechanics.game_supplies.base_card import BaseCard
 
 
@@ -19,7 +19,7 @@ class Pile(CardStructure):
         """
         if self.is_empty():
             return
-        return self._cards.pop()
+        return self.cards.pop()
 
     def draw_all(self) -> list[BaseCard]:
         """

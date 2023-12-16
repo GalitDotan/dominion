@@ -14,18 +14,19 @@ class Effect(ABC):
         return self.name
 
     @abstractmethod
-    def activate(self, game):
+    def activate(self, game, player=None):
         """
         Activate this effect according to a player's decision.
 
         Params:
             game: The current state of the game.
+            player: The player.
         """
         pass
 
 
 class VPEffect(Effect):
-    def activate(self, game):
+    def activate(self, game, player=None):
         pass
 
     def estimate(self, game):
