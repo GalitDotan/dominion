@@ -76,9 +76,9 @@ class Game:
         """
         if not player:
             player = self.curr_player
-        opponents = self.get_player_opponents(player)
+        opponents = self.game_conf.player_names.copy()
         opponents.remove(player)
-        return list(opponents)
+        return opponents
 
     def move_to_next_player(self):
         """
