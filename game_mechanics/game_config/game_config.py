@@ -10,6 +10,7 @@ from game_mechanics.game_config.game_conf_consts import DEFAULT_PILE_SIZE, DEFAU
     DEFAULT_SILVER_AMOUNT, DEFAULT_GOLD_AMOUNT, V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER
 from game_mechanics.game_status import GameStatus
 from game_mechanics.game_supplies.all_cards import Card
+from server.connection_manager import WebSocketsManager
 
 
 def victory_cards_by_players(game_conf: 'GameConfiguration') -> int:
@@ -74,6 +75,7 @@ class GameConfiguration(BaseModel):
         PileGenerator(generators=(Card.COPPER, DEFAULT_COPPER_AMOUNT)),
         PileGenerator(generators=(Card.CURSE, curse_cards_by_players)),
     ]
+    ws_manager: WebSocketsManager
 
     def __hash__(self):
         return hash(self.game_id)

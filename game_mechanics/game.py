@@ -1,3 +1,4 @@
+from asyncio import sleep
 from random import shuffle
 from typing import Optional
 
@@ -15,8 +16,9 @@ from game_mechanics.supply import Supply
 
 class PlayerTurn(Effect):
     def activate(self, game):
+        sleep(100)
         curr_player = game.curr_player
-        opponents = game.get_player_opponents()
+        opponents = game.get_opponents_names()
 
 
 class Game:
@@ -63,7 +65,7 @@ class Game:
     def player_list(self):
         return list(self.players.values())
 
-    def get_player_opponents(self, player: Optional[str] = None) -> list[str]:
+    def get_opponents_names(self, player_name: Optional[str] = None) -> list[str]:
         """
         Get all the opponents of a curr_player.
         If no curr_player name was supplied - returns the opponents of the current curr_player.
@@ -74,11 +76,24 @@ class Game:
         Returns:
             A list of opponents (players).
         """
-        if not player:
-            player = self.curr_player
+        if not player_name:
+            player_name = self.curr_player
         opponents = self.game_conf.player_names.copy()
-        opponents.remove(player)
+        opponents.remove(player_name)
         return opponents
+
+    def get_opponents(self, player_name: Optional[str] = None) -> list[Player]:
+        """
+        Get all the opponents of a curr_player.
+        If no curr_player name was supplied - returns the opponents of the current curr_player.
+
+        Params:
+            player_name: the curr_player's name
+
+        Returns:
+            A list of opponents (players).
+        """
+        return [self.players[opp] for opp in self.get_opponents_names(player_name)]
 
     def move_to_next_player(self):
         """
@@ -89,15 +104,19 @@ class Game:
     def is_in_progress(self) -> bool:
         return self.game_conf.status == GameStatus.IN_PROGRESS
 
-    def run(self):
+    async def run(self):
         """
         Run this game.
         """
         self.game_conf.status = GameStatus.IN_PROGRESS
+        await self.send_player_views()
         self.apply_effect(GameSetup())
+        await self.send_player_views()
         while not self.game_over():
             self.apply_effect(PlayerTurn())
+            await self.send_player_views()
         self.apply_effect(EndGamePhase())
+        await self.send_player_views()
 
     def apply_effect(self, effect: Effect):
         """
@@ -121,3 +140,13 @@ class Game:
             if pile in empty_pile_names:
                 return True
         return False
+
+    async def send_player_view(self, player_name: str):
+        player = str(self.players[player_name])
+        opponents = [str(opp) for opp in self.get_opponents(player_name)]
+        message = f'Supply: {self.supply}. You: {player}. Opponents: {opponents}'
+        await self.game_conf.ws_manager.send_personal_message(message, player_name)
+
+    async def send_player_views(self):
+        for player_name in self.players.keys():
+            await self.send_player_view(player_name)
