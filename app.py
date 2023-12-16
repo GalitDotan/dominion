@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse
 
 from game_mechanics.game_config.game_config import GameConfiguration
 from game_mechanics.game_runner import GameRunner
-from game_mechanics.game_state import Game
+from game_mechanics.game import Game
 from game_mechanics.game_status import GameStatus
 from server.connection_manager import WebSocketsManager
 from server.server_consts import ServerConf

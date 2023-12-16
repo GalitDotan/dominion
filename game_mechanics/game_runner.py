@@ -1,6 +1,6 @@
 from threading import Thread
 
-from game_mechanics.game_state import Game
+from game_mechanics.game import Game
 
 
 class GameRunner:
