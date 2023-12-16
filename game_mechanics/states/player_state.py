@@ -3,8 +3,7 @@ from typing import Optional
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
-from game_mechanics.game_supplies.card_types.base_card import BaseCard
-from game_mechanics.game_supplies.card_types.victory_card import VictoryCard
+from game_mechanics.game_supplies.base_card import BaseCard
 from game_mechanics.states.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_name
@@ -37,22 +36,26 @@ class Player:
         self.turns_played = 0
         self.turn_state: Optional[PlayerTurnStats] = None  # this would be initiated every turn
 
+    # TODO: fix methods
     def __repr__(self):
-        return f"[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
+        # return f"[{self.victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}"
+        pass
 
     def __lt__(self, other: "Player"):  # is self losing to other
-        return self.victory_points < other.victory_points or (
-                self.victory_points == other.victory_points and self.turns_played >= other.turns_played)
+        # return self.victory_points < other.victory_points or (
+        #        self.victory_points == other.victory_points and self.turns_played >= other.turns_played)
+        pass
 
     def __eq__(self, other: "Player"):
-        return self.victory_points == other.victory_points
+        # return self.victory_points == other.victory_points
+        pass
 
     def __gt__(self, other: "Player"):  # is self winning other
-        return self.victory_points > other.victory_points or (
-                self.victory_points == other.victory_points and self.turns_played < other.turns_played)
+        # return self.victory_points > other.victory_points or (
+        #        self.victory_points == other.victory_points and self.turns_played < other.turns_played)
+        pass
 
-    @property
-    def victory_points(self) -> int:
+    def estimate_victory_points(self, game) -> int:  # TODO: make property
         """
         Calculate the victory points by Player's cards and other places.
 
@@ -61,8 +64,7 @@ class Player:
         """
         vp = self._non_card_vp
         for card in self._all_cards:
-            if isinstance(card, VictoryCard):
-                vp += card.victory_points
+            vp += card.estimate_vp_worth(game)
         return vp
 
     def on_game_start(self):  # TODO: move to effects
@@ -91,8 +93,9 @@ class Player:
         else:
             self.turn_state = PlayerTurnStats(actions=0, buys=0, coins=0)
 
-    def detailed_repr(self):
-        return f"{self.name}[{self.victory_points} VP]: {self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \
+    def detailed_repr(self, game):
+        return f"{self.name}[{self.estimate_victory_points(game)} VP]: " \
+               f"{self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \
                f"{self.discard_pile.detailed_repr()}"
 
     def get_cards_alphabetically(self) -> list[BaseCard]:

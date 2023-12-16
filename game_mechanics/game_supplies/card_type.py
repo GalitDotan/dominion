@@ -1,13 +1,12 @@
 from enum import Enum
 
-from card_types import *
-
 
 class CardType(Enum):
-    ACTION = ActionCard
-    ATTACK = AttackCard
-    CURSE = CurseCard
-    DURATION = DurationCard
-    NIGHT = NightCard
-    REACTION = ReactionCard
-    VICTORY = VictoryCard
+    ACTION = 'Action'
+    ATTACK = 'Attack'
+    CURSE = 'Curse'
+    DURATION = 'Duration'
+    NIGHT = 'Night'
+    REACTION = 'Reaction'
+    VICTORY = 'Victory'
+    TREASURE = 'Treasure'

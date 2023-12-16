@@ -3,7 +3,7 @@ from collections import Counter
 from random import shuffle
 from typing import Optional, Callable
 
-from game_mechanics.game_supplies.card_types.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import BaseCard
 
 
 class CardStructure(ABC):

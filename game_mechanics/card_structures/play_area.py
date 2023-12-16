@@ -1,6 +1,6 @@
 from game_mechanics.card_structures._card_structure import CardStructure
-from game_mechanics.game_supplies.card_types.base_card import BaseCard
-from game_mechanics.game_supplies.card_types.duration_card import DurationCard
+from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.card_type import CardType
 
 
 class PlayArea(CardStructure):
@@ -19,16 +19,6 @@ class PlayArea(CardStructure):
         """
         self.append(card)
 
-    def resolve(self, card: DurationCard):
-        """
-        Remove a Duration card from here.
-
-        Params:
-            card: a card to put.
-        """
-        self.remove(card)
-        # TODO: add functionality on resolve
-
     def do_cleanup(self) -> list[BaseCard]:
         """
         Remove all cards but duration cards.
@@ -37,7 +27,7 @@ class PlayArea(CardStructure):
             All removed cards.
         """
         all_cards = self.remove_all()
-        duration_cards = [card for card in all_cards if type(card) is DurationCard]
-        non_duration_cards = [card for card in all_cards if type(card) is not DurationCard]
+        duration_cards = [card for card in all_cards if CardType.DURATION in card.types]
+        non_duration_cards = [card for card in all_cards if CardType.DURATION not in card.types]
         self.extend(duration_cards)  # keep the duration cards
         return non_duration_cards

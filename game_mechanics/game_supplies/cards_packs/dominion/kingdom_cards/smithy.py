@@ -1,8 +1,10 @@
-from game_mechanics.game_supplies.card_types.action_card import ActionCard
+from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.card_type import CardType
 
 
-class Smithy(ActionCard):
+class Smithy(BaseCard):
     def __init__(self):
         super().__init__(name='Smithy',
                          cost=4,
-                         actions=[])
+                         types=CardType.ACTION,
+                         action_effects=[])

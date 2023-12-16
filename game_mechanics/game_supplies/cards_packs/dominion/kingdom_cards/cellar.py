@@ -1,9 +1,10 @@
-from game_mechanics.effects.increase_player_turn_state_counters import IncStateCounter
-from game_mechanics.game_supplies.card_types.action_card import ActionCard
+from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.card_type import CardType
 
 
-class Cellar(ActionCard):
+class Cellar(BaseCard):
     def __init__(self):
         super().__init__(name='Cellar',
                          cost=2,
-                         actions=[IncStateCounter(actions=1)])
+                         types=CardType.ACTION,
+                         action_effects=[])

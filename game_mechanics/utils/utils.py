@@ -1,6 +1,6 @@
 from random import shuffle
 
-from game_mechanics.game_supplies.card_types.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import BaseCard
 
 
 def shuffle_copy(cards: list[BaseCard]):
