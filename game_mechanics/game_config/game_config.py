@@ -109,16 +109,19 @@ class GameConfiguration(BaseModel):
             card: Card = pile_generator.generators
             cards = [card.value() for _ in range(DEFAULT_PILE_SIZE)]
         elif type(pile_generator.generators) is tuple:
-            card, amount_generator = self.generators
-            cards = [card.value() for _ in range(amount_generator(self))]
+            card, amount_calculator = pile_generator.generators
+            if type(amount_calculator) is int:
+                cards = [card.value() for _ in range(amount_calculator)]
+            else:
+                cards = [card.value() for _ in range(amount_calculator(self))]
         else:  # if there is more than one type of card in the pile
-            for card_name, pile_generator in self.generators:
+            for card_name, pile_generator in pile_generator.generators:
                 if pile_generator is None:
                     num_cards = DEFAULT_PILE_SIZE
                 elif type(pile_generator) is int:
                     num_cards = pile_generator
                 else:
                     pile_generator: Callable[[GameConfiguration], int]
-                    num_cards = pile_generator(self.game_conf)
+                    num_cards = pile_generator(self)
                 cards.extend([card_name.value() for _ in range(num_cards)])
         return SupplyPile(cards)
