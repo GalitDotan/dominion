@@ -7,7 +7,7 @@ class GameSetup(Effect):
         super().__init__()
         self.cards_to_draw = 5
 
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         """
         Each player draws cards.
         """

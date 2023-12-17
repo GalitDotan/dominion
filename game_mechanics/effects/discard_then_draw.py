@@ -1,8 +1,8 @@
-from game_mechanics.effects.draw_cards import Draw
+from typing import Any
+
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.name_options import CheckboxOptions
+from game_mechanics.effects.player_decision import PlayerDecision
 from game_mechanics.game_options.range_options import RangeOptions
-from game_mechanics.player.game import Game
 
 
 class DiscardThenDraw(Effect):
@@ -11,9 +11,9 @@ class DiscardThenDraw(Effect):
     """
 
     def __init__(self):
-        super().__init__(followup_effect=Draw())
+        super().__init__()
 
-    def on_activation(self, game: Game, decision: CheckboxOptions, player):
-        to_discard = decision.cards
-        game.curr_player_name.discard(to_discard)
+    def activate(self, game, player=None) -> Any:
+
+        player.hand.discard(to_discard)
         return RangeOptions(len(to_discard))

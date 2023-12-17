@@ -6,7 +6,7 @@ class ShuffleDiscardToDrawPile(Effect):
     def __init__(self):
         super().__init__()
 
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         """
         Shuffle the discard pile into the draw pile.
         """

@@ -9,7 +9,7 @@ class Phase(GameStage, ABC):
         super().__init__()
         self.continue_phase: bool = True
 
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         """
         Play this phase.
         Each type of phase can implement what happens before, during and after phase iterations.

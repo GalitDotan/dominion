@@ -30,8 +30,8 @@ class Player:
         self.hand: Hand = Hand()
         self.play_area: PlayArea = PlayArea()
 
-        # stats
-        self._non_card_vp = non_card_vp  # All VP that does not come from cards
+        # All VP that does not come from cards + all victory cards that were already calculated
+        self.achieved_victory_points = non_card_vp
 
         self.turns_played = 0
         self.turn_state: Optional[PlayerTurnStats] = None  # this would be initiated every turn
@@ -60,7 +60,7 @@ class Player:
         Returns:
             Sum of victory points.
         """
-        vp = self._non_card_vp
+        vp = self.achieved_victory_points
         for card in self._all_cards:
             vp += card.estimate_vp_worth(game)
         return vp

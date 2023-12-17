@@ -1,0 +1,2 @@
+class PlayerDecision:
+    pass

@@ -66,6 +66,10 @@ class CardStructure(ABC):
     def remove(self, card: BaseCard):
         self.cards.remove(card)
 
+    def remove_cards(self, cards: list[BaseCard]):
+        for card in cards:
+            self.remove(card)
+
     def append(self, card: BaseCard):
         self.cards.append(card)
 

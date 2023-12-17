@@ -1,3 +1,4 @@
+from game_mechanics.effects.vp_effect import VPEffect, VPEffectKwargs
 from game_mechanics.game_supplies.base_card import BaseCard
 from game_mechanics.game_supplies.card_type import CardType
 
@@ -8,5 +9,5 @@ class Curse(BaseCard):
             name='Curse',
             cost=0,
             types=CardType.CURSE,
-            end_game_effects=[]  # TODO: -1VP effect
+            end_game_effects=[(VPEffect, VPEffectKwargs(value=-1))]
         )

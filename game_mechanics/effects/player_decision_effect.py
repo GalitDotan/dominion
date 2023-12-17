@@ -6,5 +6,5 @@ class PlayerDecisionEffect(Effect):
     Receiving a decision from the player.
     """
 
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         pass

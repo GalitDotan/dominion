@@ -28,7 +28,7 @@ class Turn(GameStage):
 
         self.phase_order = PHASE_ORDER
 
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         """
         Play this turn (with all its phases).
         """

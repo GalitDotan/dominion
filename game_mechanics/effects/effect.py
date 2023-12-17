@@ -1,5 +1,5 @@
 from abc import abstractmethod, ABC
-from typing import Optional
+from typing import Optional, Any
 
 
 class Effect(ABC):
@@ -14,7 +14,7 @@ class Effect(ABC):
         return self.name
 
     @abstractmethod
-    def activate(self, game, player=None):
+    def activate(self, game, player=None) -> Any:
         """
         Activate this effect according to a player's decision.
 
@@ -22,12 +22,4 @@ class Effect(ABC):
             game: The current state of the game.
             player: The player.
         """
-        pass
-
-
-class VPEffect(Effect):
-    def activate(self, game, player=None):
-        pass
-
-    def estimate(self, game):
         pass

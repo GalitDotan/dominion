@@ -1,5 +1,5 @@
 from random import shuffle
-from typing import Optional
+from typing import Optional, Any
 
 from game_mechanics.card_structures.card_structure import CardStructure
 from game_mechanics.card_structures.trash import Trash
@@ -124,13 +124,13 @@ class Game:
         self.apply_effect(EndGamePhase())
         await self.send_player_views()
 
-    def apply_effect(self, effect: Effect, player: Optional[Player] = None):
+    def apply_effect(self, effect: Effect, player: Optional[Player] = None) -> Any:
         """
         Activate given effect and add it to the list.
         If a player is given - the effect would affect him.
         """
-        effect.activate(self, player)
         self.applied_effects.append(effect)
+        return effect.activate(self, player)
 
     def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
         """
