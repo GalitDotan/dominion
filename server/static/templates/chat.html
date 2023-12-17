@@ -6,10 +6,6 @@
 <body>
 <h1>Dominion Initiator</h1>
 <h2>Your ID: <span id="ws-id"></span></h2>
-<form action="" onsubmit="sendMessage(event)">
-    <input type="text" id="messageText" autocomplete="off"/>
-    <button>Send</button>
-</form>
 <ul id='messages'>
 </ul>
 <script>
@@ -31,5 +27,9 @@
         event.preventDefault()
     }
 </script>
+<form action="" onsubmit="sendMessage(event)">
+    <label for="messageText"></label><input type="text" id="messageText" autocomplete="off"/>
+    <button>Send</button>
+</form>
 </body>
 </html>
