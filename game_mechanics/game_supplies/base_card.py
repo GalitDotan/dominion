@@ -19,17 +19,17 @@ class BaseCard(ABC):
                  name: str,
                  types: CardType | list[CardType],
                  cost: int,
-                 action_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
-                 treasure_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
-                 night_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
-                 cleanup_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = (),
-                 end_game_effects: Optional[list[type[Effect] | tuple[type[Effect]]]] = ()):
+                 action_effects: Optional[list[type[Effect]]] = (),
+                 treasure_effects: Optional[list[type[Effect]]] = (),
+                 night_effects: Optional[list[type[Effect]]] = (),
+                 cleanup_effects: Optional[list[type[Effect]]] = (),
+                 end_game_effects: Optional[list[type[Effect]]] = ()):
         self.name = name
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
         self._effects_by_phase: dict[type[
             action_phase.ActionPhase | buy_phase.BuyPhase | night_phase.NightPhase |
-            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[type[Effect] | tuple[type[Effect]]]] = {
+            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[type[Effect]]] = {
             action_phase.ActionPhase: action_effects,
             buy_phase.BuyPhase: treasure_effects,
             night_phase.NightPhase: night_effects,
@@ -70,13 +70,13 @@ class BaseCard(ABC):
     def is_playable(self, phase):
         return len(self._effects_by_phase.get(phase, [])) > 0
 
-    def effects_to_activate(self, game, phase=None) -> list[type[Effect] | tuple[type[Effect]]]:
+    def effects_to_activate(self, game, phase=None) -> list[type[Effect]]:
         """
         Get the types of effects to activate by phase.
         Default phase - current.
         """
         phase = phase if phase else game.curr_phase
-        return [t if type(t) is tuple else (t,) for t in self._effects_by_phase.get(phase, [])]
+        return [t for t in self._effects_by_phase.get(phase, [])]
 
     def play(self, game):
         for effect in self.effects_to_activate(game):
