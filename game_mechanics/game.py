@@ -1,24 +1,18 @@
-from asyncio import sleep
 from random import shuffle
 from typing import Optional
 
+from game_mechanics.card_structures.card_structure import CardStructure
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.effects.game_stages.phase.phase import Phase
+from game_mechanics.effects.game_stages.turn import Turn
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_status import GameStatus
 from game_mechanics.game_supplies.all_cards import Card
-from game_mechanics.states.player_state import Player
+from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
-
-
-class PlayerTurn(Effect):
-    def activate(self, game):
-        sleep(100)
-        curr_player = game.curr_player
-        opponents = game.get_opponents_names()
 
 
 class Game:
@@ -58,12 +52,24 @@ class Game:
         return hash(self.game_conf)
 
     @property
-    def curr_player(self):
+    def curr_player_name(self) -> str:
         return self._play_order[self.player_index]
+
+    @property
+    def curr_player(self) -> Player:
+        return self.players[self.curr_player_name]
 
     @property
     def player_list(self):
         return list(self.players.values())
+
+    def get_playable_cards(self, struct: CardStructure, phase: Optional[Phase] = None):
+        """
+        Receives a card structure and returns all cards from it that can be played in the given phase.
+        Default phase - current.
+        """
+        phase = phase if phase else self.curr_phase
+        return [c for c in struct.cards if c.is_playable(phase)]
 
     def get_opponents_names(self, player_name: Optional[str] = None) -> list[str]:
         """
@@ -77,7 +83,7 @@ class Game:
             A list of opponents (players).
         """
         if not player_name:
-            player_name = self.curr_player
+            player_name = self.curr_player_name
         opponents = self.game_conf.player_names.copy()
         opponents.remove(player_name)
         return opponents
@@ -113,16 +119,17 @@ class Game:
         self.apply_effect(GameSetup())
         await self.send_player_views()
         while not self.game_over():
-            self.apply_effect(PlayerTurn())
+            self.apply_effect(Turn())
             await self.send_player_views()
         self.apply_effect(EndGamePhase())
         await self.send_player_views()
 
-    def apply_effect(self, effect: Effect):
+    def apply_effect(self, effect: Effect, player: Optional[Player] = None):
         """
         Activate given effect and add it to the list.
+        If a player is given - the effect would affect him.
         """
-        effect.activate(self)
+        effect.activate(self, player)
         self.applied_effects.append(effect)
 
     def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
