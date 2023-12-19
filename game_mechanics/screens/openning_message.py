@@ -1,3 +1,4 @@
+from game_mechanics.player.player import Player
 from game_mechanics.screens.screen import Screen
 
 

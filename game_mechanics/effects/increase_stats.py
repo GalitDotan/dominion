@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydantic import BaseModel
 
 from game_mechanics.effects.effect import Effect

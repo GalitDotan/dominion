@@ -1,9 +1,28 @@
+from typing import Any
+
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.name_options import CheckboxOptions
-from game_mechanics.player.game import Game
+
+"""
+    if card not in self.state.hand:
+        raise ValueError(f"{card} is not in {self.state.hand}")
+
+    self.state.hand.remove(card)
+    self.state.play_area.play(card)
+
+    if isinstance(card, Treasure):
+        turn_state.coins += card.coins
+    if isinstance(card, Action):
+        for cmd in card.actions:
+            pass
+    if isinstance(card, Attack):
+        for cmd in card.attacks:
+            pass
+    if isinstance(card, Night):
+        pass
+"""
 
 
 class PlayCard(Effect):
-    def on_activation(self, game: Game, options: CheckboxOptions, player: Player):
-        for card in options.chosen_cards:
-            player.state.play_area.play(card)
+    def activate(self, game, player=None) -> Any:
+        # player.state.play_area.play(card)
+        pass

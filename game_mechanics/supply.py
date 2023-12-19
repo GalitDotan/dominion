@@ -14,14 +14,12 @@ class Supply:
         self._standard_piles: list[SupplyPile] = standard_piles
 
     def __repr__(self):
-        kingdom_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._kingdom_piles])
-        other_piles = '\r\n\t\t\t*  '.join([str(pile) for pile in self._standard_piles])
-        table = [kingdom_piles, other_piles]
         return f"""
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 {HeadlineFormats.H1.format("The Supply")}
         
-{tabulate({"Kingdom Cards": self._kingdom_piles, "Basic Cards": self._standard_piles}, headers="keys", showindex="always", tablefmt="fancy_grid")}
+{tabulate({"Kingdom Cards": self._kingdom_piles, "Basic Cards": self._standard_piles},
+          headers="keys", showindex="always", tablefmt="fancy_grid")}
         
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         """

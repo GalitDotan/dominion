@@ -1,3 +1,5 @@
+from typing import Any
+
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.shuffle_piles.shuffle_pile import ShuffleDiscardToDrawPile
 
@@ -23,3 +25,25 @@ class DrawNum(Effect):
                 break  # no more cards to draw
             cards.append(draw_pile.draw())
         player.hand.put_all(cards)
+
+
+def draw_card(self):
+    """
+    Get a card from the Draw pile and put it in the Hand.
+    """
+    if self.state.draw_pile.is_empty():
+        self.shuffle_discard_to_draw_pile()
+    return self.state.draw_pile.draw()
+
+
+def draw_cards(self, amount: int):
+    """
+    Draw a card `amount` times.
+    If the Draw and DiscardCard piles got emptied - it could return less than the desired `amount` of cards.
+    """
+    cards = [self.draw_card() for _ in range(amount)]
+    return [card for card in cards if card]  # card could be None
+
+
+def draw_hand(self, num: int = 5):
+    return self.draw_cards(num)

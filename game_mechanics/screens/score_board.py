@@ -2,7 +2,8 @@ from game_mechanics.screens.screen import Screen
 
 
 class ScoreBoard(Screen):
-    def __init__(self, players: list[str]):
+    def __init__(self, game):
+        players = game.players
         self.players_sorted_by_score = sorted(players, reverse=True)
         self.winner = self.players_sorted_by_score[0]
 

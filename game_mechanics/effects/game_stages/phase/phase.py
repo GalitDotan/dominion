@@ -1,4 +1,5 @@
 from abc import abstractmethod, ABC
+from typing import Any
 
 from game_mechanics.effects.game_stages.game_stage import GameStage
 
@@ -16,7 +17,10 @@ class Phase(GameStage, ABC):
         before_run_iterations() would happen ones in the beginning.
         Then there's a loop of run_phase_iteration().
         Then after_run_iterations() would run one time.
-        :param player:
+
+        Params:
+            game: The game.
+            player: The player.
         """
         game.send_player_view(f'Starting {self.name}')
         game.curr_phase = self

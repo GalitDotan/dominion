@@ -31,11 +31,11 @@ class BaseCard(ABC):
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
         self._effects_by_phase: dict[type[
-            action_phase.ActionPhase | buy_phase.BuyPhase | night_phase.NightPhase |
+            action_phase.ActionPhase | buy_phase.BuyPhaseTreasures | night_phase.NightPhase |
             cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], Optional[
             list[tuple[type[Effect], BaseModel]]]] = {
             action_phase.ActionPhase: action_effects,
-            buy_phase.BuyPhase: treasure_effects,
+            buy_phase.BuyPhaseTreasures: treasure_effects,
             night_phase.NightPhase: night_effects,
             cleanup_phase.CleanUpPhase: cleanup_effects,
             end_game_phase.EndGamePhase: end_game_effects

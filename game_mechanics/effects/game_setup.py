@@ -1,3 +1,5 @@
+from typing import Any
+
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.move_cards.draw_num_cards import DrawNum
 

@@ -1,4 +1,16 @@
+from typing import Any
+
 from game_mechanics.effects.effect import Effect
+
+'''
+def shuffle_discard_to_draw_pile(self):
+    """
+    Shuffle all cards in the DiscardCard pile and put them on the bottom of the Draw pile.
+    """
+    cards = self.state.discard_pile.draw_all()
+    shuffle(cards)
+    self.state.discard_pile.put_all(cards)
+'''
 
 
 class ShuffleDiscardToDrawPile(Effect):

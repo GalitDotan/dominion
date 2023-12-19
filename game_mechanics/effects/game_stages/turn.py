@@ -1,10 +1,12 @@
+from typing import Any
+
 from game_mechanics.effects.game_stages.game_stage import GameStage
 from game_mechanics.effects.game_stages.phase.action_phase import ActionPhase
-from game_mechanics.effects.game_stages.phase.buy_phase import BuyPhase
+from game_mechanics.effects.game_stages.phase.buy_phase import BuyPhaseTreasures
 from game_mechanics.effects.game_stages.phase.cleanup_phase import CleanUpPhase
 from game_mechanics.effects.game_stages.phase.night_phase import NightPhase
 
-PHASE_ORDER = (ActionPhase, BuyPhase, NightPhase, CleanUpPhase)
+PHASE_ORDER = (ActionPhase, BuyPhaseTreasures, NightPhase, CleanUpPhase)
 
 
 class Turn(GameStage):

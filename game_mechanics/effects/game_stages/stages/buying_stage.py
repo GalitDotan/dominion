@@ -1,5 +1,6 @@
-from game_mechanics.effects.game_stages.game_stage import GameStage
+from game_mechanics.effects.game_stages.phase.phase import Phase
 
 
-class BuyingStage(GameStage):
-    pass
+class BuyPhaseSupply(Phase):
+    def run_phase_iteration(self):
+        pass

@@ -7,4 +7,5 @@ from game_mechanics.effects.player_decision import PlayerDecision
 class Discard(Effect):
     def activate(self, game, player=None) -> Any:
         to_discard = game.apply_effect(PlayerDecision(), player)
-        cards = player.hand.remove()
+        cards = player.hand.remove(to_discard)
+        return cards
