@@ -26,8 +26,8 @@ class PileGenerator(BaseModel):
         tuple[Card, Optional[Callable[['GameConfiguration'], int] | int]]]
     name: Card
 
-    @classmethod
     @model_validator(mode='before')
+    @classmethod
     def validate_name(cls, data: Any):
         if 'name' not in data:
             generators = data['generators']

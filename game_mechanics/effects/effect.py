@@ -14,7 +14,7 @@ class Effect(ABC):
         return self.name
 
     @abstractmethod
-    def activate(self, game, player=None) -> Any:
+    def activate(self, game, player=None, *args, **kwargs) -> Any:
         """
         Activate this effect according to a player's decision.
 

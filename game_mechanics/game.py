@@ -8,6 +8,7 @@ from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.effects.game_stages.phase.phase import Phase
 from game_mechanics.effects.game_stages.turn import Turn
+from game_mechanics.effects.reactions.on_effect_reaction import OnEffectReaction
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_status import GameStatus
 from game_mechanics.game_supplies.all_cards import Card
@@ -45,6 +46,7 @@ class Game:
         self._num_players = len(self.players)
 
         self.applied_effects: list[Effect] = []
+        self.waiting_reactions: dict[str, list[OnEffectReaction]] = {pl: [] for pl in self.players.keys()}
 
         self.curr_phase: Optional[Phase] = None
 
@@ -124,13 +126,23 @@ class Game:
         self.apply_effect(EndGamePhase())
         await self.send_player_views()
 
-    def apply_effect(self, effect: Effect, player: Optional[Player] = None) -> Any:
+    def apply_effect(self, effect: Effect, player: Optional[Player] = None, *args, **kwargs) -> Any:
         """
         Activate given effect and add it to the list.
         If a player is given - the effect would affect him.
         """
         self.applied_effects.append(effect)
-        return effect.activate(self, player)
+        reactions_to_apply = [reaction for pl, reaction in self.waiting_reactions if
+                              reaction.should_react(effect) and pl == player]
+        for reaction in reactions_to_apply:
+            self.apply_effect(reaction, player, *args, **kwargs)
+        return effect.activate(self, player, *args, **kwargs)
+
+    def add_waiting_reaction(self, reaction: OnEffectReaction, player_name: str):
+        self.waiting_reactions[player_name].append(reaction)
+
+    def remove_waiting_reaction(self, reaction: OnEffectReaction, player_name: str):
+        self.waiting_reactions[player_name].remove(reaction)
 
     def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
         """

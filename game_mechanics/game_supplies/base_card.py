@@ -1,7 +1,4 @@
 from abc import ABC
-from typing import Optional
-
-from pydantic import BaseModel
 
 import game_mechanics.effects.game_stages.phase.action_phase as action_phase
 import game_mechanics.effects.game_stages.phase.buy_phase as buy_phase
@@ -22,18 +19,17 @@ class BaseCard(ABC):
                  name: str,
                  types: CardType | list[CardType],
                  cost: int,
-                 action_effects: Optional[list[tuple[type[Effect], BaseModel]]] = (),
-                 treasure_effects: Optional[list[tuple[type[Effect], BaseModel]]] = (),
-                 night_effects: Optional[list[tuple[type[Effect], BaseModel]]] = (),
-                 cleanup_effects: Optional[list[tuple[type[Effect], BaseModel]]] = (),
-                 end_game_effects: Optional[list[tuple[type[Effect], BaseModel]]] = ()):
+                 action_effects: list[Effect] = (),
+                 treasure_effects: list[Effect] = (),
+                 night_effects: list[Effect] = (),
+                 cleanup_effects: list[Effect] = (),
+                 end_game_effects: list[Effect] = ()):
         self.name = name
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
         self._effects_by_phase: dict[type[
             action_phase.ActionPhase | buy_phase.BuyPhaseTreasures | night_phase.NightPhase |
-            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], Optional[
-            list[tuple[type[Effect], BaseModel]]]] = {
+            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[Effect]] = {
             action_phase.ActionPhase: action_effects,
             buy_phase.BuyPhaseTreasures: treasure_effects,
             night_phase.NightPhase: night_effects,
@@ -74,7 +70,7 @@ class BaseCard(ABC):
     def is_playable(self, phase):
         return len(self._effects_by_phase.get(phase, [])) > 0
 
-    def effects_to_activate(self, game, phase=None) -> Optional[list[tuple[type[Effect], BaseModel]]]:
+    def effects_to_activate(self, game, phase=None) -> list[Effect]:
         """
         Get the types of effects to activate by phase.
         Default phase - current.
@@ -83,10 +79,16 @@ class BaseCard(ABC):
         return [t for t in self._effects_by_phase.get(phase, [])]
 
     def play(self, game):
+        """
+        Apply all the effect of the card for the current phase.
+        """
         for effect, model in self.effects_to_activate(game):
-            game.apply_effect(effect(**dict(model)))
+            game.apply_effect(effect)
 
     def estimate_vp_worth(self, game):
+        """
+        Estimate the VP this card is worth.
+        """
         vp_effects = self._effects_by_phase.get(end_game_phase.EndGamePhase)
         vps = 0
         for effect in vp_effects:

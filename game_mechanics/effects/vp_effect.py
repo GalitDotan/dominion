@@ -1,7 +1,5 @@
 from typing import Any, Callable
 
-from pydantic import BaseModel
-
 from game_mechanics.effects.effect import Effect
 
 
@@ -10,7 +8,7 @@ class VPEffect(Effect):
         super().__init__()
         self.value = value
 
-    def activate(self, game, player=None) -> Any:
+    def activate(self, game, player=None, **kwargs) -> Any:
         value = self.estimate(game, player)
         player.achieved_victory_points += value
 
@@ -18,7 +16,3 @@ class VPEffect(Effect):
         if type(self.value) is int:
             return self.value
         return self.value(game, player)
-
-
-class VPEffectKwargs(BaseModel):
-    value: int | Callable[[Any], int]
