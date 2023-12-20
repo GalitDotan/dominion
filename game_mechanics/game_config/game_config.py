@@ -91,7 +91,7 @@ class GameConfiguration(BaseModel):
         """
         Get a list of Supply Piles from a list of pile generators.
 
-        Params:
+        Args:
             pile_generators: The generators.
 
         Returns:

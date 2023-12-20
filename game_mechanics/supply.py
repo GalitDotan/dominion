@@ -1,3 +1,5 @@
+from typing import Callable
+
 from tabulate import tabulate
 
 from consts import HeadlineFormats
@@ -12,6 +14,7 @@ class Supply:
     def __init__(self, kingdom_piles: list[SupplyPile], standard_piles: list[SupplyPile]):
         self._kingdom_piles: list[SupplyPile] = kingdom_piles
         self._standard_piles: list[SupplyPile] = standard_piles
+        self._all_piles = {pile.name: pile for pile in self._kingdom_piles + self._standard_piles}
 
     def __repr__(self):
         return f"""
@@ -35,9 +38,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     def empty_piles(self):
         return [pile for pile in self.piles if pile.is_empty()]
 
-    def get_piles_allowed_for_buy(self, max_cost: int = 1000) -> list[SupplyPile]:
+    def get_pile_names_by_condition(self, card_condition: Callable) -> list[str]:
         piles = []
         for pile in self.piles:
-            if not pile.is_empty() and pile.cost <= max_cost:
-                piles.append(pile)
+            if not pile.is_empty() and card_condition(pile.peak()):
+                piles.append(pile.name)
         return piles
+
+    def get_card(self, pile_name: str):
+        pile: SupplyPile = self._all_piles[pile_name]
+        return pile.draw()

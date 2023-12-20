@@ -34,7 +34,7 @@ class Player:
         self.achieved_victory_points = non_card_vp
 
         self.turns_played = 0
-        self.turn_state: Optional[PlayerTurnStats] = None  # this would be initiated every turn
+        self.turn_stats: Optional[PlayerTurnStats] = None  # this would be initiated every turn
 
     def __repr__(self):  # TODO: add VP
         return f"{self.name}: {self.hand}, {self.draw_pile}, {self.discard_pile}"
@@ -77,13 +77,13 @@ class Player:
             * On my turns - is initiated with 1 action, 1 buy and 0 coins.
             * On my turns - is initiated with 0 action, 0 buy and 0 coins.
 
-        Params:
+        Args:
             my turn: is current turn mine.
         """
         if my_turn:
-            self.turn_state = PlayerTurnStats(actions=1, buys=1, coins=0)
+            self.turn_stats = PlayerTurnStats(actions=1, buys=1, coins=0)
         else:
-            self.turn_state = PlayerTurnStats(actions=0, buys=0, coins=0)
+            self.turn_stats = PlayerTurnStats(actions=0, buys=0, coins=0)
 
     def detailed_repr(self, game):
         return f"{self.name}[{self.estimate_victory_points(game)} VP]: " \
@@ -95,3 +95,13 @@ class Player:
 
     def get_cards_by_value(self) -> list[BaseCard]:
         return sorted(self._all_cards, key=lambda x: x.value)
+
+    def gain_cards(self, cards: BaseCard | list[BaseCard]):
+        cards = (cards,) if type(cards) is BaseCard else cards
+        for card in cards:
+            self._all_cards.append(card)
+
+    def remove_cards(self, cards: BaseCard | list[BaseCard]):
+        cards = (cards,) if type(cards) is BaseCard else cards
+        for card in cards:
+            self._all_cards.remove(card)

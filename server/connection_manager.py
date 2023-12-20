@@ -32,7 +32,7 @@ class WebSocketsManager:
         """
         Rename a client's name.
 
-         Params:
+         Args:
             curr_name: The currently saved name.
             new_name: The new name.
         """

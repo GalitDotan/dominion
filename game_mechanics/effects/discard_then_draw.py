@@ -1,7 +1,8 @@
 from typing import Any
 
+from game_mechanics.effects.discard import Discard
+from game_mechanics.effects.draw_cards import DrawCards
 from game_mechanics.effects.effect import Effect
-from game_mechanics.game_options.range_options import RangeOptions
 
 
 class DiscardThenDraw(Effect):
@@ -12,7 +13,6 @@ class DiscardThenDraw(Effect):
     def __init__(self):
         super().__init__()
 
-    def activate(self, game, player=None) -> Any:
-        to_discard = []  # TODO: choice effect
-        player.hand.discard(to_discard)
-        return RangeOptions(to_discard)  # TODO: is this what I want?
+    def apply(self, game, player=None, **kwargs) -> Any:
+        discarded = game.apply_effect(Discard())
+        return game.apply_effect(DrawCards(amount=len(discarded)))

@@ -8,7 +8,7 @@ from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.effects.game_stages.phase.phase import Phase
 from game_mechanics.effects.game_stages.turn import Turn
-from game_mechanics.effects.reactions.on_effect_reaction import OnEffectReaction
+from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_status import GameStatus
 from game_mechanics.game_supplies.all_cards import Card
@@ -26,7 +26,7 @@ class Game:
         Establish curr_player order.
         Initiate all the card structures that are part of the game.
 
-        Params:
+        Args:
             game_conf: a "ready" dominion configuration.
         """
         self.game_conf = game_conf
@@ -46,7 +46,7 @@ class Game:
         self._num_players = len(self.players)
 
         self.applied_effects: list[Effect] = []
-        self.waiting_reactions: dict[str, list[OnEffectReaction]] = {pl: [] for pl in self.players.keys()}
+        self.waiting_reactions: dict[str, list[Reaction]] = {pl: [] for pl in self.players.keys()}
 
         self.curr_phase: Optional[Phase] = None
 
@@ -73,35 +73,35 @@ class Game:
         phase = phase if phase else self.curr_phase
         return [c for c in struct.cards if c.is_playable(phase)]
 
-    def get_opponents_names(self, player_name: Optional[str] = None) -> list[str]:
+    def get_opponents_names_ordered(self, player_name: Optional[str] = None) -> list[str]:
         """
         Get all the opponents of a curr_player.
         If no curr_player name was supplied - returns the opponents of the current curr_player.
 
-        Params:
+        Args:
+            player_name: the curr_player's name
+
+        Returns:
+            A list of opponents (players) by the cycle order:
+            from the player next to given player, up to the player before the given player.
+        """
+        player_name = player_name if player_name else self.curr_player_name
+        all_player_names = self._play_order.copy()
+        i = all_player_names.index(player_name)
+        return all_player_names[i + 1:len(all_player_names)] + all_player_names[0:i]
+
+    def get_opponents_ordered(self, player_name: Optional[str] = None) -> list[Player]:
+        """
+        Get all the opponents of a curr_player.
+        If no curr_player name was supplied - returns the opponents of the current curr_player.
+
+        Args:
             player_name: the curr_player's name
 
         Returns:
             A list of opponents (players).
         """
-        if not player_name:
-            player_name = self.curr_player_name
-        opponents = self.game_conf.player_names.copy()
-        opponents.remove(player_name)
-        return opponents
-
-    def get_opponents(self, player_name: Optional[str] = None) -> list[Player]:
-        """
-        Get all the opponents of a curr_player.
-        If no curr_player name was supplied - returns the opponents of the current curr_player.
-
-        Params:
-            player_name: the curr_player's name
-
-        Returns:
-            A list of opponents (players).
-        """
-        return [self.players[opp] for opp in self.get_opponents_names(player_name)]
+        return [self.players[opp] for opp in self.get_opponents_names_ordered(player_name)]
 
     def move_to_next_player(self):
         """
@@ -138,10 +138,10 @@ class Game:
             self.apply_effect(reaction, player, *args, **kwargs)
         return effect.activate(self, player, *args, **kwargs)
 
-    def add_waiting_reaction(self, reaction: OnEffectReaction, player_name: str):
+    def add_waiting_reaction(self, reaction: Reaction, player_name: str):
         self.waiting_reactions[player_name].append(reaction)
 
-    def remove_waiting_reaction(self, reaction: OnEffectReaction, player_name: str):
+    def remove_waiting_reaction(self, reaction: Reaction, player_name: str):
         self.waiting_reactions[player_name].remove(reaction)
 
     def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
@@ -162,10 +162,16 @@ class Game:
 
     async def send_player_view(self, player_name: str):
         player = str(self.players[player_name])
-        opponents = [str(opp) for opp in self.get_opponents(player_name)]
+        opponents = [str(opp) for opp in self.get_opponents_ordered(player_name)]
         message = f'Supply: {self.supply}. You: {player}. Opponents: {opponents}'
-        await self.game_conf.ws_manager.send_personal_message(message, player_name)
+        await self.send_personal_message(message, player_name)
 
     async def send_player_views(self):
         for player_name in self.players.keys():
             await self.send_player_view(player_name)
+
+    async def send_personal_message(self, message: str, player_name: str):
+        await self.game_conf.ws_manager.send_personal_message(message, player_name)
+
+    async def receive_text(self, player_name: str):
+        return await self.game_conf.ws_manager.send_personal_message(player_name)

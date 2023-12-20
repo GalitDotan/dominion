@@ -39,3 +39,6 @@ class Pile(CardStructure):
         Last card of the input would become the top card of the pile.
         """
         self.extend(cards)
+
+    def peak(self):
+        return self.cards[-1]

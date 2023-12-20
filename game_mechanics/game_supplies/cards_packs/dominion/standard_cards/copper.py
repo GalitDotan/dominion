@@ -1,3 +1,4 @@
+from game_mechanics.effects.treasure_effect import TreasureEffect
 from game_mechanics.game_supplies.base_card import BaseCard
 from game_mechanics.game_supplies.card_type import CardType
 
@@ -8,6 +9,5 @@ class Copper(BaseCard):
             name='Copper',
             cost=0,
             types=[CardType.TREASURE],
-            treasure_effects=[]
-
+            treasure_effects=[TreasureEffect(value=1)]
         )

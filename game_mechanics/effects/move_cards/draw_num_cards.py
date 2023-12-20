@@ -10,7 +10,7 @@ class DrawNum(Effect):
         super().__init__()
         self.num = num
 
-    def activate(self, game, player=None, *args, **kwargs) -> Any:
+    def apply(self, game, player=None, *args, **kwargs) -> Any:
         """
         Draw num cards from player's draw pile to his hand.
         If draw pile gets emptied - shuffle it to the draw pile and keep drawing.

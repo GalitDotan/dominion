@@ -8,9 +8,9 @@ class TreasureEffect(Effect):
         super().__init__()
         self.value = value
 
-    def activate(self, game, player=None, **kwargs) -> Any:
+    def apply(self, game, player=None, **kwargs) -> Any:
         if type(self.value) is int:
             coins = self.value
         else:
             coins = self.value(game, player)
-        player.turn_state.coins += coins
+        player.turn_stats.coins += coins

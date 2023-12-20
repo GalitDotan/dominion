@@ -7,7 +7,7 @@ def get_random_words(num_words: int):
     """
     Get a tuple of random words.
 
-    Params:
+    Args:
         num_words: the number of words to generate.
 
     Returns:

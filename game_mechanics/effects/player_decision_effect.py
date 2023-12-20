@@ -8,5 +8,5 @@ class PlayerDecisionEffect(Effect):
     Receiving a decision from the player.
     """
 
-    def activate(self, game, player=None) -> Any:
+    def apply(self, game, player=None) -> Any:
         pass

@@ -8,7 +8,7 @@ class VPEffect(Effect):
         super().__init__()
         self.value = value
 
-    def activate(self, game, player=None, **kwargs) -> Any:
+    def apply(self, game, player=None, **kwargs) -> Any:
         value = self.estimate(game, player)
         player.achieved_victory_points += value
 

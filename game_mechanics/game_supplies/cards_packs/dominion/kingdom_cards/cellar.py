@@ -1,3 +1,4 @@
+from game_mechanics.effects.discard_then_draw import DiscardThenDraw
 from game_mechanics.game_supplies.base_card import BaseCard
 from game_mechanics.game_supplies.card_type import CardType
 
@@ -7,4 +8,4 @@ class Cellar(BaseCard):
         super().__init__(name='Cellar',
                          cost=2,
                          types=CardType.ACTION,
-                         action_effects=[])
+                         action_effects=[DiscardThenDraw()])

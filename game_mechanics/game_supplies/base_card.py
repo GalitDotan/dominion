@@ -1,4 +1,5 @@
 from abc import ABC
+from typing import Optional, Callable
 
 import game_mechanics.effects.game_stages.phase.action_phase as action_phase
 import game_mechanics.effects.game_stages.phase.buy_phase as buy_phase
@@ -94,3 +95,24 @@ class BaseCard(ABC):
         for effect in vp_effects:
             effect: VPEffect
             vps += effect.estimate(game)
+
+
+class ReactionCard(BaseCard):
+    def __init__(self,
+                 name: str,
+                 types: CardType | list[CardType],
+                 cost: int,
+                 action_effects: list[Effect] = (),
+                 treasure_effects: list[Effect] = (),
+                 night_effects: list[Effect] = (),
+                 cleanup_effects: list[Effect] = (),
+                 end_game_effects: list[Effect] = (),
+                 react_on_effect: type[Effect] = None,
+                 apply_times: Optional[int] = None, apply_condition: Optional[Callable] = None,
+                 remove_condition: Optional[Callable] = None):
+        super().__init__(name, types, cost, action_effects, treasure_effects, night_effects, cleanup_effects,
+                         end_game_effects)
+        self.react_on_effect = react_on_effect
+        self.apply_times = apply_times
+        self.apply_condition = apply_condition
+        self.remove_condition = remove_condition

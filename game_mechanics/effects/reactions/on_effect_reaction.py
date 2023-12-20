@@ -4,7 +4,7 @@ from typing import Optional, Any, final, Callable
 from game_mechanics.effects.effect import Effect
 
 
-class OnEffectReaction(Effect, ABC):
+class Reaction(Effect, ABC):
     def __init__(self, react_on_effect: type[Effect], apply_times: Optional[int] = None,
                  apply_condition: Optional[Callable] = None, remove_condition: Optional[Callable] = None):
         super().__init__()
@@ -22,7 +22,7 @@ class OnEffectReaction(Effect, ABC):
         return self.remove_condition(game, player, *args, **kwargs)
 
     @final
-    def activate(self, game, player=None, *args, **kwargs) -> Any:
+    def apply(self, game, player=None, *args, **kwargs) -> Any:
         self.count_activations += 1
         self.apply_activation(game, player, *args, **kwargs)
         if self.count_activations == self.apply_times:

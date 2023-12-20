@@ -11,7 +11,7 @@ class IncStats(Effect):
         self.actions = actions
         self.buys = buys
 
-    def activate(self, game, player=None, **kwargs) -> Any:
-        player.turn_state.coins += self.coins
-        player.turn_state.actions += self.actions
-        player.turn_state.buys += self.buys
+    def apply(self, game, player=None, **kwargs) -> Any:
+        player.turn_stats.coins += self.coins
+        player.turn_stats.actions += self.actions
+        player.turn_stats.buys += self.buys

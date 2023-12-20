@@ -30,12 +30,12 @@ class Turn(GameStage):
 
         self.phase_order = PHASE_ORDER
 
-    def activate(self, game, player=None) -> Any:
+    def apply(self, game, player=None) -> Any:
         """
         Play this turn (with all its phases).
         """
         curr_player = game.curr_player
-        opponents = game.get_opponents(player.name)
+        opponents = game.get_opponents_ordered(player.name)
 
         curr_player.on_turn_start(my_turn=True)
         for opponent in opponents:

@@ -10,7 +10,7 @@ class Phase(GameStage, ABC):
         super().__init__()
         self.continue_phase: bool = True
 
-    def activate(self, game, player=None) -> Any:
+    def apply(self, game, player=None) -> Any:
         """
         Play this phase.
         Each type of phase can implement what happens before, during and after phase iterations.
@@ -18,7 +18,7 @@ class Phase(GameStage, ABC):
         Then there's a loop of run_phase_iteration().
         Then after_run_iterations() would run one time.
 
-        Params:
+        Args:
             game: The game.
             player: The player.
         """

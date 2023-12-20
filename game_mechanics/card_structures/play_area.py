@@ -14,7 +14,7 @@ class PlayArea(CardStructure):
         Put a card here.
         Assuming the cars is no longer in other card structures.
 
-        Params:
+        Args:
             card: a card to put.
         """
         self.append(card)

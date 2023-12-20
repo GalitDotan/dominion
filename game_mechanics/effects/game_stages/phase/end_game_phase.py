@@ -6,7 +6,7 @@ from game_mechanics.game_status import GameStatus
 
 class EndGamePhase(Phase):
 
-    def activate(self, game, player=None) -> Any:
+    def apply(self, game, player=None) -> Any:
         game.game_conf.status = GameStatus.FINISHED
         # TODO: play all players victory cards
 
