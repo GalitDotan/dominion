@@ -1,3 +1,4 @@
+import logging
 import os.path
 from asyncio import sleep
 from threading import Thread
@@ -26,34 +27,34 @@ games: set[Game] = set()
 threads: set[Thread] = set()
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get('/', response_class=HTMLResponse)
 async def get():
     with open(os.path.join(ROOT, CHAT_FILE)) as fh:
         data = fh.read()
-    return HTMLResponse(content=data, media_type="text/html")
+    return HTMLResponse(content=data, media_type='text/html')
 
 
 @app.websocket('/ws/{name}')
 async def game_initiation_manager(websocket: WebSocket, name: str):
     await ws_manager.connect(name, websocket)
     try:
-        await ws_manager.send_personal_message(f"Enter your name", name)
-        new_name = await websocket.receive_text()
+        await ws_manager.send_personal_message(f'Enter your name', name)
+        new_name = await ws_manager.receive_text(name)
         ws_manager.rename_active_client(name, new_name)
         name = new_name
-        await ws_manager.send_personal_message(f"Welcome, {name}", name)
+        await ws_manager.send_personal_message(f'Welcome, {name}', name)
         printable_games = [str(gc) for gc in awaiting_game_confs.values()]
         if printable_games:
-            await ws_manager.send_personal_message(f"Open games are {printable_games}", name)
+            await ws_manager.send_personal_message(f'Open games are {printable_games}', name)
             await ws_manager.send_personal_message(
-                f"Type 'init' to open a new game or 'join <id>' to join one of the open ones", name)
+                f'Type "init" to open a new game or "join <id>" to join one of the open ones', name)
         else:
-            await ws_manager.send_personal_message(f"There are no open games to join", name)
+            await ws_manager.send_personal_message(f'There are no open games to join', name)
             await ws_manager.send_personal_message(
-                f"Type 'init' to open a new game or wait for a game to be opened and then type 'join <id>' to join it",
+                f'Type "init" to open a new game or wait for a game to be opened and then type "join <id>" to join it',
                 name)
 
-        choice = await websocket.receive_text()
+        choice = await ws_manager.receive_text(name)
         if choice == 'init':
             await _init_game(name)
             return
@@ -63,9 +64,10 @@ async def game_initiation_manager(websocket: WebSocket, name: str):
             return
         else:
             raise HTTPException(status_code=404, detail=f'Unknown request {choice}')
-    except WebSocketDisconnect:
+    except WebSocketDisconnect as e:
+        logging.exception(e)
         ws_manager.disconnect(name)
-        await ws_manager.broadcast(f"Player #{name} got disconnected")
+        await ws_manager.broadcast(f'Player {name} got disconnected')
 
 
 async def _init_game(name: str):
@@ -74,13 +76,13 @@ async def _init_game(name: str):
     """
     game_conf = GameConfiguration(player_names=[name], ws_manager=ws_manager)
     awaiting_game_confs[name] = game_conf
-    await ws_manager.send_personal_message(f"Your new game: {game_conf.game_id}", name)
-    await ws_manager.broadcast(f"{name} initiated game. To join type 'join {game_conf.game_id}'")
-    await ws_manager.send_personal_message(f"Type 'start' whenever you wish to start the game", name)
+    await ws_manager.send_personal_message(f'Your new game: {game_conf.game_id}', name)
+    await ws_manager.broadcast(f'{name} initiated game. To join type "join {game_conf.game_id}"')
+    await ws_manager.send_personal_message(f'Type "start" whenever you wish to start the game', name)
     while True:
         data = await ws_manager.receive_text(name)
-        await ws_manager.send_personal_message(f"You wrote: {data}", name)
-        await ws_manager.broadcast(f"{name} says: {data}")
+        await ws_manager.send_personal_message(f'You wrote: {data}', name)
+        await ws_manager.broadcast(f'{name} says: {data}')
         if data == 'start':
             await _start_game(name)
             return
@@ -96,8 +98,8 @@ async def _join_game(name: str, game_id: str):
     """
     game_conf = _find_not_started_game(game_id)
     game_conf.player_names.append(name)
-    await ws_manager.send_personal_message(f"You have joined {game_conf.game_id}. "
-                                           f"Please wait for host to start the game", name)
+    await ws_manager.send_personal_message(f'You have joined {game_conf.game_id}. '
+                                           f'Please wait for host to start the game', name)
     await ws_manager.broadcast(
         f'{name} has joined the game {game_id}, '
         f'which now has {game_conf.num_players} players: {game_conf.player_names}')
@@ -121,18 +123,18 @@ async def _wait_root(name: str, game_id: str):
     Waiting for given game to become 'IN_PROGRESS'.
     Meanwhile - send and receive messages.
     """
-    await ws_manager.send_personal_message(f"Welcome to the chat room. Here you'll wait for your game to start", name)
+    await ws_manager.send_personal_message(f'Welcome to the chat room. Here you will wait for your game to start', name)
     game = _find_not_started_game(game_id)
     while game.status != GameStatus.IN_PROGRESS:
         data = await ws_manager.receive_text(name)
-        await ws_manager.send_personal_message(f"You wrote: {data}", name)
-        await ws_manager.broadcast(f"{name} says: {data}")
+        await ws_manager.send_personal_message(f'You wrote: {data}', name)
+        await ws_manager.broadcast(f'{name} says: {data}')
 
 
 async def _play_game(game: Game, player_name: str):
     while game.game_conf.status == GameStatus.IN_PROGRESS:
-        await game.send_player_view(player_name)
-        await sleep(1000)
+        # await game.send_player_view(player_name)
+        await sleep(10000)
 
 
 def _find_not_started_game(game_id: str) -> Optional[GameConfiguration]:

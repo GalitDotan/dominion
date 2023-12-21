@@ -24,4 +24,4 @@ def generate_name() -> str:
         The name.
     """
     first_name, last_name = get_random_words(num_words=2)
-    return f"{first_name}{last_name}"
+    return f'{first_name}{last_name}'

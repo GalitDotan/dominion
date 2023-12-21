@@ -37,7 +37,7 @@ class Player:
         self.turn_stats: Optional[PlayerTurnStats] = None  # this would be initiated every turn
 
     def __repr__(self):  # TODO: add VP
-        return f"{self.name}: {self.hand}, {self.draw_pile}, {self.discard_pile}"
+        return f'{self.name}: {self.hand}, {self.draw_pile}, {self.discard_pile}'
 
     def __lt__(self, other: "Player"):  # is self losing to other
         # return self.victory_points < other.victory_points or (

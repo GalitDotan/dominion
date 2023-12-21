@@ -3,7 +3,7 @@ from typing import Optional, TypeVar
 
 NULL_CHOICE: int = -1
 
-T = TypeVar("T")
+T = TypeVar('T')
 
 
 class Options(ABC):
@@ -12,7 +12,7 @@ class Options(ABC):
     """
 
     def __init__(self, options: list[T], min_choices_allowed: int, max_choices_allowed: int,
-                 question: str = "What do you choose?"):
+                 question: str = 'What do you choose?'):
         self.question: str = question
         self.options: list[T] = options
         self.decided: bool = False
