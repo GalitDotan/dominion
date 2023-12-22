@@ -1,27 +1,25 @@
-from random_word import RandomWords
+import random
 
-RW = RandomWords()
+from wonderwords import RandomWord
+
+RW = RandomWord()
+
+available_names = ['SIRI', 'LIBI', 'KIKI', 'BABA', 'NIMI', 'LILY']
+GAME_NAME_FORMAT = "{host_name}'s {adj} Game"
 
 
-def get_random_words(num_words: int):
+def generate_player_name() -> str:
     """
-    Get a tuple of random words.
-
-    Args:
-        num_words: the number of words to generate.
-
-    Returns:
-         The words.
+    Generate a players name.
     """
-    return (str(RW.get_random_word()).capitalize() for _ in range(num_words))
+    name = random.choice(available_names)
+    available_names.remove(name)
+    return name
 
 
-def generate_name() -> str:
+def generate_game_name(host_name: str) -> str:
     """
-    Generate a name using 2 random English words.
-
-    Returns:
-        The name.
+    Generate a name for a game.
     """
-    first_name, last_name = get_random_words(num_words=2)
-    return f'{first_name}{last_name}'
+    return GAME_NAME_FORMAT.format(host_name=host_name,
+                                   adj=RW.word(include_parts_of_speech=['adjectives']))

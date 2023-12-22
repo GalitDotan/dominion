@@ -6,7 +6,7 @@ from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.game_supplies.base_card import BaseCard
 from game_mechanics.player.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
-from utils.name_generator import generate_name
+from utils.name_generator import generate_player_name
 
 
 class Player:
@@ -20,7 +20,7 @@ class Player:
     """
 
     def __init__(self, name: str, cards: list[BaseCard], non_card_vp: int = 0):
-        self.name = name if name else generate_name()
+        self.name = name if name else generate_player_name()
 
         self._all_cards: list[BaseCard] = cards.copy()  # all cards the curr_player has
 

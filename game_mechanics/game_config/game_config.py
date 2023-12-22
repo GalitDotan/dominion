@@ -1,16 +1,15 @@
 from typing import Optional, Callable, Any
-from uuid import uuid4
 
 from pydantic import BaseModel
-from pydantic import Field
 from pydantic.functional_validators import model_validator
 
 from game_mechanics.card_structures.supply_pile import SupplyPile
 from game_mechanics.game_config.game_conf_consts import DEFAULT_PILE_SIZE, DEFAULT_COPPER_AMOUNT, \
     DEFAULT_SILVER_AMOUNT, DEFAULT_GOLD_AMOUNT, V_CARDS_PER_PLAYERS, CURSES_CARDS_PER_PLAYER
 from game_mechanics.game_status import GameStatus
-from game_mechanics.game_supplies.all_cards import Card
+from game_mechanics.game_supplies.all_cards import Card, Expansion
 from server.connection_manager import WebSocketsManager
+from utils.name_generator import generate_game_name
 
 
 def victory_cards_by_players(game_conf: 'GameConfiguration') -> int:
@@ -22,6 +21,9 @@ def curse_cards_by_players(game_conf: 'GameConfiguration') -> int:
 
 
 class PileGenerator(BaseModel):
+    """
+    Generator for supply piles.
+    """
     generators: Card | tuple[Card, Optional[Callable[['GameConfiguration'], int] | int]] | list[
         tuple[Card, Optional[Callable[['GameConfiguration'], int] | int]]]
     name: Card
@@ -51,9 +53,11 @@ class GameConfiguration(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    game_id: str = Field(default_factory=lambda: str(uuid4()))
+    host_player_name: str
+    game_name: str
     player_names: list[str] = []
     status: GameStatus = GameStatus.INITIATED
+    expansions: Expansion = Expansion.BASE
     kingdom_piles_generators: list[PileGenerator] = [
         PileGenerator(generators=Card.CELLAR),
         PileGenerator(generators=Card.MOAT),
@@ -77,11 +81,21 @@ class GameConfiguration(BaseModel):
     ]
     ws_manager: WebSocketsManager
 
+    @model_validator(mode='before')
+    @classmethod
+    def validate_names(cls, data: Any):
+        if 'host_player_name' not in data:
+            data['host_player_name'] = data['player_names'][0]
+        if 'game_name' not in data:
+            host_player_name = data['host_player_name']
+            data['game_name'] = generate_game_name(host_player_name)
+        return data
+
     def __hash__(self):
-        return hash(self.game_id)
+        return hash(self.game_name)
 
     def __repr__(self):
-        return f'{self.game_id}[{self.status}]:{self.player_names}'
+        return f'~ {self.game_name} ~ Players: {self.player_names}'
 
     @property
     def num_players(self):

@@ -4,6 +4,10 @@ from game_mechanics.game_supplies.cards_packs.dominion.kingdom_cards import *
 from game_mechanics.game_supplies.cards_packs.dominion.standard_cards import *
 
 
+class Expansion(Enum):
+    BASE = 'Base'
+
+
 class Card(Enum):
     # standard cards
     COPPER = Copper
