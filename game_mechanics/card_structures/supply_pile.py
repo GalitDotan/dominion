@@ -2,11 +2,11 @@ from collections import Counter
 from typing import Optional
 
 from game_mechanics.card_structures.pile import Pile
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 
 
 class SupplyPile(Pile):
-    def __init__(self, cards: list[BaseCard] = (), name: Optional[str] = None, is_visible: bool = True):
+    def __init__(self, cards: list[Card] = (), name: Optional[str] = None, is_visible: bool = True):
         super().__init__(cards, name, is_visible)
         if len(self) == 0:
             raise ValueError("Supply pile cannot be initiated empty")

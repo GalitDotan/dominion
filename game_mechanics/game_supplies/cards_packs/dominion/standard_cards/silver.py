@@ -1,9 +1,9 @@
 from game_mechanics.effects.treasure_effect import TreasureEffect
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class Silver(BaseCard):
+class Silver(Card):
     def __init__(self):
         super().__init__(
             name='Silver',

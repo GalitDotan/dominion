@@ -1,40 +1,37 @@
-from abc import abstractmethod, ABC
+from abc import ABC
 from typing import Any
 
+from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.game_stages.game_stage import GameStage
+from game_mechanics.effects.move_cards.play_card import PlayCard
 
 
 class Phase(GameStage, ABC):
-
-    def __init__(self):
+    def __init__(self, phase_effect: type[Effect] = PlayCard):
         super().__init__()
-        self.continue_phase: bool = True
+        self.phase_effect: type[Effect] = phase_effect
 
-    async def apply(self, game, player=None, **kwargs) -> Any:
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        await self.autoplay_cards(game, player, *args, **kwargs)
+        await self.play_phase(game, player, *args, **kwargs)
+
+    async def play_phase(self, game, player=None, *args, **kwargs) -> Any:
+        while self.should_continue(player):
+            card = self.apply_phase_effect(game, player)
+            if not card:
+                break
+
+    def apply_phase_effect(self, game, player):
+        return game.apply_effect(self.phase_effect(), player)
+
+    def should_continue(self, player) -> bool:
+        return self.has_playable_cards(player)
+
+    def has_playable_cards(self, player) -> bool:
+        return player.hand.get_cards_for_phase(self)
+
+    async def autoplay_cards(self, game, player=None, *args, **kwargs) -> Any:
         """
-        Play this phase.
-        Each type of phase can implement what happens before, during and after phase iterations.
-        before_run_iterations() would happen ones in the beginning.
-        Then there's a loop of run_phase_iteration().
-        Then after_run_iterations() would run one time.
+        For phases with autoplay features - override this.
         """
-        await game.send_personal_message(f'Starting {self.name}', player.name)
-        game.curr_phase = self
-        playable_cards = game.get_playable_cards(struct=player.hand, phase=self)
-        if not playable_cards:
-            await game.send_personal_message(f'No playable cards for {self.name}', player.name)
-            return
-        self.before_run_iterations()
-        while self.continue_phase:
-            self.run_phase_iteration()
-        self.after_run_iterations()
-
-    def before_run_iterations(self):
         return
-
-    def after_run_iterations(self):
-        return
-
-    @abstractmethod
-    def run_phase_iteration(self):
-        pass

@@ -1,10 +1,10 @@
 from game_mechanics.effects.increase_stats import IncStats
 from game_mechanics.effects.move_cards.draw_num_cards import DrawNum
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class Market(BaseCard):
+class Market(Card):
     """
     +1 Card
     +1 Action

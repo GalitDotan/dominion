@@ -4,7 +4,7 @@ from game_mechanics.effects.move_cards.draw_num_cards import DrawNum
 from game_mechanics.effects.reactions.add_reaction import AddReaction
 from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 from game_mechanics.effects.treasure_effect import TreasureEffect
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 from game_mechanics.game_supplies.card_type import CardType
 from game_mechanics.game_supplies.cards_packs.dominion.standard_cards import Silver
 
@@ -19,7 +19,7 @@ def is_cleanup_phase(phase, *args, **kwargs):
     return type(phase) is CleanUpPhase
 
 
-class Merchant(BaseCard):
+class Merchant(Card):
     """
     +1 Card
     +1 Action

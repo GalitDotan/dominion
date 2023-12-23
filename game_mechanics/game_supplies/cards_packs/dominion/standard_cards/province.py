@@ -1,9 +1,9 @@
 from game_mechanics.effects.vp_effect import VPEffect
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class Province(BaseCard):
+class Province(Card):
     def __init__(self):
         super().__init__(
             name='Province',

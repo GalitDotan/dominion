@@ -1,28 +1,34 @@
+from abc import ABC, abstractmethod
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-
-"""
-    if card not in self.state.hand:
-        raise ValueError(f"{card} is not in {self.state.hand}")
-
-    self.state.hand.remove(card)
-    self.state.play_area.play(card)
-
-    if isinstance(card, Treasure):
-        turn_state.coins += card.coins
-    if isinstance(card, Action):
-        for cmd in card.actions:
-            pass
-    if isinstance(card, Attack):
-        for cmd in card.attacks:
-            pass
-    if isinstance(card, Night):
-        pass
-"""
+from game_mechanics.effects.player_decision import PlayerDecision
 
 
-class PlayCard(Effect):
+class PlayCard(Effect, ABC):
+
     async def apply(self, game, player=None, card=None, *args, **kwargs) -> Any:
-        # player.state.play_area.play(card)
+        """
+        Move given card from given card structure to the play area.
+        Apply all the effect of the card for the current phase.
+        """
+        struct = self.get_card_structure(game, player=None, *args, **kwargs)
+        if not card:
+            playable_cards = struct.get_cards_for_phase(self)
+            card = PlayerDecision(playable_cards, allow_none_noice=True)
+        if card:
+            struct.remove(card)
+            player.play_area.play(card)
+            for effect in card.effects_to_activate(game):
+                await game.apply_effect(effect, player)
+        return card
+
+    @abstractmethod
+    def get_card_structure(self, game, player=None, *args, **kwargs):
         pass
+
+
+class PlayCardFromHand(PlayCard):
+
+    def get_card_structure(self, game, player=None, *args, **kwargs):
+        return player.hand

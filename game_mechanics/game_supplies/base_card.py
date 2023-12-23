@@ -7,11 +7,12 @@ import game_mechanics.effects.game_stages.phase.cleanup_phase as cleanup_phase
 import game_mechanics.effects.game_stages.phase.end_game_phase as end_game_phase
 import game_mechanics.effects.game_stages.phase.night_phase as night_phase
 from game_mechanics.effects.effect import Effect
+from game_mechanics.effects.game_stages.phase import treasure_phase, setup_phase
 from game_mechanics.effects.vp_effect import VPEffect
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class BaseCard(ABC):
+class Card(ABC):
     """
     A card in a game. Stats can be modified
     """
@@ -20,8 +21,10 @@ class BaseCard(ABC):
                  name: str,
                  types: CardType | list[CardType],
                  cost: int,
+                 setup_effects: list[Effect] = (),
                  action_effects: list[Effect] = (),
                  treasure_effects: list[Effect] = (),
+                 buy_effects: list[Effect] = (),
                  night_effects: list[Effect] = (),
                  cleanup_effects: list[Effect] = (),
                  end_game_effects: list[Effect] = ()):
@@ -29,10 +32,12 @@ class BaseCard(ABC):
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
         self._effects_by_phase: dict[type[
-            action_phase.ActionPhase | buy_phase.BuyPhaseTreasures | night_phase.NightPhase |
-            cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[Effect]] = {
+            setup_phase.SetupPhase | action_phase.ActionPhase | treasure_phase.TreasurePhase | buy_phase.BuyPhase |
+            night_phase.NightPhase | cleanup_phase.CleanUpPhase | end_game_phase.EndGamePhase], list[Effect]] = {
+            setup_phase.SetupPhase: setup_effects,
             action_phase.ActionPhase: action_effects,
-            buy_phase.BuyPhaseTreasures: treasure_effects,
+            treasure_phase.TreasurePhase: treasure_effects,
+            buy_phase.BuyPhase: buy_effects,
             night_phase.NightPhase: night_effects,
             cleanup_phase.CleanUpPhase: cleanup_effects,
             end_game_phase.EndGamePhase: end_game_effects
@@ -50,7 +55,7 @@ class BaseCard(ABC):
     def __eq__(self, other):
         return self.name == other.name
 
-    def __lt__(self, other: 'BaseCard'):
+    def __lt__(self, other: 'Card'):
         if self.cost < other.cost:
             return True
         if self.cost > other.cost:
@@ -69,6 +74,9 @@ class BaseCard(ABC):
         return self._types.copy()
 
     def is_playable(self, phase):
+        """
+        Returns true if there is at least one effect for the given phase.
+        """
         return len(self._effects_by_phase.get(phase, [])) > 0
 
     def effects_to_activate(self, game, phase=None) -> list[Effect]:
@@ -78,13 +86,6 @@ class BaseCard(ABC):
         """
         phase = phase if phase else game.curr_phase
         return [t for t in self._effects_by_phase.get(phase, [])]
-
-    async def play(self, game):
-        """
-        Apply all the effect of the card for the current phase.
-        """
-        for effect, model in self.effects_to_activate(game):
-            await game.apply_effect(effect, player=self)
 
     def estimate_vp_worth(self, game):
         """
@@ -97,7 +98,7 @@ class BaseCard(ABC):
             vps += effect.estimate(game)
 
 
-class ReactionCard(BaseCard):
+class ReactionCard(Card):
     def __init__(self,
                  name: str,
                  types: CardType | list[CardType],
@@ -116,3 +117,9 @@ class ReactionCard(BaseCard):
         self.apply_times = apply_times
         self.apply_condition = apply_condition
         self.remove_condition = remove_condition
+
+
+class TreasureCard(Card):
+    def __init__(self, name: str, types: CardType | list[CardType], cost: int, should_autoplay: bool = True):
+        super().__init__(name, types, cost)
+        self.should_autoplay = should_autoplay

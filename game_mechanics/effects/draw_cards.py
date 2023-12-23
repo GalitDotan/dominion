@@ -1,7 +1,7 @@
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerIntDecision
 from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 
 
@@ -10,9 +10,15 @@ class DrawCards(Effect):
         super().__init__()
         self.amount = amount
 
-    async def apply(self, game, player=None, **kwargs) -> Any:  # TODO: what player decision should happen here?
-        amount = self.amount if type(self.amount) is int else await game.apply_effect(PlayerDecision(), player)
-        cards = player.draw_pile.draw_cards(amount)
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        if type(self.amount) is int:
+            draw_amount = self.amount
+        elif type(self.amount) is tuple:
+            draw_amount = self.amount if type(self.amount) is int else await game.apply_effect(
+                PlayerIntDecision(self.amount), player)
+        else:
+            draw_amount = 0
+        cards = player.draw_pile.draw_cards(draw_amount)
         player.hand.extend(cards)
         self._add_awaiting_reactions(game, player.name, cards)
         return cards

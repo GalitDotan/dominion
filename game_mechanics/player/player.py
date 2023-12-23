@@ -3,7 +3,7 @@ from typing import Optional
 from game_mechanics.card_structures.hand import Hand
 from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 from game_mechanics.player.player_turn_state import PlayerTurnStats
 from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_player_name
@@ -19,10 +19,10 @@ class Player:
         5. Different mats
     """
 
-    def __init__(self, name: str, cards: list[BaseCard], non_card_vp: int = 0):
+    def __init__(self, name: str, cards: list[Card], non_card_vp: int = 0):
         self.name = name if name else generate_player_name()
 
-        self._all_cards: list[BaseCard] = cards.copy()  # all cards the curr_player has
+        self._all_cards: list[Card] = cards.copy()  # all cards the curr_player has
 
         # curr_player's card structures
         self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
@@ -90,18 +90,18 @@ class Player:
                f"{self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \
                f"{self.discard_pile.detailed_repr()}"
 
-    def get_cards_alphabetically(self) -> list[BaseCard]:
+    def get_cards_alphabetically(self) -> list[Card]:
         return sorted(self._all_cards, key=lambda x: x.name)
 
-    def get_cards_by_value(self) -> list[BaseCard]:
+    def get_cards_by_value(self) -> list[Card]:
         return sorted(self._all_cards, key=lambda x: x.value)
 
-    def gain_cards(self, cards: BaseCard | list[BaseCard]):
-        cards = (cards,) if type(cards) is BaseCard else cards
+    def gain_cards(self, cards: Card | list[Card]):
+        cards = (cards,) if type(cards) is Card else cards
         for card in cards:
             self._all_cards.append(card)
 
-    def remove_cards(self, cards: BaseCard | list[BaseCard]):
-        cards = (cards,) if type(cards) is BaseCard else cards
+    def remove_cards(self, cards: Card | list[Card]):
+        cards = (cards,) if type(cards) is Card else cards
         for card in cards:
             self._all_cards.remove(card)

@@ -3,7 +3,7 @@ from typing import Any, Callable
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.gain_cards import GainCardsToHand
 from game_mechanics.effects.player_decision import PlayerDecision
-from game_mechanics.game_supplies.base_card import BaseCard
+from game_mechanics.game_supplies.base_card import Card
 
 
 class TrashFromHand(Effect):
@@ -16,7 +16,7 @@ class TrashFromHand(Effect):
 
 
 class TrashThenGain(Effect):
-    def __init__(self, gain_condition_generator: Callable[[BaseCard], Callable[[BaseCard], bool]]):
+    def __init__(self, gain_condition_generator: Callable[[Card], Callable[[Card], bool]]):
         super().__init__()
         self.gain_condition_generator = gain_condition_generator
 

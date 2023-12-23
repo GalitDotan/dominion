@@ -1,7 +1,6 @@
 from random import shuffle
 from typing import Optional, Any
 
-from game_mechanics.card_structures.card_structure import CardStructure
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.game_setup import GameSetup
@@ -64,14 +63,6 @@ class Game:
     @property
     def player_list(self):
         return list(self.players.values())
-
-    def get_playable_cards(self, struct: CardStructure, phase: Optional[Phase] = None):
-        """
-        Receives a card structure and returns all cards from it that can be played in the given phase.
-        Default phase - current.
-        """
-        phase = phase if phase else self.curr_phase
-        return [c for c in struct.cards if c.is_playable(phase)]
 
     def get_opponents_names_ordered(self, player_name: Optional[str] = None) -> list[str]:
         """
