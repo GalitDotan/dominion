@@ -13,7 +13,7 @@ class BuyCardsToDiscard(Effect):
         self.amount = amount
         self.cost = cost
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
-        gained_cards = game.apply_effect(GainCardsToDiscard(self.amount, self.cost), player, *args, **kwargs)
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        gained_cards = await game.apply_effect(GainCardsToDiscard(self.amount, self.cost), player, *args, **kwargs)
         player.turn_stats.coins -= sum([card.cost for card in gained_cards])
         player.turn_stats.buys -= len(gained_cards)

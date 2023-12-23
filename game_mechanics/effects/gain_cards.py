@@ -15,8 +15,8 @@ class GainCards(Effect):
         self.cost = cost
         self.allowed_pile_names = allowed_pile_names
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
-        chosen_piles = game.apply_effect(PlayerDecision(self.allowed_pile_names), player, *args, **kwargs)
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        chosen_piles = await game.apply_effect(PlayerDecision(self.allowed_pile_names), player, *args, **kwargs)
         cards = []
         for pile_name in chosen_piles:
             cards.append(game.supply.get_card(pile_name))
@@ -31,8 +31,8 @@ class GainCardsToHand(Effect):
         self.cost = cost
         self.allowed_pile_names = allowed_pile_names
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
-        cards = game.apply_effect(GainCards(self.amount, self.cost, self.allowed_pile_names), player, *args, **kwargs)
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        cards = await game.apply_effect(GainCards(self.amount, self.cost, self.allowed_pile_names), player, *args, **kwargs)
         player.hand.extend(cards)
         return cards
 
@@ -45,7 +45,7 @@ class GainCardsToDiscard(Effect):
         self.cost = cost
         self.allowed_pile_names = allowed_pile_names
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
-        cards = game.apply_effect(GainCards(self.amount, self.cost, self.allowed_pile_names), player, *args, **kwargs)
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        cards = await game.apply_effect(GainCards(self.amount, self.cost, self.allowed_pile_names), player, *args, **kwargs)
         player.discard_pile.put_all(cards)
         return cards

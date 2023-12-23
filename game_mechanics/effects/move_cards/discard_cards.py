@@ -31,8 +31,8 @@ class DiscardCards(Effect):
         super().__init__()
         self.cards_amount: int | tuple[int, int] = cards_amount
 
-    def apply(self, game, player=None, **kwargs) -> Any:
-        cards = game.apply_effect(PlayerDecision(), player, **kwargs)
+    async def apply(self, game, player=None, **kwargs) -> Any:
+        cards = await game.apply_effect(PlayerDecision(player.hand.cards), player, **kwargs)
 
         for card in cards:
             player.hand.remove(card)
@@ -51,5 +51,5 @@ class DiscardHand(Effect):
     Discard all cards in hand.
     """
 
-    def apply(self, game, player=None, **kwargs) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         pass

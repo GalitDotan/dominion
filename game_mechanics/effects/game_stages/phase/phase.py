@@ -10,23 +10,19 @@ class Phase(GameStage, ABC):
         super().__init__()
         self.continue_phase: bool = True
 
-    def apply(self, game, player=None) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         """
         Play this phase.
         Each type of phase can implement what happens before, during and after phase iterations.
         before_run_iterations() would happen ones in the beginning.
         Then there's a loop of run_phase_iteration().
         Then after_run_iterations() would run one time.
-
-        Args:
-            game: The game.
-            player: The player.
         """
-        game.send_player_view(f'Starting {self.name}')
+        await game.send_personal_message(f'Starting {self.name}', player.name)
         game.curr_phase = self
-        playable_cards = game.get_playable_cards()
+        playable_cards = game.get_playable_cards(struct=player.hand, phase=self)
         if not playable_cards:
-            game.send_player_view(f'No playable cards for {self.name}')
+            await game.send_personal_message(f'No playable cards for {self.name}', player.name)
             return
         self.before_run_iterations()
         while self.continue_phase:

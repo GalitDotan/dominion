@@ -30,7 +30,7 @@ class Turn(GameStage):
 
         self.phase_order = PHASE_ORDER
 
-    def apply(self, game, player=None) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         """
         Play this turn (with all its phases).
         """
@@ -42,4 +42,4 @@ class Turn(GameStage):
             opponent.on_turn_start(my_turn=False)
 
         for CurrPhase in self.phase_order:
-            game.apply_effect(CurrPhase())
+            await game.apply_effect(CurrPhase(), player)

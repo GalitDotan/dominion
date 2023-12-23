@@ -16,7 +16,7 @@ class Effect(ABC):
     def __repr__(self):
         return self.name
 
-    def activate(self, game, player=None, *args, **kwargs) -> Any:
+    async def activate(self, game, player=None, *args, **kwargs) -> Any:
         """
         Activate this effect.
 
@@ -26,10 +26,10 @@ class Effect(ABC):
         """
         if self.is_disabled:
             return
-        return self.apply(game, player, *args, **kwargs)
+        return await self.apply(game, player, *args, **kwargs)
 
     @abstractmethod
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
         """
         The actual logic that is applied on activation. 
         """

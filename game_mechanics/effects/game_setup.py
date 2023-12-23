@@ -9,9 +9,9 @@ class GameSetup(Effect):
         super().__init__()
         self.cards_to_draw = 5
 
-    def apply(self, game, player=None) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         """
         Each player draws cards.
         """
         for player in game.players.values():
-            game.apply_effect(DrawNum(self.cards_to_draw), player)
+            await game.apply_effect(DrawNum(self.cards_to_draw), player)

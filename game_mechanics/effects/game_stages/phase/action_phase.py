@@ -7,5 +7,5 @@ class ActionPhase(Phase):
     def run_phase_iteration(self):
         pass  # TODO: play actions
 
-    def apply(self, game, player=None) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         pass

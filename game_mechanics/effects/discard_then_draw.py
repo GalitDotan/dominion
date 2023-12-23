@@ -13,6 +13,6 @@ class DiscardThenDraw(Effect):
     def __init__(self):
         super().__init__()
 
-    def apply(self, game, player=None, **kwargs) -> Any:
-        discarded = game.apply_effect(Discard())
-        return game.apply_effect(DrawCards(amount=len(discarded)))
+    async def apply(self, game, player=None, **kwargs) -> Any:
+        discarded = await game.apply_effect(Discard(), player)
+        return await game.apply_effect(DrawCards(amount=len(discarded)), player)

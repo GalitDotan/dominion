@@ -9,7 +9,7 @@ class AddReaction(Effect):
         super().__init__()
         self.reaction = reaction
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
         game.add_waiting_reaction(self.reaction, player)
 
     def un_activate(self, game, player=None, *args, **kwargs) -> Any:

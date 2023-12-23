@@ -18,12 +18,13 @@ class ShuffleDiscardToDrawPile(Effect):
     def __init__(self):
         super().__init__()
 
-    def apply(self, game, player=None) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         """
         Shuffle the discard pile into the draw pile.
         """
-        discard_pile = player.discard_pile
-        draw_pile = player.draw_pile
-        discard_pile.shuffle()
-        cards = discard_pile.draw_all()
-        draw_pile.put_all(cards)
+        if player:
+            discard_pile = player.discard_pile
+            draw_pile = player.draw_pile
+            discard_pile.shuffle()
+            cards = discard_pile.draw_all()
+            draw_pile.put_all(cards)

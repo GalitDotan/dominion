@@ -23,6 +23,6 @@ from game_mechanics.effects.effect import Effect
 
 
 class PlayCard(Effect):
-    def apply(self, game, player=None, card=None, *args, **kwargs) -> Any:
+    async def apply(self, game, player=None, card=None, *args, **kwargs) -> Any:
         # player.state.play_area.play(card)
         pass

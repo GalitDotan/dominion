@@ -8,7 +8,7 @@ class TreasureEffect(Effect):
         super().__init__()
         self.value = value
 
-    def apply(self, game, player=None, **kwargs) -> Any:
+    async def apply(self, game, player=None, **kwargs) -> Any:
         if type(self.value) is int:
             coins = self.value
         else:

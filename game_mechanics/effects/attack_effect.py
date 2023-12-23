@@ -9,6 +9,6 @@ class AttackEffect(Effect):
         self.attack_type: type[Effect] = attack_type
         self.attack_conf = attack_conf if attack_conf else {}
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
         for pl in game.get_opponents_ordered():
-            game.apply_effect(effect=self.attack_type(**self.attack_conf), player=pl)
+            await game.apply_effect(effect=self.attack_type(**self.attack_conf), player=pl)

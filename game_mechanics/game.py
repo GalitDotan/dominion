@@ -42,7 +42,7 @@ class Game:
         self._play_order: list[str] = list(self.players.keys())
         shuffle(self._play_order)
 
-        self.player_index = 0
+        self.curr_player_index = 0
         self._num_players = len(self.players)
 
         self.applied_effects: list[Effect] = []
@@ -55,7 +55,7 @@ class Game:
 
     @property
     def curr_player_name(self) -> str:
-        return self._play_order[self.player_index]
+        return self._play_order[self.curr_player_index]
 
     @property
     def curr_player(self) -> Player:
@@ -107,7 +107,7 @@ class Game:
         """
         Update next curr_player index.
         """
-        self.player_index = (self.player_index + 1) % self._num_players
+        self.curr_player_index = (self.curr_player_index + 1) % self._num_players
 
     def is_in_progress(self) -> bool:
         return self.game_conf.status == GameStatus.IN_PROGRESS
@@ -117,26 +117,28 @@ class Game:
         Run this game.
         """
         self.game_conf.status = GameStatus.IN_PROGRESS
-        await self.send_player_views()
-        self.apply_effect(GameSetup())
-        await self.send_player_views()
+        await self.apply_effect(GameSetup())
         while not self.game_over():
-            self.apply_effect(Turn())
-            await self.send_player_views()
-        self.apply_effect(EndGamePhase())
-        await self.send_player_views()
+            await self.apply_effect(Turn(), self.curr_player)
+        await self.apply_effect(EndGamePhase())
 
-    def apply_effect(self, effect: Effect, player: Optional[Player] = None, *args, **kwargs) -> Any:
+    async def apply_effect(self, effect: Effect, player: Optional[Player] = None, *args, **kwargs) -> Any:
         """
         Activate given effect and add it to the list.
         If a player is given - the effect would affect him.
         """
         self.applied_effects.append(effect)
-        reactions_to_apply = [reaction for pl, reaction in self.waiting_reactions if
-                              reaction.should_react(effect) and pl == player]
-        for reaction in reactions_to_apply:
-            self.apply_effect(reaction, player, *args, **kwargs)
-        return effect.activate(self, player, *args, **kwargs)
+
+        if player:
+            reactions_to_apply = [reaction for reaction in self.waiting_reactions[player.name] if
+                                  reaction.should_react(activated_effect=effect,
+                                                        game=self,
+                                                        player=player)]
+            for reaction in reactions_to_apply:
+                await self.apply_effect(reaction, player, *args, **kwargs)
+        result = await effect.activate(self, player, *args, **kwargs)
+        await self.send_player_views()
+        return result
 
     def add_waiting_reaction(self, reaction: Reaction, player_name: str):
         self.waiting_reactions[player_name].append(reaction)

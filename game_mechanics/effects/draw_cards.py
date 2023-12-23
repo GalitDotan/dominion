@@ -10,8 +10,8 @@ class DrawCards(Effect):
         super().__init__()
         self.amount = amount
 
-    def apply(self, game, player=None, **kwargs) -> Any:
-        amount = self.amount if type(self.amount) is int else game.apply_effect(PlayerDecision(), player)
+    async def apply(self, game, player=None, **kwargs) -> Any:  # TODO: what player decision should happen here?
+        amount = self.amount if type(self.amount) is int else await game.apply_effect(PlayerDecision(), player)
         cards = player.draw_pile.draw_cards(amount)
         player.hand.extend(cards)
         self._add_awaiting_reactions(game, player.name, cards)

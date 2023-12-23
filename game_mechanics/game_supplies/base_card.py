@@ -79,12 +79,12 @@ class BaseCard(ABC):
         phase = phase if phase else game.curr_phase
         return [t for t in self._effects_by_phase.get(phase, [])]
 
-    def play(self, game):
+    async def play(self, game):
         """
         Apply all the effect of the card for the current phase.
         """
         for effect, model in self.effects_to_activate(game):
-            game.apply_effect(effect)
+            await game.apply_effect(effect, player=self)
 
     def estimate_vp_worth(self, game):
         """

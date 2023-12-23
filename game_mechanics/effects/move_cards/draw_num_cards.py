@@ -10,7 +10,7 @@ class DrawNum(Effect):
         super().__init__()
         self.num = num
 
-    def apply(self, game, player=None, *args, **kwargs) -> Any:
+    async def apply(self, game, player=None, *args, **kwargs) -> Any:
         """
         Draw num cards from player's draw pile to his hand.
         If draw pile gets emptied - shuffle it to the draw pile and keep drawing.
@@ -20,11 +20,11 @@ class DrawNum(Effect):
         draw_pile = player.draw_pile
         for _ in range(self.num):
             if draw_pile.is_empty():
-                game.apply_effect(ShuffleDiscardToDrawPile())
+                await game.apply_effect(ShuffleDiscardToDrawPile(), player)
             if draw_pile.is_empty():  # still empty
                 break  # no more cards to draw
             cards.append(draw_pile.draw())
-        player.hand.put_all(cards)
+        player.hand.extend(cards)
 
 
 def draw_card(self):
