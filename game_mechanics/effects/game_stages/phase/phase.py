@@ -17,12 +17,12 @@ class Phase(GameStage, ABC):
 
     async def play_phase(self, game, player=None, *args, **kwargs) -> Any:
         while self.should_continue(player):
-            card = self.apply_phase_effect(game, player)
+            card = await self.apply_phase_effect(game, player)
             if not card:
                 break
 
-    def apply_phase_effect(self, game, player):
-        return game.apply_effect(self.phase_effect(), player)
+    async def apply_phase_effect(self, game, player):
+        return await game.apply_effect(self.phase_effect(), player)
 
     def should_continue(self, player) -> bool:
         return self.has_playable_cards(player)

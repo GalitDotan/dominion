@@ -163,8 +163,12 @@ class Game:
         for player_name in self.players.keys():
             await self.send_player_view(player_name)
 
-    async def send_personal_message(self, message: str, player_name: str):
-        await self.game_conf.ws_manager.send_personal_message(message, player_name)
+    async def send_personal_message(self, message: str, player: str | Player):
+        if type(player) is Player:
+            player = player.name
+        await self.game_conf.ws_manager.send_personal_message(message, player)
 
-    async def receive_text(self, player_name: str):
-        return await self.game_conf.ws_manager.send_personal_message(player_name)
+    async def receive_text(self, player: str | Player):
+        if type(player) is Player:
+            player = player.name
+        return await self.game_conf.ws_manager.send_personal_message(player)
