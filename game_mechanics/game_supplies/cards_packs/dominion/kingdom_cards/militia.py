@@ -8,7 +8,7 @@ from game_mechanics.game_supplies.card_type import CardType
 class Militia(Card):
     """
     +2 Coins
-    Each player discards down to 2.
+    Each player_name discards down to 2.
     """
 
     def __init__(self):

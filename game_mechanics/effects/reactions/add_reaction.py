@@ -4,7 +4,7 @@ from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 
 
-class AddReaction(Effect):
+class AddReaction(Effect):  # TODO: update
     def __init__(self, reaction: Reaction):
         super().__init__()
         self.reaction = reaction

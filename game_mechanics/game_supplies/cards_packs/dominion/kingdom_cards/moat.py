@@ -17,7 +17,7 @@ class Moat(ReactionCard):
     """
     +2 cards
     _______________
-    If another player plays an attack....
+    If another player_name plays an attack....
     """
 
     def __init__(self):

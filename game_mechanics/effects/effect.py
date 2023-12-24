@@ -22,7 +22,7 @@ class Effect(ABC):
 
         Args:
             game: The current state of the game.
-            player: The player.
+            player: The player_name.
         """
         if self.is_disabled:
             return
@@ -41,6 +41,6 @@ class Effect(ABC):
 
         Args:
             game: The current state of the game.
-            player: The player.
+            player: The player_name.
         """
         return

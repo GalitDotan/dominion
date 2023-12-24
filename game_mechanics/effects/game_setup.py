@@ -11,7 +11,7 @@ class GameSetup(Effect):
 
     async def apply(self, game, player=None, **kwargs) -> Any:
         """
-        Each player draws cards.
+        Each player_name draws cards.
         """
         for player in game.players.values():
             await game.apply_effect(DrawNum(self.cards_to_draw), player)

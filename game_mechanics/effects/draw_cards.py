@@ -25,5 +25,5 @@ class DrawCards(Effect):
 
     def _add_awaiting_reactions(self, game, player_name, drawn_cards):
         for card in drawn_cards:
-            if drawn_cards.REACTION in card.types():
+            if drawn_cards.REACTION in card.types():  # TODO: update
                 game.add_waiting_reaction(Reaction(react_on_effect=DrawCards, apply_condition=None), player_name)

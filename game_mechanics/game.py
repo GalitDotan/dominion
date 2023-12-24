@@ -1,6 +1,7 @@
 from random import shuffle
 from typing import Optional, Any
 
+from game_mechanics.card_structures.reaction_manager import PlayerReactionManager, ReactionWaiter
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.game_setup import GameSetup
@@ -45,9 +46,13 @@ class Game:
         self._num_players = len(self.players)
 
         self.applied_effects: list[Effect] = []
-        self.waiting_reactions: dict[str, list[Reaction]] = {pl: [] for pl in self.players.keys()}
 
         self.curr_phase: Optional[Phase] = None
+
+        self.player_reaction_managers: dict[str:PlayerReactionManager] = {
+            player_name: PlayerReactionManager(player_name) for
+            player_name in
+            self.game_conf.player_names}
 
     def __hash__(self):
         return hash(self.game_conf)
@@ -74,7 +79,7 @@ class Game:
 
         Returns:
             A list of opponents (players) by the cycle order:
-            from the player next to given player, up to the player before the given player.
+            from the player_name next to given player_name, up to the player_name before the given player_name.
         """
         player_name = player_name if player_name else self.curr_player_name
         all_player_names = self._play_order.copy()
@@ -116,26 +121,22 @@ class Game:
     async def apply_effect(self, effect: Effect, player: Optional[Player] = None, *args, **kwargs) -> Any:
         """
         Activate given effect and add it to the list.
-        If a player is given - the effect would affect him.
+        If a player_name is given - the effect would affect him.
         """
         self.applied_effects.append(effect)
-
         if player:
-            reactions_to_apply = [reaction for reaction in self.waiting_reactions[player.name] if
-                                  reaction.should_react(activated_effect=effect,
-                                                        game=self,
-                                                        player=player)]
-            for reaction in reactions_to_apply:
-                await self.apply_effect(reaction, player, *args, **kwargs)
+            pass
         result = await effect.activate(self, player, *args, **kwargs)
         await self.send_player_views()
         return result
 
     def add_waiting_reaction(self, reaction: Reaction, player_name: str):
-        self.waiting_reactions[player_name].append(reaction)
+        manager = self.player_reaction_managers[player_name]
+        manager.add_reaction(ReactionWaiter(player_reaction_manager=manager, reaction=reaction))
 
     def remove_waiting_reaction(self, reaction: Reaction, player_name: str):
-        self.waiting_reactions[player_name].remove(reaction)
+        manager = self.player_reaction_managers[player_name]
+        manager.remove_reaction(ReactionWaiter(player_reaction_manager=manager, reaction=reaction))
 
     def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
         """

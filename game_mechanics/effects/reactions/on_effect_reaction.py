@@ -25,7 +25,7 @@ class Reaction(Effect):
         self.count_activations += 1
         self.apply_activation(game, player, *args, **kwargs)
         if self.count_activations == self.apply_times:
-            game.remove_waiting_reaction(self)
+            game.remove_waiting_reaction(self)  # TODO: remove
 
     def apply_activation(self, game, player=None, *args, **kwargs) -> Any:
         pass

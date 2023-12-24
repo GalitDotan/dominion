@@ -76,7 +76,7 @@ class DiscardHand(DiscardAllCardsInStruct):
 
 class DiscardPlayArea(DiscardAllCardsInStruct):
     """
-    Discard all cards from player's play area.
+    Discard all cards from player_name's play area.
     """
 
     def get_card_structure(self, game, player=None, *args, **kwargs):

@@ -8,7 +8,7 @@ T = TypeVar('T')
 
 class Options(ABC):
     """
-    Represents a decision a player has to make.
+    Represents a decision a player_name has to make.
     """
 
     def __init__(self, options: list[T], min_choices_allowed: int, max_choices_allowed: int,

@@ -16,7 +16,7 @@ class PlayerDecision(Effect):
         options = '\r\n'.join([f'{i}. {str(choice)}' for i, choice in enumerate(self.choices, start=1)])
         message = f'Please choose from: {options}'
         await game.send_personal_message(message, player)
-        response = game.receive_text(player)
+        response = await game.receive_text(player)
         chosen_choices = [int(i) - 1 for i in ' '.split(response)]
         result = [self.choices[i] for i in chosen_choices]
         self.format_result(result)
