@@ -8,6 +8,6 @@ from game_mechanics.effects.move_cards.discard_cards import DiscardHand, Discard
 class CleanUpPhase(Phase):
     async def apply(self, game, player=None, draw_amount=5, *args, **kwargs) -> Any:
         if player:
-            game.apply_effect(DiscardHand(), player)
-            game.apply_effect(DiscardPlayArea(), player)
-            game.apply_effect(DrawCards(amount=draw_amount), player)
+            await game.apply_effect(DiscardHand(), player)
+            await game.apply_effect(DiscardPlayArea(), player)
+            await game.apply_effect(DrawCards(amount=draw_amount), player)
