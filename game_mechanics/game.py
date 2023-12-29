@@ -124,8 +124,6 @@ class Game:
         If a player_name is given - the effect would affect him.
         """
         self.applied_effects.append(effect)
-        if player:
-            pass
         result = await effect.activate(self, player, *args, **kwargs)
         await self.send_player_views()
         return result
