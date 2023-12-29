@@ -4,14 +4,14 @@ from random import shuffle
 from typing import Optional, Callable
 
 from game_mechanics.effects.game_stages.phase.phase import Phase
-from game_mechanics.game_supplies.base_card import Card
+from game_mechanics.game_supplies.base_card import CardObject
 
 
 class CardStructure(ABC):
-    def __init__(self, cards: Optional[list[Card]] = None, name: Optional[str] = None, is_visible: bool = True):
+    def __init__(self, cards: Optional[list[CardObject]] = None, name: Optional[str] = None, is_visible: bool = True):
         default_name = cards[0].name if cards and len(cards) > 0 else self.__class__.__name__
         self.name: str = name if name else default_name
-        self.cards: list[Card] = cards if cards else []
+        self.cards: list[CardObject] = cards if cards else []
         self.is_visible: bool = is_visible
 
     def __hash__(self):
@@ -34,7 +34,7 @@ class CardStructure(ABC):
         return self.is_visible
 
     @property
-    def cards_dict(self) -> dict[Card, int]:
+    def cards_dict(self) -> dict[CardObject, int]:
         # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
         return dict(Counter(self))
 
@@ -56,7 +56,7 @@ class CardStructure(ABC):
         else:
             self.cards.sort()
 
-    def remove_all(self) -> list[Card]:
+    def remove_all(self) -> list[CardObject]:
         """
         Remove all the cards from the structure.
         """
@@ -64,17 +64,17 @@ class CardStructure(ABC):
         self.cards = []
         return cards
 
-    def remove(self, card: Card):
+    def remove(self, card: CardObject):
         self.cards.remove(card)
 
-    def remove_cards(self, cards: list[Card]):
+    def remove_cards(self, cards: list[CardObject]):
         for card in cards:
             self.remove(card)
 
-    def append(self, card: Card):
+    def append(self, card: CardObject):
         self.cards.append(card)
 
-    def extend(self, cards: list[Card]):
+    def extend(self, cards: list[CardObject]):
         self.cards.extend(cards)
 
     def shuffle(self):
@@ -83,7 +83,7 @@ class CardStructure(ABC):
         """
         shuffle(self.cards)
 
-    def get_cards_for_phase(self, phase: Optional[Phase] = None) -> list[Card]:
+    def get_cards_for_phase(self, phase: Optional[Phase] = None) -> list[CardObject]:
         """
         Receives a card structure and returns all cards from it that can be played in the given phase.
         Default phase - current.

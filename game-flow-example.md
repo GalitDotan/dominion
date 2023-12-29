@@ -5,7 +5,7 @@
 * Request: `StartGame(game_id='game-1234')`
 
 # Game run
-* Effect: `GameSetup()`
+* Effect: `SetupPhase()`
     * Effect: `Draw(SIRI, 5)`
         * Note: Draw does shuffle and put discard in draw pile
                 when no cards in draw pile

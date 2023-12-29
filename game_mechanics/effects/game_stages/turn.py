@@ -43,4 +43,4 @@ class Turn(GameStage):
             opponent.on_turn_start(my_turn=False)
 
         for CurrPhase in self.phase_order:
-            await game.apply_effect(CurrPhase(), player)
+            await game.apply_effect(CurrPhase(), curr_player)

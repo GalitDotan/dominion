@@ -4,6 +4,7 @@ from tabulate import tabulate
 
 from consts import HeadlineFormats
 from game_mechanics.card_structures.supply_pile import SupplyPile
+from game_mechanics.game_supplies.base_card import CardObject
 
 
 class Supply:
@@ -28,7 +29,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
         """
 
     @property
-    def piles(self):
+    def piles_sorted(self):
         return sorted(self._kingdom_piles + self._standard_piles)
 
     def get_num_of_empty(self):
@@ -36,15 +37,20 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
     @property
     def empty_piles(self):
-        return [pile for pile in self.piles if pile.is_empty()]
+        return [pile for pile in self.piles_sorted if pile.is_empty()]
 
     def get_pile_names_by_condition(self, card_condition: Callable) -> list[str]:
         piles = []
-        for pile in self.piles:
+        for pile in self.piles_sorted:
             if not pile.is_empty() and card_condition(pile.peak()):
                 piles.append(pile.name)
         return piles
 
-    def get_card(self, pile_name: str):
+    def get_card(self, pile_name: str) -> CardObject | None:
+        """
+        Get the top card from the given pile.
+        If pile is empty - returns None.
+        """
+        pile_name = pile_name.capitalize()
         pile: SupplyPile = self._all_piles[pile_name]
         return pile.draw()

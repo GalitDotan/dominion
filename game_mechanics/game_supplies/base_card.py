@@ -1,18 +1,14 @@
 from abc import ABC
 from typing import Optional, Callable
 
-import game_mechanics.effects.game_stages.phase.action_phase as action_phase
-import game_mechanics.effects.game_stages.phase.buy_phase as buy_phase
-import game_mechanics.effects.game_stages.phase.cleanup_phase as cleanup_phase
-import game_mechanics.effects.game_stages.phase.end_game_phase as end_game_phase
-import game_mechanics.effects.game_stages.phase.night_phase as night_phase
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.game_stages.phase import treasure_phase, setup_phase
+from game_mechanics.effects.game_stages.phase import action_phase, buy_phase, cleanup_phase, end_game_phase, \
+    night_phase, setup_phase, treasure_phase
 from game_mechanics.effects.vp_effect import VPEffect
 from game_mechanics.game_supplies.card_type import CardType
 
 
-class Card(ABC):
+class CardObject(ABC):
     """
     A card in a game. Stats can be modified
     """
@@ -27,7 +23,8 @@ class Card(ABC):
                  buy_effects: list[Effect] = (),
                  night_effects: list[Effect] = (),
                  cleanup_effects: list[Effect] = (),
-                 end_game_effects: list[Effect] = ()):
+                 end_game_effects: list[Effect] = (),
+                 should_autoplay: bool = False):
         self.name = name
         self._cost: int = cost
         self._types: list[CardType] = types if type(types) is list else [types]
@@ -42,6 +39,7 @@ class Card(ABC):
             cleanup_phase.CleanUpPhase: cleanup_effects,
             end_game_phase.EndGamePhase: end_game_effects
         }
+        self.should_autoplay = should_autoplay
 
     def __repr__(self):
         return self.name
@@ -55,7 +53,7 @@ class Card(ABC):
     def __eq__(self, other):
         return self.name == other.name
 
-    def __lt__(self, other: 'Card'):
+    def __lt__(self, other: 'CardObject'):
         if self.cost < other.cost:
             return True
         if self.cost > other.cost:
@@ -98,28 +96,42 @@ class Card(ABC):
             vps += effect.estimate(game)
 
 
-class ReactionCard(Card):
+class ReactionCard(CardObject):
     def __init__(self,
                  name: str,
                  types: CardType | list[CardType],
                  cost: int,
+                 setup_effects: list[Effect] = (),
                  action_effects: list[Effect] = (),
                  treasure_effects: list[Effect] = (),
+                 buy_effects: list[Effect] = (),
                  night_effects: list[Effect] = (),
                  cleanup_effects: list[Effect] = (),
                  end_game_effects: list[Effect] = (),
+                 should_autoplay: bool = False,
                  react_on_effect: type[Effect] = None,
                  apply_times: Optional[int] = None, apply_condition: Optional[Callable] = None,
                  remove_condition: Optional[Callable] = None):
-        super().__init__(name, types, cost, action_effects, treasure_effects, night_effects, cleanup_effects,
-                         end_game_effects)
+        super().__init__(name, types, cost, setup_effects, action_effects, treasure_effects, buy_effects, night_effects,
+                         cleanup_effects, end_game_effects, should_autoplay)
         self.react_on_effect = react_on_effect
         self.apply_times = apply_times
         self.apply_condition = apply_condition
         self.remove_condition = remove_condition
 
 
-class TreasureCard(Card):
-    def __init__(self, name: str, types: CardType | list[CardType], cost: int, should_autoplay: bool = True):
-        super().__init__(name, types, cost)
-        self.should_autoplay = should_autoplay
+class TreasureCard(CardObject):
+    def __init__(self,
+                 name: str,
+                 types: CardType | list[CardType],
+                 cost: int,
+                 setup_effects: list[Effect] = (),
+                 action_effects: list[Effect] = (),
+                 treasure_effects: list[Effect] = (),
+                 buy_effects: list[Effect] = (),
+                 night_effects: list[Effect] = (),
+                 cleanup_effects: list[Effect] = (),
+                 end_game_effects: list[Effect] = (),
+                 should_autoplay: bool = True):
+        super().__init__(name, types, cost, setup_effects, action_effects, treasure_effects, buy_effects, night_effects,
+                         cleanup_effects, end_game_effects, should_autoplay)

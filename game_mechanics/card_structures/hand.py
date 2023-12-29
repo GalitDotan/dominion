@@ -1,9 +1,9 @@
 from typing import Optional
 
 from game_mechanics.card_structures.card_structure import CardStructure
-from game_mechanics.game_supplies.base_card import Card
+from game_mechanics.game_supplies.base_card import CardObject
 
 
 class Hand(CardStructure):
-    def __init__(self, cards: Optional[list[Card]] = None):
+    def __init__(self, cards: Optional[list[CardObject]] = None):
         super().__init__(cards, name="Hand")

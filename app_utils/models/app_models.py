@@ -1,0 +1,12 @@
+# User model
+from pydantic import BaseModel
+
+
+class User(BaseModel):
+    username: str
+
+
+# Token model
+class Token(BaseModel):
+    access_token: str
+    token_type: str

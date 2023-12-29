@@ -8,7 +8,7 @@ class Expansion(Enum):
     BASE = 'Base'
 
 
-class Card(Enum):
+class CardInitiator(Enum):
     # standard cards
     COPPER = Copper
     SILVER = Silver

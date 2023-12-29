@@ -4,14 +4,14 @@ from typing import Optional, Any
 from game_mechanics.card_structures.reaction_manager import PlayerReactionManager, ReactionWaiter
 from game_mechanics.card_structures.trash import Trash
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.game_setup import GameSetup
 from game_mechanics.effects.game_stages.phase.end_game_phase import EndGamePhase
 from game_mechanics.effects.game_stages.phase.phase import Phase
+from game_mechanics.effects.game_stages.phase.setup_phase import SetupPhase
 from game_mechanics.effects.game_stages.turn import Turn
 from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 from game_mechanics.game_config.game_conf_consts import EMPTY_PILES_FOR_FINISH_BY_NUM_PLAYERS
 from game_mechanics.game_status import GameStatus
-from game_mechanics.game_supplies.all_cards import Card
+from game_mechanics.game_supplies.all_cards import CardInitiator
 from game_mechanics.player.player import Player
 from game_mechanics.supply import Supply
 
@@ -32,8 +32,8 @@ class Game:
         self.game_conf = game_conf
 
         self.supply = Supply(
-            kingdom_piles=self.game_conf.generate_supply_piles(self.game_conf.kingdom_piles_generators),
-            standard_piles=self.game_conf.generate_supply_piles(self.game_conf.standard_piles_generators))
+            kingdom_piles=self.game_conf.generate_supply_piles(self.game_conf.kingdom_piles_initiators),
+            standard_piles=self.game_conf.generate_supply_piles(self.game_conf.standard_piles_initiators))
         self.trash = Trash(name="Trash")
 
         self.players: dict[str, Player] = {player_name: Player(cards=[], name=player_name) for player_name in
@@ -113,7 +113,7 @@ class Game:
         Run this game.
         """
         self.game_conf.status = GameStatus.IN_PROGRESS
-        await self.apply_effect(GameSetup())
+        await self.apply_effect(SetupPhase())
         while not self.game_over():
             await self.apply_effect(Turn(), self.curr_player)
         await self.apply_effect(EndGamePhase())
@@ -138,7 +138,7 @@ class Game:
         manager = self.player_reaction_managers[player_name]
         manager.remove_reaction(ReactionWaiter(player_reaction_manager=manager, reaction=reaction))
 
-    def game_over(self, finishing_piles: tuple[str] = (Card.PROVINCE,)) -> bool:
+    def game_over(self, finishing_piles: tuple[str] = (CardInitiator.PROVINCE,)) -> bool:
         """
         Check whether any of the end conditions are met.
         """
@@ -156,9 +156,8 @@ class Game:
 
     async def send_player_view(self, player_name: str):
         player = str(self.players[player_name])
-        opponents = [str(opp) for opp in self.get_opponents_ordered(player_name)]
-        message = f'Supply: {self.supply}. You: {player}. Opponents: {opponents}'
-        await self.send_personal_message(message, player_name)
+        # opponents = [str(opp) for opp in self.get_opponents_ordered(player_name)]
+        await self.send_personal_message(message=str(player), player=player_name)
 
     async def send_player_views(self):
         for player_name in self.players.keys():

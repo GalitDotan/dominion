@@ -5,3 +5,6 @@ uvicorn~=0.25
 asyncio~=3.4
 starlette~=0.34
 wonderwords~=2.2.0
+
+PyJWT~=2.8.0
+passlib~=1.7.4

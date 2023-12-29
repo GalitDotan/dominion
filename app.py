@@ -1,5 +1,5 @@
 import logging
-import os.path
+import os
 from asyncio import sleep
 from threading import Thread
 from typing import Optional
@@ -8,15 +8,19 @@ import uvicorn
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.exceptions import HTTPException
 from fastapi.responses import HTMLResponse
+from fastapi.security import OAuth2PasswordBearer
 
+from app_utils.connection_manager import WebSocketsManager
+from app_utils.server_consts import ServerConf
 from game_mechanics.game import Game
 from game_mechanics.game_config.game_config import GameConfiguration
 from game_mechanics.game_status import GameStatus
-from server.connection_manager import WebSocketsManager
-from server.server_consts import ServerConf
 from utils.name_generator import generate_player_name
 
-ROOT = 'server/static/templates'
+# Security
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+ROOT = 'app_utils/static/templates'
 CHAT_FILE = 'chat.html'
 
 RANDOM_CHOICE = 'r'
@@ -73,6 +77,15 @@ async def game_initiation_manager(websocket: WebSocket, name: str):
         logging.exception(e)
         ws_manager.disconnect(name)
         await ws_manager.broadcast(f'Player {name} got disconnected')
+
+
+@app.get('/game_state/{game_name}/supply')
+async def get_game_state(game_name: str):
+    """
+    Retrieve the current state of the game by game name.
+    """
+    game: Game = _find_in_progres_game(game_name)
+    return str(game.supply)
 
 
 async def _init_game(name: str):
