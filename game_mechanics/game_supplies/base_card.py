@@ -85,15 +85,16 @@ class CardObject(ABC):
         phase = phase if phase else game.curr_phase
         return [t for t in self._effects_by_phase.get(phase, [])]
 
-    def estimate_vp_worth(self, game):
+    def estimate_vp_worth(self, game) -> int:
         """
-        Estimate the VP this card is worth.
+        Estimate the Victory Points this card is worth.
         """
         vp_effects = self._effects_by_phase.get(end_game_phase.EndGamePhase)
         vps = 0
         for effect in vp_effects:
             effect: VPEffect
             vps += effect.estimate(game)
+        return vps
 
 
 class ReactionCard(CardObject):

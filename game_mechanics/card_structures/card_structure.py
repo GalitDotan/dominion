@@ -35,7 +35,6 @@ class CardStructure(ABC):
 
     @property
     def cards_dict(self) -> dict[CardObject, int]:
-        # card_names = sorted([c.name for c in self._cards]) # TODO: make sure this is not necessary, then remove
         return dict(Counter(self))
 
     def detailed_repr(self):

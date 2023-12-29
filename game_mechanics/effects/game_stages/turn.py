@@ -6,6 +6,7 @@ from game_mechanics.effects.game_stages.phase.buy_phase import BuyPhase
 from game_mechanics.effects.game_stages.phase.cleanup_phase import CleanUpPhase
 from game_mechanics.effects.game_stages.phase.night_phase import NightPhase
 from game_mechanics.effects.game_stages.phase.treasure_phase import TreasurePhase
+from game_mechanics.player.player_turn_state import PlayerTurnStats
 
 PHASE_ORDER = (ActionPhase, TreasurePhase, BuyPhase, NightPhase, CleanUpPhase)
 
@@ -38,9 +39,25 @@ class Turn(GameStage):
         curr_player = game.curr_player
         opponents = game.get_opponents_ordered(player.name)
 
-        curr_player.on_turn_start(my_turn=True)
+        curr_player.turns_played += 1
+
+        curr_player.init_turn_state(my_turn=True)
         for opponent in opponents:
-            opponent.on_turn_start(my_turn=False)
+            opponent.init_turn_state(my_turn=False)
 
         for CurrPhase in self.phase_order:
             await game.apply_effect(CurrPhase(), curr_player)
+
+    def init_turn_state(self, player, is_curr):
+        """
+        Initiate the state of current turn.
+        By Default:
+            * For current player - is initiated with 1 action, 1 buy and 0 coins.
+            * For other player - is initiated with 0 action, 0 buy and 0 coins.
+
+        Args:
+            my turn: is current turn mine.
+        """
+        actions = 1 if is_curr else 0
+        buys = 1 if is_curr else 0
+        player.turn_stats = PlayerTurnStats(actions=actions, buys=buys, coins=0)

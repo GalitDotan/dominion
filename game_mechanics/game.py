@@ -36,7 +36,7 @@ class Game:
             standard_piles=self.game_conf.generate_supply_piles(self.game_conf.standard_piles_initiators))
         self.trash = Trash(name="Trash")
 
-        self.players: dict[str, Player] = {player_name: Player(cards=[], name=player_name) for player_name in
+        self.players: dict[str, Player] = {player_name: Player(name=player_name, game=self) for player_name in
                                            self.game_conf.player_names}
 
         self._play_order: list[str] = list(self.players.keys())

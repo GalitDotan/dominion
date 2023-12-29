@@ -5,7 +5,6 @@ from game_mechanics.card_structures.pile import Pile
 from game_mechanics.card_structures.play_area import PlayArea
 from game_mechanics.game_supplies.base_card import CardObject
 from game_mechanics.player.player_turn_state import PlayerTurnStats
-from game_mechanics.utils.utils import shuffle_copy
 from utils.name_generator import generate_player_name
 
 
@@ -19,13 +18,14 @@ class Player:
         5. Different mats
     """
 
-    def __init__(self, name: str, cards: list[CardObject], non_card_vp: int = 0):
+    def __init__(self, name: str, game, non_card_vp: int = 0):
         self.name = name if name else generate_player_name()
+        self.game = game
 
-        self._all_cards: list[CardObject] = cards.copy()  # all cards the curr_player has
+        self._all_cards: list[CardObject] = []  # all cards the player has
 
         # curr_player's card structures
-        self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False, cards=shuffle_copy(cards))
+        self.draw_pile: Pile = Pile(name='Draw Pile', is_visible=False)
         self.discard_pile = Pile(name='DiscardCard Pile', is_visible=True)
         self.hand: Hand = Hand()
         self.play_area: PlayArea = PlayArea()
@@ -36,8 +36,10 @@ class Player:
         self.turns_played = 0
         self.turn_stats: Optional[PlayerTurnStats] = None  # this would be initiated every turn
 
-    def __repr__(self):  # TODO: add VP
-        return f'{self.name}: {self.hand}, {self.draw_pile}, {self.discard_pile}'
+        self._all_card_structures = (self.draw_pile, self.discard_pile, self.hand, self.play_area)
+
+    def __repr__(self):
+        return f'{self.name}[{self.estimate_victory_points} VP]: {self.hand}, {self.draw_pile}, {self.discard_pile}'
 
     def __lt__(self, other: "Player"):  # is self losing to other
         # return self.victory_points < other.victory_points or (
@@ -53,7 +55,16 @@ class Player:
         #        self.victory_points == other.victory_points and self.turns_played < other.turns_played)
         pass
 
-    def estimate_victory_points(self, game) -> int:  # TODO: make property
+    @property
+    def cards_amounts(self) -> dict[CardObject, int]:
+        card_counter_dict: dict[CardObject, int] = {}
+        for cars_structure in self._all_card_structures:
+            for card, cnt in cars_structure.cards_dict.items():
+                card_counter_dict[card] = card_counter_dict.get(card, 0) + cnt
+        return card_counter_dict
+
+    @property
+    def estimate_victory_points(self) -> int:
         """
         Calculate the victory points by Player's cards and other places.
 
@@ -61,32 +72,12 @@ class Player:
             Sum of victory points.
         """
         vp = self.achieved_victory_points
-        for card in self._all_cards:
-            vp += card.estimate_vp_worth(game)
+        for card, cnt in self.cards_amounts.items():
+            vp += card.estimate_vp_worth(self.game) * cnt
         return vp
 
-    def on_turn_start(self, my_turn: bool):  # TODO: move to effects
-        self.init_turn_state(my_turn)
-        if my_turn:
-            self.turns_played += 1
-
-    def init_turn_state(self, my_turn: bool):
-        """
-        Initiate the state of current turn.
-        By Default:
-            * On my turns - is initiated with 1 action, 1 buy and 0 coins.
-            * On my turns - is initiated with 0 action, 0 buy and 0 coins.
-
-        Args:
-            my turn: is current turn mine.
-        """
-        if my_turn:
-            self.turn_stats = PlayerTurnStats(actions=1, buys=1, coins=0)
-        else:
-            self.turn_stats = PlayerTurnStats(actions=0, buys=0, coins=0)
-
-    def detailed_repr(self, game):
-        return f"{self.name}[{self.estimate_victory_points(game)} VP]: " \
+    def detailed_repr(self):
+        return f"{self.name}[{self.estimate_victory_points} VP]: " \
                f"{self.hand.detailed_repr()}{self.draw_pile.detailed_repr()}" \
                f"{self.discard_pile.detailed_repr()}"
 
