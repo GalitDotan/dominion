@@ -25,5 +25,6 @@ class SetupPhase(Phase):
         """
         for player in game.players.values():
             for card, amount in self.cards_to_gain:
-                await game.apply_effect(GainCardToDiscard(pile_name=card.name), player)
+                for _ in range(amount):
+                    await game.apply_effect(GainCardToDiscard(pile_name=card.name), player)
             await game.apply_effect(DrawHand(self.cards_to_draw), player)
