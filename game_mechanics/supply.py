@@ -39,12 +39,21 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
     def empty_piles(self):
         return [pile for pile in self.piles_sorted if pile.is_empty()]
 
-    def get_pile_names_by_condition(self, card_condition: Callable) -> list[str]:
-        piles = []
+    def get_non_empty_pile_names(self, card_condition: Callable[[CardObject], bool] = lambda x: True) -> list[str]:
+        """
+        Get all names of non-empty piles that match the given condition.
+
+        Args:
+            card_condition: Defaltly - don't limit (the condition is always True).
+
+        Returns:
+             The pile names.
+        """
+        pile_names = []
         for pile in self.piles_sorted:
             if not pile.is_empty() and card_condition(pile.peak()):
-                piles.append(pile.name)
-        return piles
+                pile_names.append(pile.name)
+        return pile_names
 
     def get_card(self, pile_name: str) -> CardObject | None:
         """

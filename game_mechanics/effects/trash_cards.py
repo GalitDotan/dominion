@@ -26,7 +26,7 @@ class TrashThenGain(Effect):
         trashed_card = await game.apply_effect(TrashFromHand(), player, *args, **kwargs)
         max_cost = trashed_card.cost + 3
         condition = self.gain_condition_generator(trashed_card)
-        piles_allowed_to_gain_from = game.supply.get_pile_names_by_condition(condition)
+        piles_allowed_to_gain_from = game.supply.get_non_empty_pile_names(condition)
         gained_card = await game.apply_effect(
             GainCardsDecision(gain_type=self.gain_type, amount=1, cost=(0, max_cost),
                               allowed_pile_names=piles_allowed_to_gain_from),

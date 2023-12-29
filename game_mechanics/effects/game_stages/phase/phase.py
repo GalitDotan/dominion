@@ -12,6 +12,7 @@ class Phase(GameStage, ABC):
         self.phase_effect: type[Effect] = phase_effect
 
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
+        game.curr_phase = self
         await self.autoplay_cards(game, player, *args, **kwargs)
         await self.play_phase(game, player, *args, **kwargs)
 

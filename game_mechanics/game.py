@@ -169,4 +169,4 @@ class Game:
     async def receive_text(self, player: str | Player):
         if type(player) is Player:
             player = player.name
-        return await self.game_conf.ws_manager.send_personal_message(player)
+        return await self.game_conf.ws_manager.receive_text(player)

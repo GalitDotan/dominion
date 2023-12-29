@@ -45,7 +45,7 @@ class BuyCardsDecision(Effect):
     def __init__(self, buy_type: type[BuyCard] = BuyCardToDiscard,
                  amount: int | tuple[int, int] = -1,
                  cost: int | tuple[int, int] = -1,
-                 allowed_pile_names: list[str] | None = None):
+                 allowed_pile_names: list[str] = ()):
         """
         Asking the player to choose piles to gain from, the applying a gain effect.
 
@@ -61,7 +61,12 @@ class BuyCardsDecision(Effect):
         self.allowed_pile_names = allowed_pile_names
 
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
-        chosen_piles = await game.apply_effect(PlayerDecision(self.allowed_pile_names), player, *args, **kwargs)
+        """
+        Asking the player to choose piles to gain from, the applying a gain effect.
+        """
+        allowed_piles = self.allowed_pile_names if self.allowed_pile_names else game.supply.get_non_empty_pile_names(
+            card_condition=lambda p: p.cost <= player.turn_stats.coins and p.name in self.allowed_pile_names)
+        chosen_piles = await game.apply_effect(PlayerDecision(allowed_piles), player, *args, **kwargs)
         bought_cards = []
         for pile_name in chosen_piles:
             card = await game.apply_effect(self.buy_type(pile_name))
