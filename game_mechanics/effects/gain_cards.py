@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerCheckboxChoice
 
 
 class GainCard(Effect, ABC):
@@ -58,7 +58,7 @@ class GainCardsDecision(Effect):
         self.allowed_pile_names = allowed_pile_names
 
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
-        chosen_piles = await game.apply_effect(PlayerDecision(self.allowed_pile_names), player, *args, **kwargs)
+        chosen_piles = await game.apply_effect(PlayerCheckboxChoice(self.allowed_pile_names), player, *args, **kwargs)
         gained_cards = []
         for pile_name in chosen_piles:
             card = await game.apply_effect(self.gain_type(pile_name), player, *args, **kwargs)

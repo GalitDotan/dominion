@@ -3,7 +3,7 @@ from typing import Any
 
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.gain_cards import GainCardToDiscard, GainCard, GainCardToHand
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerCheckboxChoice
 
 
 class BuyCard(Effect, ABC):
@@ -44,29 +44,25 @@ class BuyCardsDecision(Effect):
 
     def __init__(self, buy_type: type[BuyCard] = BuyCardToDiscard,
                  amount: int | tuple[int, int] = -1,
-                 cost: int | tuple[int, int] = -1,
-                 allowed_pile_names: list[str] = ()):
+                 cost: int | tuple[int, int] = -1):
         """
         Asking the player to choose piles to gain from, the applying a gain effect.
 
         Args:
             amount: Amount of cards to gain. Could be a number, a range, or (-1) for unlimited.
             cost: Cost of the card to gain. Could be a number, a range, or (-1) for unlimited.
-            allowed_pile_names: If not None - limit the options only to the allowed piles_sorted.
         """
         super().__init__()
         self.buy_type: type[BuyCard] = buy_type
         self.amount = amount
         self.cost = cost
-        self.allowed_pile_names = allowed_pile_names
 
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
         """
         Asking the player to choose piles to gain from, the applying a gain effect.
         """
-        allowed_piles = self.allowed_pile_names if self.allowed_pile_names else game.supply.get_non_empty_pile_names(
-            card_condition=lambda p: p.cost <= player.turn_stats.coins and p.name in self.allowed_pile_names)
-        chosen_piles = await game.apply_effect(PlayerDecision(allowed_piles), player, *args, **kwargs)
+        allowed_piles = game.supply.get_non_empty_pile_names(card_condition=lambda p: p.cost <= player.turn_stats.coins)
+        chosen_piles = await game.apply_effect(PlayerCheckboxChoice(allowed_piles), player, *args, **kwargs)
         bought_cards = []
         for pile_name in chosen_piles:
             card = await game.apply_effect(self.buy_type(pile_name))

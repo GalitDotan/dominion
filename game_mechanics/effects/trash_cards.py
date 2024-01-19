@@ -2,13 +2,13 @@ from typing import Any, Callable
 
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.gain_cards import GainCardsDecision, GainCard, GainCardToDiscard
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerCheckboxChoice
 from game_mechanics.game_supplies.base_card import CardObject
 
 
 class TrashFromHand(Effect):
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
-        treasure = await game.apply_effect(PlayerDecision(player.hand.cards), player)
+        treasure = await game.apply_effect(PlayerCheckboxChoice(player.hand.cards), player)
         player.hand.remove(treasure)
         player.remove_card(treasure)
         game.trash.append(treasure)

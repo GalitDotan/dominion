@@ -2,13 +2,13 @@ from typing import Any
 
 from game_mechanics.effects.effect import Effect
 from game_mechanics.effects.move_cards.play_card import PlayCardFromHand
-from game_mechanics.effects.player_decision import PlayerBooleanDecision
+from game_mechanics.effects.player_decision import PlayerBooleanChoice
 from game_mechanics.game_supplies.card_type import CardType
 
 
 class AutoplayTreasures(Effect):
     async def apply(self, game, player=None, *args, **kwargs) -> Any:
-        do_autoplay: bool = await game.apply_effect(PlayerBooleanDecision(), player)
+        do_autoplay: bool = await game.apply_effect(PlayerBooleanChoice(header='Autoplay treasures'), player)
         if do_autoplay:
             for card in player.hand.cards:
                 if CardType.TREASURE in card.types and card.should_autoplay:

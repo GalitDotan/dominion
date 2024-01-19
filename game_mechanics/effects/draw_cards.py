@@ -1,7 +1,7 @@
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.player_decision import PlayerIntDecision
+from game_mechanics.effects.player_decision import PlayerChoiceFromRange
 from game_mechanics.effects.reactions.on_effect_reaction import Reaction
 from game_mechanics.effects.shuffle_piles.shuffle_pile import ShuffleDiscardToDrawPile
 
@@ -21,7 +21,7 @@ class DrawCards(Effect):
             draw_amount = self.amount
         elif type(self.amount) is tuple:
             draw_amount = self.amount if type(self.amount) is int else await game.apply_effect(
-                PlayerIntDecision(self.amount), player)
+                PlayerChoiceFromRange(self.amount), player)
         else:
             draw_amount = 0
         cards = []

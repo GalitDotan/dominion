@@ -111,18 +111,27 @@ async def _join_game(name: str, game_name: str):
     Join an already initiated game.
     This is allowed only for games that hadn't been started yet.
 
-    :param name: Client's name.
-    :param game_name: The game ID.
+    Args:
+        name: Client's name.
+        game_name: The game ID.
     """
     game_conf = _find_not_started_game(game_name)
+
+    if not game_conf:
+        return await ws_manager.send_personal_message(f'The game {game_name} does not exist or has already started',
+                                                      name)
+    if game_conf.status != GameStatus.INITIATED:
+        return await ws_manager.send_personal_message(f'The game {game_name} has already started', name)
+    if name in game_conf.player_names:
+        return await ws_manager.send_personal_message(f'You are already part of the game {game_name}', name)
     game_conf.player_names.append(name)
     await ws_manager.send_personal_message(f'You have joined {game_conf.game_name}. '
-                                           f'Please wait for host to start the game', name)
+                                           f'Please wait for the host to start the game', name)
     await ws_manager.broadcast(
         f'{name} has joined the game {game_name}, '
         f'which now has {game_conf.num_players} players: {game_conf.player_names}')
-    await _wait_root(name, game_name)
-    game = _find_in_progres_game(game_name)
+    game = _wait_root(game_name)
+    print(f'{name} is starting to play the game')
     await _play_game(game, name)
 
 
@@ -136,17 +145,14 @@ async def _start_game(game_host_name: str):
     await game.run()
 
 
-async def _wait_root(name: str, game_name: str):
+def _wait_root(game_name: str) -> Optional[Game]:
     """
     Waiting for given game to become 'IN_PROGRESS'.
-    Meanwhile - send and receive messages.
     """
-    await ws_manager.send_personal_message(f'Welcome to the chat room. Here you will wait for your game to start', name)
     game = _find_not_started_game(game_name)
     while game.status != GameStatus.IN_PROGRESS:
-        data = await ws_manager.receive_text(name)
-        await ws_manager.send_personal_message(f'You wrote: {data}', name)
-        await ws_manager.broadcast(f'{name} says: {data}')
+        continue
+    return _find_in_progres_game(game_name)
 
 
 async def _play_game(game: Game, player_name: str):

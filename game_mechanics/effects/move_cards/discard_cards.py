@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerCheckboxChoice
 
 
 class DiscardCards(Effect, ABC):
@@ -31,7 +31,7 @@ class DiscardCards(Effect, ABC):
             player.discard_pile.put(card)
 
     async def get_cards_to_discard(self, game, struct, player=None, *args, **kwargs):
-        return await game.apply_effect(PlayerDecision(struct.cards), player, **kwargs)
+        return await game.apply_effect(PlayerCheckboxChoice(struct.cards), player, **kwargs)
 
     @abstractmethod
     def get_card_structure(self, game, player=None, *args, **kwargs):

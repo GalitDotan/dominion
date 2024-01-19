@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 from game_mechanics.effects.effect import Effect
-from game_mechanics.effects.player_decision import PlayerDecision
+from game_mechanics.effects.player_decision import PlayerCheckboxChoice
 
 
 class PlayCard(Effect, ABC):
@@ -58,7 +58,7 @@ class PlayCardDecision(Effect, ABC):
         struct = self.get_card_structure(game, player=None, *args, **kwargs)
         if not card:
             playable_cards = struct.get_cards_for_phase(self)
-            card = PlayerDecision(playable_cards, allow_none_noice=True)
+            card = PlayerCheckboxChoice(playable_cards, allow_none_noice=True)
         if card:
             return await game.apply_effect(self.play_type(card), player, *args, **kwargs)
 
